@@ -15,9 +15,9 @@
 - Jake Johnson
 - Yongbo Shu
 
-**Description:** Throughout the course of this semester we will be developing a recipe finder app.
+**Description:** Throughout the course of this semester we will be developing a recipe finder app. This recipe app will be connected to an open source recipe database, and will be able to search for recipes with extensive search criteria. Each user will define certain ingrediants that they really like or really hate, allergy information, restrictions on prep time and kitchen ware (like if you have a grill or not), and dietarty restrictions, and the app will filter recipes based on this information. If no results were found, The app will continue to check the database for updates and will notify the user if a new recipe was added to the database that matches search criteria. We will start with this, and if we get this running we have tons of ways to expand this idea.
 
-**Vision Statement:**
+**Vision Statement:** The fully expanded version of this app will have a database that stores information about every ingrediant used in every recipe. Such information includes price, where these ingredients can be bought, and nutritional value. If we could have access to such a database, the app could calculate the nutritional value of each recipe and the cost to buy all the ingredients. The app could tell you which store has all the ingrediants for the lowest price and is the closest to your current location, and could suggest ways of making the recipe healthier by substituting certain ingredients. We can even add in settings for vegan, vegitarian, gluten-free, etc. where the app can customize existing recipes to make them conform with your dietary restrictions. There would be a hard-coded substution for eggs, cheese, milk, bread, meat, etc. 
 
 **Motivation:**
 
