@@ -23,7 +23,7 @@
 
 **Risks:** The biggest risk is going to be weather or not we can have access to all the information needed for the full expansion.
 
-**Risk Mitigation Plan:**
+**Risk Mitigation Plan:** To mitigate these risks, we will start off with basic functionality since all thats required for this is an open source recipe database which we know we can find plenty of on the web. We could set up a meeting with some of the major grocery store chains and request access to price data, and maybe there is an open source database for nutritional information on the web that we can use. 
 
 **Version Control:** We will be working collaboratively via GitHub and using [Circle CI](https://circleci.com) for continous integration.
 
