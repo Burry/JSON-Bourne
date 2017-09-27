@@ -15,7 +15,7 @@
 - Jake Johnson
 - Yongbo Shu
 
-**Description:**
+**Description:** Throughout the course of this semester we will be developing a recipe finder app.
 
 **Vision Statement:**
 
