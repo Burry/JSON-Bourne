@@ -27,7 +27,7 @@
 
 **Version Control:** We will be working collaboratively via GitHub and using [Circle CI](https://circleci.com) for continuous integration.
 
-**Development Method:**
+**Development Method:** We will use agile methodology.
 
 **Collaboration Tool:** We will use Slack with GitHub, Circle CI, and Trello app integrations as a primary means of team communication.
 
