@@ -1,11 +1,5 @@
 # Proposal
 
-*Will convert to PDF when ready to submit*
-
-[See milestone instructions](https://github.com/Burry/JSON-Bourne-Temp-Name/milestone/1)
-
----
-
 **Team Name:** JSON Bourne *[rename to project name when determined]*
 
 **Members:**
