@@ -1,7 +1,5 @@
 # Project Tools & Agile Methodology Summary
 
-*Will convert to PDF when ready to submit*
-
 [See milestone instructions](https://github.com/Burry/JSON-Bourne-Temp-Name/milestone/2)
 
 ---
