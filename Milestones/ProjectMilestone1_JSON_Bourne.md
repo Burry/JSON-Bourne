@@ -32,7 +32,7 @@ To mitigate these risks we will start with developing basic functionality that w
 ### Version Control
 We will be working collaboratively via GitHub and using [Circle CI](https://circleci.com) for continuous integration.
 
-### Development Method:
+### Development Method
 We plan on using Agile methodology with the Scrum framework (although with holding meetings twice a week).
 
 ### Collaboration Tool
