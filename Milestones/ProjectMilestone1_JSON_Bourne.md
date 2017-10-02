@@ -7,7 +7,7 @@ JSON Bourne
 - [Austin Rugh](https://github.com/arugh21)
 - [Gabe Faber](https://github.com/gabefaber)
 - [Grant Burry](https://github.com/Burry)
-- [Jake Johnson]()
+- [Jake Johnson](https://github.com/jjohnson5253)
 - [Yongbo Shu](https://github.com/yosh3289)
 
 ### Description
