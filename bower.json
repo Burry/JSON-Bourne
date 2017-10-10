@@ -1,5 +1,5 @@
 {
-  "name": "FindMyAppetite",
+  "name": "find-my-appetite",
   "description": "Let's make something good",
   "main": "public/stylesheets/site.scss",
   "repository" : {
