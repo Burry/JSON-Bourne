@@ -50,5 +50,15 @@
         "node-sass-middleware": "0.9.8",
         "pug": "~2.0.0-beta11",
         "serve-favicon": "~2.4.2"
+    },
+    "devDependencies": {
+        "browser-sync": "^2.18.13",
+        "gulp": "^3.9.1",
+        "gulp-autoprefixer": "^4.0.0",
+        "gulp-develop-server": "^0.5.2",
+        "gulp-jshint": "^2.0.4",
+        "gulp-sass": "^3.1.0",
+        "gulp-sourcemaps": "^2.6.1",
+        "jshint": "^2.9.5"
     }
 }
