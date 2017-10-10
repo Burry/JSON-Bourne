@@ -1,0 +1,54 @@
+{
+    "name": "FindMyAppetite",
+    "version": "0.0.1",
+    "description": "Let's make something good",
+    "homepage": "https://findmyappetite.com",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Burry/JSON-Bourne"
+    },
+    "contributors": [
+        {
+            "name": "Austin Rugh",
+            "email": "austin.rugh@colorado.edu",
+            "url": "https://github.com/arugh21"
+        },
+        {
+            "name": "Gabe Faber",
+            "email": "gabriel.faber@colorado.edu",
+            "url": "https://github.com/gabefaber"
+        },
+        {
+            "name": "Grant Burry",
+            "email": "grant.burry@colorado.edu",
+            "url": "https://grantburry.com"
+        },
+        {
+            "name": "Jake Johnson",
+            "email": "jake.e.johnson@colorado.edu",
+            "url": "https://github.com/jjohnson5253"
+        },
+        {
+            "name": "Yongbo Shu",
+            "email": "yongbo.shu@colorado.edu",
+            "url": "https://github.com/yosh3289"
+        }
+    ],
+    "private": true,
+    "scripts": {
+        "start": "node ./bin/www"
+    },
+    "postinstall": "node_modules/.bin/bower cache clean && node_modules/.bin/bower install",
+    "dependencies": {
+        "body-parser": "~1.17.1",
+        "bower": "^1.8.2",
+        "cookie-parser": "~1.4.3",
+        "debug": "~2.6.3",
+        "dotenv": "^4.0.0",
+        "express": "~4.15.2",
+        "morgan": "~1.8.1",
+        "node-sass-middleware": "0.9.8",
+        "pug": "~2.0.0-beta11",
+        "serve-favicon": "~2.4.2"
+    }
+}
