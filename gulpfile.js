@@ -1,80 +1,165 @@
+'use strict'
+
 require('dotenv').config()
-const browserSync = require('browser-sync')
+const autoPrefixer = require('gulp-autoprefixer')
+const bower = require('gulp-bower')
+const browserSync = require('browser-sync').create()
+const cleanCSS = require('gulp-clean-css')
+const del = require('del')
+const esLint = require('gulp-eslint')
+const fs = require('fs')
 const gulp = require('gulp')
-const server = require('gulp-develop-server')
-const jsHint = require('gulp-jshint')
+const nodemon = require('gulp-nodemon')
 const sass = require('gulp-sass')
 const sourceMaps = require('gulp-sourcemaps')
-const autoPrefixer = require('gulp-autoprefixer')
+const uglify = require('gulp-uglify')
 
+// Paths
+let paths = {
+    modules: {
+        src: './node_modules/**/*.*',
+        dest: './node_modules/'
+    },
+    public: {
+        src: './public/**/*.*',
+        dest: './public/',
+        vendor: {
+            src: './public/vendor/**/*.*',
+            dest: './public/vendor/'
+        },
+        css: {
+            src: './public/css/**/*.css',
+            dest: './public/css/'
+        },
+        js: {
+            src: './public/js/**/*.js',
+            dest: './public/js/'
+        },
+        images: {
+            src: './public/images/**/*.*',
+            dest: './public/images/'
+        }
+    },
+    sass: {
+        src: './sass/**/*.scss',
+        dest: './sass/'
+    },
+    serverJS: ['./**/*.js', '!./node_modules/**/*.*', '!./public/**/*.*']
+}
+
+// Options
 let options = {
-    'browserSync': {
-        proxy: 'http://localhost:' + process.env.PORT
+    bower: {
+        directory: paths.public.vendor.dest
     },
-    'server': {
-        path: './bin/www'
+    browserSync: {
+        files: '/public/*',
+        proxy: 'http://localhost:' + (parseInt(process.env.PORT) || 3000),
+        port: (parseInt(process.env.PORT) + 1 || 3001),
+        ui: {
+            port: (parseInt(process.env.PORT) + 2 || 3002)
+        },
+        notify: true
     },
-    'sass': {
-        errLogToConsole: true,
-        outputStyle: 'compressed'
+    nodemon: {
+        script: './bin/www',
+        ext: 'js json pug',
+        ignore: ['gulpfile.js', paths.public.dest, paths.sass.dest, paths.modules.dest],
+        quiet: true
     }
 }
 
-let files = {
-    'js': './**/*.js',
-    'server': [
-        './bin/www',
-        './routes/**/*.js',
-        './views/**/*.pug',
-        './*.js'
-    ],
-    'sass': './sass/**/*.scss',
-    'css': './public/css'
-}
+// Clean
+gulp.task('clean', () => {
+    return del([paths.public.vendor.dest, paths.public.css.dest])
+})
 
-gulp.task('server:start', () => {
-    return server.listen(options.server, err => {
-        if (!err) browserSync(options.browserSync)
-        else console.error(err)
+// Install/update Bower dependencies
+gulp.task('bower-install', next => {
+    fs.readdir(paths.public.vendor.dest, (err, files) => {
+        options.bower.cmd = err || !files.length ? 'update' : 'install'
+        return bower(options.bower)
+            .pipe(gulp.dest(paths.public.vendor.dest))
+            .on('end', next)
     })
 })
 
-gulp.task('server:restart', () => {
-    return server.restart(err => {
-        if (!err) browserSync.reload()
-        else console.error(err)
-    })
+// Lint server JS files
+gulp.task('es-lint-server', next => {
+    return gulp
+        .src(paths.serverJS)
+        .pipe(esLint())
+        .pipe(esLint.format())
+        .pipe(esLint.failAfterError())
+        .on('end', next)
 })
 
-gulp.task('lint', () => {
+// Lint public JS files
+gulp.task('es-lint-public', next => {
     return gulp
-        .src(files.js)
-        .pipe(jsHint())
-})
-
-gulp.task('style', () => {
-    return gulp
-        .src(files.sass)
+        .src(paths.public.js.src)
+        .pipe(esLint())
+        .pipe(esLint.format())
+        .pipe(esLint.failAfterError())
         .pipe(sourceMaps.init())
-        .pipe(sass(options.sass).on('error', sass.logError))
-        .pipe(autoPrefixer())
+        .pipe(uglify())
         .pipe(sourceMaps.write('.'))
-        .pipe(gulp.dest(files.css))
+        .pipe(gulp.dest(paths.public.js.dest))
+        .pipe(browserSync.stream())
+        .on('end', next)
 })
 
-gulp.task('build', ['lint', 'style'])
-
-gulp.task('default', ['lint', 'style', 'server:start'], () => {
-    gulp.watch(files.js, ['lint'])
-        .on('change', () => {
-            console.log('JS files changed — linting...')
-        })
-    gulp.watch(files.server, ['server:restart'])
-        .on('change', () => {
-            console.log('Server files changed — restarting application...')
-        })
-    gulp.watch(files.sass, ['style'])
-        .on('change', () => {
-            console.log('Stylesheet changed — compiling...')
-        })
+// Compile SASS and run Autoprefixer
+gulp.task('styles', next => {
+    return gulp
+        .src(paths.sass.src)
+        .pipe(sourceMaps.init())
+        .pipe(sass({errLogToConsole: true}).on('error', sass.logError))
+        .pipe(autoPrefixer())
+        .pipe(cleanCSS())
+        .pipe(sourceMaps.write('.'))
+        .pipe(gulp.dest(paths.public.css.dest))
+        .pipe(browserSync.stream())
+        .on('end', next)
 })
+
+// Build application
+gulp.task('build', gulp.series('bower-install', gulp.parallel('es-lint-server', 'es-lint-public', 'styles')), next => next())
+
+// Start/restart nodemon
+gulp.task('nodemon', next => {
+    let running = false
+    let stream = nodemon(options.nodemon)
+        .on('start', () => {
+            if (!running) next()
+            running = true
+        })
+        .on('restart', () => {
+            setTimeout(() => {
+                browserSync.reload({stream: false})
+                next()
+            }, 1000)
+        })
+        .on('crash', function() {
+            console.error('The application has crashed! Restarting in 10s...')
+            stream.emit('restart', 10)
+        })
+    return stream
+})
+
+// Start BrowserSync
+gulp.task('browser-sync', next => {
+    browserSync.init(options.browserSync)
+    next()
+})
+
+// Watch for and handle changes
+gulp.task('watch', next => {
+    gulp.watch(paths.serverJS, gulp.series('es-lint-server'))
+    gulp.watch(paths.public.js.src, gulp.series('es-lint-public'))
+    gulp.watch(paths.sass.src, gulp.series('styles'))
+    next()
+})
+
+// Default task
+gulp.task('default', gulp.series('build', 'nodemon', 'browser-sync', 'watch'))
