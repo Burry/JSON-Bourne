@@ -2,7 +2,7 @@ doctype html
 html
     head
         //- Page title
-        title= title || 'FindMyAppetite'
+        title= title ? 'FindMyAppetite » ' + title : 'FindMyAppetite'
         
         //- Meta tags
         include includes/meta
@@ -20,7 +20,7 @@ html
         //- Conditionals for the browser with special needs
         include includes/ie
         
-        //- Any additional page-specific head content goes here
+        //- Any additional page-specific <head> content goes here
         block head
     body
         //- Navigation bar
