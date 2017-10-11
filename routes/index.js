@@ -1,9 +1,22 @@
-const express = require('express')
-const router = express.Router()
+const middleware = require('./middleware')
+const router = require('express').Router()
 
-/* GET home page. */
-router.get('/', (req, res) => {
-    res.render('views/index', { title: 'FindMyAppetite' });
-})
+// Implement middleware
+router.use(middleware.initLocals)
+router.use(middleware.catchErrors)
 
-module.exports = router
+// Views
+router.use('/', require('./views/index'))
+router.use('/discover', require('./views/discover'))
+router.use('/favorites', require('./views/favorites'))
+router.use('/pantry', require('./views/pantry'))
+router.use('/design', require('./views/design'))
+
+// Authentication
+
+// User
+
+// Handle 404 errors — must be bellow all other routes
+router.use(middleware.catch404)
+
+exports = module.exports = router
