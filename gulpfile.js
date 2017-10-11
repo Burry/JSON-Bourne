@@ -2,12 +2,10 @@
 
 require('dotenv').config()
 const autoPrefixer = require('gulp-autoprefixer')
-const bower = require('gulp-bower')
 const browserSync = require('browser-sync').create()
 const cleanCSS = require('gulp-clean-css')
 const del = require('del')
 const esLint = require('gulp-eslint')
-const fs = require('fs')
 const gulp = require('gulp')
 const nodemon = require('gulp-nodemon')
 const sass = require('gulp-sass')
@@ -74,16 +72,6 @@ gulp.task('clean', () => {
     return del([paths.public.vendor.dest, paths.public.css.dest])
 })
 
-// Install/update Bower dependencies
-gulp.task('bower-install', next => {
-    fs.readdir(paths.public.vendor.dest, (err, files) => {
-        options.bower.cmd = err || !files.length ? 'update' : 'install'
-        return bower(options.bower)
-            .pipe(gulp.dest(paths.public.vendor.dest))
-            .on('end', next)
-    })
-})
-
 // Lint server JS files
 gulp.task('es-lint-server', next => {
     return gulp
@@ -124,7 +112,7 @@ gulp.task('styles', next => {
 })
 
 // Build application
-gulp.task('build', gulp.series('bower-install', gulp.parallel('es-lint-server', 'es-lint-public', 'styles')), next => next())
+gulp.task('build', gulp.parallel('es-lint-server', 'es-lint-public', 'styles'), next => next())
 
 // Start/restart nodemon
 gulp.task('nodemon', next => {
@@ -138,7 +126,7 @@ gulp.task('nodemon', next => {
             setTimeout(() => {
                 browserSync.reload({stream: false})
                 next()
-            }, 1000)
+            }, 1500)
         })
         .on('crash', function() {
             console.error('The application has crashed! Restarting in 10s...')
