@@ -21,7 +21,6 @@
         comma-dangle: ["warn", "never"],
         comma-spacing: ["warn", { "before": false, "after": true }],
         comma-style: ["warn", "last"],
-        curly: ["warn", "multi-or-nest"],
         no-console: ["warn", { allow: ["warn", "error"] }],
         no-unused-vars: ["warn", { "vars": "local" }],
         eqeqeq: ["warn", "smart"]
