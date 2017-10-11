@@ -1,6 +1,12 @@
 extends ../layout
 
 block content
-    h1= message
-    h2= error.status
-    pre #{error.stack}
+	.container.mb-5.mt-5: .row: .col.mb-5
+		h2=title
+		p.lead.mb-0
+			=errorMsg + ' '
+			a(href='/') Return home &raquo;
+		if (err)
+			.row: .col
+				hr
+				pre=err
