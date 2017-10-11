@@ -29,8 +29,8 @@ build/Release
 node_modules
 
 # Package locks
-package-lock.json
-yarn.lock
+# package-lock.json
+# yarn.lock
 
 # Debug log from npm
 npm-debug.log
