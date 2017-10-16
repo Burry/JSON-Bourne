@@ -11,6 +11,7 @@ yarn.lock
 # Logs
 logs
 *.log*
+coverage
 
 # macOS Finder leftovers
 .DS_Store
