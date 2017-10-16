@@ -2,11 +2,36 @@
     "name": "FindMyAppetite",
     "version": "0.0.1",
     "description": "Let's make something good",
-    "homepage": "https://findmyappetite.com",
+    "scripts": {
+        "precommit": "lint-staged",
+        "lint-js": "eslint --ignore-path .gitignore --ignore-pattern \"!**/.*\" .",
+        "lint-css": "stylelint \"src/**/*.{css,less,styl,scss,sass,sss}\"",
+        "lint": "yarn run lint-js && yarn run lint-css",
+        "fix-js": "yarn run lint-js --fix",
+        "fix-css": "yarn run lint-css --fix",
+        "fix": "yarn run fix-js && yarn run fix-css",
+        "test": "mocha",
+        "test-watch": "mocha --watch",
+        "test-cover": "nyc --reporter=html --reporter=text mocha",
+        "coverage": "yarn run test-cover && opn coverage/lcov-report/index.html",
+        "clean": "babel-node tools/run clean",
+        "copy": "babel-node tools/run copy",
+        "bundle": "babel-node tools/run bundle",
+        "build": "babel-node tools/run build",
+        "build-stats": "yarn run build --release --analyse",
+        "serve": "babel-node tools/run runServer",
+        "start": "babel-node tools/run start"
+    },
+    "engines": {
+        "node": ">=8.6",
+        "yarn": ">=1.2.0"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/Burry/JSON-Bourne"
     },
+    "private": true,
+    "homepage": "https://findmyappetite.com",
     "contributors": [
         {
             "name": "Austin Rugh",
@@ -34,36 +59,95 @@
             "url": "https://github.com/yosh3289"
         }
     ],
-    "private": true,
-    "scripts": {
-        "start": "node ./bin/www",
-        "postinstall": "node_modules/.bin/bower cache clean && node_modules/.bin/bower install"
-    },
+    "browserslist": [
+        ">1%",
+        "last 4 versions",
+        "Firefox ESR",
+        "not ie < 9"
+    ],
     "dependencies": {
+        "babel-polyfill": "^6.26.0",
         "body-parser": "~1.17.1",
-        "bower": "^1.8.2",
         "cookie-parser": "~1.4.3",
         "debug": "~2.6.3",
-        "dotenv": "^4.0.0",
         "express": "~4.15.2",
-        "morgan": "~1.8.1",
+        "express-jwt": "^5.3.0",
+        "jsonwebtoken": "^8.1.0",
         "node-sass-middleware": "0.9.8",
+        "pg": "^7.3.0",
+        "pretty-error": "^2.1.1",
         "pug": "~2.0.0-beta11",
-        "serve-favicon": "~2.4.2"
+        "sequelize": "^4.13.17",
+        "source-map-support": "^0.5.0"
     },
     "devDependencies": {
+        "assets-webpack-plugin": "^3.5.1",
+        "autoprefixer": "^7.1.5",
+        "babel-core": "^7.0.0-beta.2",
+        "babel-eslint": "^8.0.1",
+        "babel-jest": "^21.2.0",
+        "babel-loader": "^7.1.2",
+        "babel-node": "^7.0.0-beta.2",
+        "babel-preset-env": "^2.0.0-beta.2",
+        "babel-preset-stage-2": "^7.0.0-beta.2",
+        "bootstrap": "^3.3.7",
         "browser-sync": "^2.18.13",
-        "bunyan": "^1.8.12",
-        "gulp": "github:gulpjs/gulp#4.0",
-        "gulp-autoprefixer": "^4.0.0",
-        "gulp-clean-css": "^3.9.0",
-        "gulp-eslint": "^4.0.0",
-        "gulp-nodemon": "^2.2.1",
-        "gulp-sass": "^3.1.0",
-        "gulp-sourcemaps": "^2.6.1",
-        "gulp-uglify": "^3.0.0",
-        "jshint": "^2.9.5",
-        "jshint-stylish": "^2.2.1",
-        "nodemon": "^1.12.1"
+        "chai": "^4.1.2",
+        "chokidar": "^1.7.0",
+        "eslint": "^4.9.0",
+        "eslint-config-prettier": "^2.6.0",
+        "eslint-import-resolver-node": "^0.3.1",
+        "eslint-loader": "^1.9.0",
+        "eslint-plugin-prettier": "^2.3.1",
+        "file-loader": "^1.1.5",
+        "jquery": "^3.2.1",
+        "lint-staged": "^4.2.3",
+        "mkdirp": "^0.5.1",
+        "mocha": "^4.0.1",
+        "node-sass": "^4.5.3",
+        "nyc": "^11.2.1",
+        "pixrem": "^4.0.1",
+        "pleeease-filters": "^4.0.0",
+        "postcss": "^6.0.13",
+        "postcss-calc": "^6.0.1",
+        "postcss-color-function": "^4.0.0",
+        "postcss-custom-media": "^6.0.0",
+        "postcss-custom-properties": "^6.2.0",
+        "postcss-custom-selectors": "^4.0.1",
+        "postcss-flexbugs-fixes": "^3.2.0",
+        "postcss-import": "^11.0.0",
+        "postcss-loader": "^2.0.8",
+        "postcss-media-minmax": "^3.0.0",
+        "postcss-nested": "^2.1.2",
+        "postcss-nesting": "^4.2.1",
+        "postcss-selector-matches": "^3.0.1",
+        "postcss-selector-not": "^3.0.1",
+        "prettier": "^1.7.4",
+        "rimraf": "^2.6.2",
+        "sass-loader": "^6.0.6",
+        "stylelint": "^8.2.0",
+        "stylelint-config-standard": "^17.0.0",
+        "stylelint-order": "^0.7.0",
+        "svg-url-loader": "^2.2.0",
+        "url-loader": "^0.6.2",
+        "webpack": "^3.7.1",
+        "webpack-bundle-analyzer": "^2.9.0",
+        "webpack-dev-middleware": "^1.12.0",
+        "webpack-hot-middleware": "^2.19.1",
+        "webpack-node-externals": "^1.6.0"
+    },
+    "lint-staged": {
+        "*.{js}": [
+            "eslint --fix",
+            "git add"
+        ],
+        "*.{json}": [
+            "prettier --write",
+            "git add"
+        ],
+        "*.{css,less,styl,scss,sass,sss}": [
+            "stylelint --fix",
+            "git add"
+        ]
     }
 }

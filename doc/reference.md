@@ -26,13 +26,17 @@
 
 [Mongoose.js](http://mongoosejs.com/docs/guide.html): Elegant MongoDB object modeling for Node.js
 
+[Passport.js](http://passportjs.org/): Simple, unobtrusive authentication for Node.js
+
 ## Testing
 [Mocha.js](https://mochajs.org): Feature-rich JavaScript test framework running on Node.js and in the browser
 
 [Chai.js](http://chaijs.com): JavaScript assertion library — pairs with Mocha
 
 ## Automation
-[Gulp.js](https://gulpjs.com): A toolkit for automating painful or time-consuming tasks in your development workflow
+[Yarn](https://yarnpkg.com/en): Fast, reliable, and secure dependency management and script runner
+
+[Webpack](https://webpack.github.io): Module bundler and build tool
 
 [Circle CI](https://circleci.com): Continuous integration and continuous delivery
 
