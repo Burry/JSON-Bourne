@@ -1,0 +1,27 @@
+# https://circleci.com/docs/2.0/language-javascript/
+
+version: 2
+
+jobs:
+    build:
+        docker:
+            # Specify service dependencies here
+            # https://circleci.com/docs/2.0/circleci-images/
+            - image: circleci/node:8.7.0
+            - image: circleci/postgresql:9.6.2
+            - image: circleci/mongodb:3.5.6
+        working_directory: ~/repo
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - v1-dependencies-{{ checksum "package.json" }}
+                    - v1-dependencies-
+            - run: yarn install
+            - save_cache:
+                paths:
+                  - node_modules
+                key: v1-dependencies-{{ checksum "package.json" }}
+            - run:
+                - yarn lint
+                - yarn test
