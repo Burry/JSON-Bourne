@@ -5,12 +5,12 @@ const router = require('express').Router()
 router.use(middleware.initLocals)
 router.use(middleware.catchErrors)
 
-// Views
-router.use('/', require('./views/index'))
-router.use('/discover', require('./views/discover'))
-router.use('/favorites', require('./views/favorites'))
-router.use('/pantry', require('./views/pantry'))
-router.use('/design', require('./views/design'))
+// pages
+router.use('/', require('./pages/index'))
+router.use('/discover', require('./pages/discover'))
+router.use('/favorites', require('./pages/favorites'))
+router.use('/pantry', require('./pages/pantry'))
+router.use('/design', require('./pages/design'))
 
 // Authentication
 
