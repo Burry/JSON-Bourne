@@ -13,7 +13,7 @@ exports.initLocals = (req, res, next) => {
 		{label: 'Discover', key: 'discover', href: '/discover'},
 		{label: 'Favorites', key: 'favorites', href: '/favorites'},
 		{label: 'Pantry', key: 'pantry', href: '/pantry'},
-		{label: 'Design', key: 'discover', href: '/design'}
+		{label: 'Design', key: 'design', href: '/design'}
 	]
 	next()
 }

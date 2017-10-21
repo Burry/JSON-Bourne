@@ -5,12 +5,12 @@ const path = require('path')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
-const routes = require('./routes/index')
+const routes = require('./controllers/index')
 
 const app = express()
 
 // View engine setup
-app.set('views', path.join(__dirname, 'templates', 'views'))
+app.set('views', path.join(__dirname, 'views', 'pages'))
 app.set('view engine', 'pug')
 
 // app.use(favicon(path.join(__dirname, 'public', 'icons', 'favicon.ico')))
