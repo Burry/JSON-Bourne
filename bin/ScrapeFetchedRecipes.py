@@ -9,12 +9,14 @@ with open("recipes.txt", "r") as links:
         i += 1
         recipe_links.append(line)
         if i > 10:
-            break
+            break # i only exists so loop doesnt go through every line in the text file
+#prints first 10 links extracted from text file
 j = 0
 while j < 10:
     print recipe_links[j]
     j+=1
 j = 0
+#scrapes first recipe extracted from text file
 while j < 1:
 
 	ingredient_list = []
