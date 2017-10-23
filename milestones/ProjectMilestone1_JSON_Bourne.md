@@ -1,6 +1,6 @@
 # Proposal
 
-### Team: JSON Bourne
+### Team: [JSON Bourne](https://github.com/Burry/JSON-Bourne)
 
 ### Members
 - [Austin Rugh](https://github.com/arugh21)
