@@ -1,7 +1,6 @@
 # Proposal
 
-### Team Name
-JSON Bourne
+### Team: JSON Bourne
 
 ### Members
 - [Austin Rugh](https://github.com/arugh21)
