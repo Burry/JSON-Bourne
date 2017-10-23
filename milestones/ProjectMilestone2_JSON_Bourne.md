@@ -5,7 +5,7 @@
 ### Project Management Tool
 We are using Trello to track our project's stories and progress.
 
-![Trello Screen Shot](../doc/resources/Trello Screen Shot.png)
+<img src="https://github.com/Burry/JSON-Bourne/raw/master/doc/resources/Trello%20Screen%20Shot.png" alt="Trello Screen Shot" />
 
 ### Project Plan
 Our project’s development will be segmented into four sprint cycles. The first sprint includes standing up a barebones Node.js application, implementing some basic styling and UI paradigms, designing the schemas for our two databases, and developing a script to scrape recipe information from a website. Our second sprint will involve integrating our databases into the application, implementing sample data, building a user login and registration system, implementing basic recipe search, building out front-end views, integrating the scraper with the application, and the introduction of unit tests. Sprint 3 includes expanding search functionality through advanced filters and ranking, including nutritional information into the database, recipe views, and search filters, building the ability for users to create and submit custom recipes, offering the ability to substitute ingredients per a user’s preferences or a one-time selection, and further unit testing. The fourth and final sprint will involve building the functionality to offer a shopping list for any given recipe, tracking a user’s inventory of purchased ingredients, and user acceptance tests.
