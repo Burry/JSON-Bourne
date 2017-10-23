@@ -1,6 +1,6 @@
 # Project Tools & Agile Methodology Summary
 
-### Team: JSON Bourne
+### Team: [JSON Bourne](https://github.com/Burry/JSON-Bourne)
 
 ### Project Management Tool
 We are using Trello to track our project's stories and progress.
