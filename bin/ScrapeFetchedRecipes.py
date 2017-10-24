@@ -23,7 +23,7 @@ while j < 1:
 	Directions = 'Directions: \n'
 	Amount = 'Makes: '
 	Cook_Time = 'Total Cooking Time: '
-	r = requests.get(recipe_links[j])
+	r = requests.get('http://www.foodnetwork.com/recipes/beef-bourguignon-recipe2-2013524')
 	print (r.url) #can verify information by going to URL
 	content = r.content
 	soup = BeautifulSoup(content, 'html.parser')
@@ -39,7 +39,7 @@ while j < 1:
 			print ("There is an image!")
 	ingredients_div = soup.find('div', {'class' : 'o-Ingredients__m-Body'})
 	if ingredients_div:
-		for li in ingredients_div.find_all('li'):
+		for li in ingredients_div.find_all('li' , {'class' : 'o-Ingredients__a-ListItem'}):
 			item = li.find('input')
 			ingredient_list.append(item.get('value'))#put ingredients into list
 	cook_time_section = soup.find('section', {'class' : 'o-RecipeInfo o-Time'})
