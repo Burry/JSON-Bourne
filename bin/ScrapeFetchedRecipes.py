@@ -16,10 +16,10 @@ with open("recipes.txt", "r") as links:
 # while j < 50:
 # 	print recipe_links[j]
 # 	j+=1
-j = 470
+j = 20
 #scrapes first recipe extracted from text file
 ingredient_list = []
-while j < 475:
+while j < 30:
 	#ingredient_list = []
 	Directions = 'Directions: \n'
 	Amount = 'Makes: '

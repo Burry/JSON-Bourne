@@ -6,38 +6,46 @@ errors = []
 filter_results = []
 k = 0
 while k < len(ScrapeFetchedRecipes.ingredient_list):
-
+    #format input string
     input_ingredient = ScrapeFetchedRecipes.ingredient_list[k].strip()
-    input_ingredient = input_ingredient.replace(' mix' , '').replace(' blend' , '').replace('best', '').replace('slices', '').replace('minced', '').replace('small-diced', '').replace('assorted', '').replace('tops', '').replace('homemade', '').replace('toasted', '')
+    input_ingredient = input_ingredient.replace(' if desired', '').replace('ripe', '').replace('quality', '').replace('good', '').replace(' mix' , '').replace(' blend' , '').replace('best', '').replace('slices', '').replace('minced', '').replace('small-diced', '').replace('assorted', '').replace('tops', '').replace('homemade', '').replace('toasted', '')
     input_ingredient = input_ingredient.replace('-', ' ')
     m = re.match('[1-9] [1-9]/[1-9]', input_ingredient)
     if m:
         Num, space, rest = input_ingredient.partition(' ')
         input_ingredient = Num + '-' + rest
     if ' or ' in input_ingredient:#pick first option always
-        input_ingredient = input_ingredient.rsplit(' or ',1)[0]
+        errors.append(input_ingredient) #input_ingredient = input_ingredient.rsplit(' or ',1)[0]
+        k += 1
+        continue
+    #corner cases
+    if ',' in input_ingredient and input_ingredient.count(',') == 1:
+        check = input_ingredient.rsplit(',', 2)[1]
+        check = check.split()[0]
+        if check == 'plus':
+            input_ingredient = input_ingredient.replace(',', '')
 
-    input_ingredient = input_ingredient.replace(' quality ',' ').replace(' good ' , ' ')
-    slices_case = re.match(r'^[^\w]+[\w]+ cut into [1-9]+ slices', input_ingredient)
     quantity_specified = re.match(r'[1-9/]{1,3}|One', input_ingredient)
-    if slices_case:
-        pieces = input_ingredient.split()
-        ingredient = pieces[1]
-    #word_count = len(input_ingredient.split())
-
-    elif quantity_specified:
+    if '!' in input_ingredient:
+        k+=1
+        errors.append(input_ingredient)
+        continue
+    if quantity_specified:
         #check for valid ingredient
         if 'pepper' in input_ingredient or 'salt' in input_ingredient or 'recipe' in input_ingredient or ' spray ' in input_ingredient:
             k += 1
             continue
-        #special case
+        #corner case
+        slices_case = re.match(r'^[^\w]+[\w]+ cut into [1-9]+ slices', input_ingredient)
         if ' egg beaten ' in input_ingredient:
             ingredient = 'egg'
+        elif slices_case:
+            pieces = input_ingredient.split()
+            ingredient = pieces[1]
+
         elif ',' in input_ingredient: #check for commas
-            piece1 = input_ingredient.rsplit(',', 1)[0]
-            while piece1.count(',') > 0:
-                piece1 =  piece1.rsplit(',', 1)[0]
-            if piece1[len(piece1)-1] == ')' or '(' in piece1:
+            piece1 = input_ingredient.split(',', 1)[0]
+            if piece1[len(piece1)-1] == ')' or ('(' in piece1 and ')' not in piece1):
                 piece1 = piece1.rsplit('(', 1)[0]
             pieces = piece1.split()
             j = len(pieces) - 1
@@ -66,9 +74,12 @@ while k < len(ScrapeFetchedRecipes.ingredient_list):
 
         ingredient = ingredient.lower()
         ingredient = re.sub(r"[0-9]",'',ingredient )
-        #special case corrections (either too specific or not specific enough)
-        if ingredient == 'garlic':
-            ingredient = ingredient + ' ' + 'cloves'
+        #filter 2 to reduce number of no search results and to increase liklihood of getting the right results
+        #often the problem is that ingredient is either too specific or not specific enough
+        if ingredient == 'butter chips':
+            ingredient = 'chocolate chips'
+        if ingredient == 'garlic' or ((ingredient == 'cloves' or ingredient == 'clove') and pieces[j-1] == 'garlic'):
+            ingredient = 'garlic cloves'
         elif ingredient == 'flour':
             ingredient = 'all-purpose flour'
         elif ingredient == 'acacia':
@@ -79,9 +90,9 @@ while k < len(ScrapeFetchedRecipes.ingredient_list):
             ingredient = 'adobo spice'
         elif 'adobo' in ingredient:
             ingredient = 'adobo sauce'
-        elif (len(ingredient.split()) == 2 and ('vinegar' in ingredient or 'capers' in ingredient or 'scallions' in ingredient or 'oregano' in ingredient or 'shrimp' in ingredient or 'tarragon' in ingredient or 'scallops' in ingredient or 'parsley' in ingredient or ingredient.split()[1] == 'onion' or ingredient.split()[1] == 'carrot' or 'celery' in ingredient or 'walnuts' in ingredient or 'butter' in ingredient)):
+        elif (len(ingredient.split()) == 2 and ('vinegar' in ingredient or 'capers' in ingredient or 'scallions' in ingredient or 'oregano' in ingredient or 'shrimp' in ingredient or 'tarragon' in ingredient or 'scallops' in ingredient or 'parsley' in ingredient or ingredient.split()[1] == 'onion' or ingredient.split()[1] == 'carrot' or 'celery' in ingredient or 'walnuts' in ingredient)):
             ingredient = ingredient.split()[1]
-        elif ingredient == 'oil':
+        elif 'oil' in ingredient:
             ingredient = 'olive oil'
         elif 'confectioners\'' in ingredient:
             ingredient = ingredient.replace('confectioners\' ', '')
@@ -92,12 +103,15 @@ while k < len(ScrapeFetchedRecipes.ingredient_list):
         elif ingredient == 'fillet pieces':
             ingredient = pieces[j-2] + ' ' + ingredient
         elif ingredient == 'chile':
-            ingredient = 'chile pepper'
+            ingredient = 'chili pepper'
         elif 'mint' in ingredient:
             ingredient = 'fresh mint'
         elif ingredient == 'stick':
-            ingredient = pieces [j-1] + ' ' + ingredient
-        elif 'in ' in ingredient:
+            ingredient = pieces [j-1]
+        elif 'tuna' in ingredient:
+            ingredient = 'tuna'
+        elif 'in ' in ingredient or 'water' in ingredient:
+            errors.append(ingredient)
             k += 1
             continue
     else:
@@ -107,14 +121,6 @@ while k < len(ScrapeFetchedRecipes.ingredient_list):
 
     keywords = ingredient.split() #split ingredients into array of words
     search = re.sub(r"[^\w]",'+', ingredient) #used for searching ingredients
-
-    #generate regex expression
-    if(len(keywords) == 3):
-        key = '^http://www.calorieking.com/foods/calories-in-.*' + keywords[0] + '.*' + keywords[1] + '.*' + keywords[2] + '.*$'
-    elif(len(keywords) == 2):
-        key = '^http://www.calorieking.com/foods/calories-in-.*' + keywords[0] + '.*' + keywords[1] + '.*$'
-    elif(len(keywords) == 1):
-        key = '^http://www.calorieking.com/foods/calories-in-.*' + keywords[0] + '.*$'
 
     #construct link to search results
     part1 = 'http://www.calorieking.com/foods/search.php?keywords='
@@ -127,7 +133,7 @@ while k < len(ScrapeFetchedRecipes.ingredient_list):
     soup = BeautifulSoup(content, 'html.parser')
     link_to_data = ' '
     #filter links on search results
-    #intellegent search
+    #most intellegent search
     for category in soup.find_all('div', {'class' : 'food-search-result left-vertical-border-green'}):
         subCategorySpan = category.find('span' , {'class' : 'food-search-category'} )
         subCategory = subCategorySpan.get_text()
@@ -139,24 +145,46 @@ while k < len(ScrapeFetchedRecipes.ingredient_list):
             optimizedLink = category.find('a',{'class' : 'food-search-result-name'}, href = True)
             if optimizedLink:
                 link_to_data = optimizedLink['href']
+                print ingredient + ': ' + link_to_data
                 #print 'found'
                 break
-        else:
-            for link in category.find_all('a', href = True):
-                match1 = re.match(key, link['href'], re.M)
-                if match1:
-                    print ingredient + ': ' + match1.group(0)
-                    link_to_data = match1.group(0)
+    #intellegent search
+    if link_to_data == ' ':
+        for category in soup.find_all('div', {'class' : 'food-search-result left-vertical-border-green'}):
+            link = category.find('a',{'class' : 'food-search-result-name'}, href = True)
+            if len(keywords) == 3:
+                if '+' not in link['href'] and keywords[0] in link['href'] and keywords[1] in link['href'] and keywords[0] in link['href']:
+                    print ingredient + ': ' + link['href']
+                    link_to_data = link
                     break
-            break
-    #less intellegent search
+            elif len(keywords) == 2:
+                if '+' not in link['href'] and keywords[0] in link['href'] and keywords[1] in link['href']:
+                    print ingredient + ': ' + link['href']
+                    link_to_data = link
+                    break
+            elif len(keywords) == 1:
+                if '+' not in link['href'] and keywords[0] in link['href']:
+                    print ingredient + ': ' + link['href']
+                    link_to_data = link
+                    break
+    #least intellegent search
     if(link_to_data == ' '):
         for link in soup.find_all('a', href = True):
-            match1 = re.match(key, link['href'], re.M)
-            if match1:
-                print ingredient + ': ' + match1.group(0)
-                link_to_data = match1.group(0)
-                break
+            if len(keywords) == 3:
+                if '+' not in link['href'] and keywords[0] in link['href'] and keywords[1] in link['href'] and keywords[0] in link['href']:
+                    print ingredient + ': ' + link['href']
+                    link_to_data = link
+                    break
+            elif len(keywords) == 2:
+                if '+' not in link['href'] and keywords[0] in link['href'] and keywords[1] in link['href']:
+                    print ingredient + ': ' + link['href']
+                    link_to_data = link
+                    break
+            elif len(keywords) == 1:
+                if '+' not in link['href'] and keywords[0] in link['href']:
+                    print ingredient + ': ' + link['href']
+                    link_to_data = link
+                    break
 
     r.close()
     if(link_to_data == ' '):
