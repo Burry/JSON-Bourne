@@ -8,7 +8,7 @@ k = 0
 while k < len(ScrapeFetchedRecipes.ingredient_list):
     #format input string
     input_ingredient = ScrapeFetchedRecipes.ingredient_list[k].strip()
-    input_ingredient = input_ingredient.replace(' if desired', '').replace('ripe', '').replace('quality', '').replace('good', '').replace(' mix' , '').replace(' blend' , '').replace('best', '').replace('slices', '').replace('minced', '').replace('small-diced', '').replace('assorted', '').replace('tops', '').replace('homemade', '').replace('toasted', '')
+    input_ingredient = input_ingredient.replace('blossoms', '').replace(' if desired', '').replace('ripe', '').replace('quality', '').replace('good', '').replace(' mix' , '').replace(' blend' , '').replace('best', '').replace('slices', '').replace('minced', '').replace('small-diced', '').replace('assorted', '').replace('tops', '').replace('homemade', '').replace('toasted', '')
     input_ingredient = input_ingredient.replace('-', ' ')
     m = re.match('[1-9] [1-9]/[1-9]', input_ingredient)
     if m:
