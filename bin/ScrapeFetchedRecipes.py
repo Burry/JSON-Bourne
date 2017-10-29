@@ -16,18 +16,18 @@ with open("recipes.txt", "r") as links:
 # while j < 50:
 # 	print recipe_links[j]
 # 	j+=1
-j = 20
+j = 21
 #scrapes first recipe extracted from text file
 ingredient_list = []
-while j < 30:
+while j < 22:
 	#ingredient_list = []
 	Directions = 'Directions: \n'
-	Amount = 'Makes: '
+	Amount = 'for '
 	Cook_Time = 'Total Cooking Time: '
 	time = ' '
 	servings = ' '
 	r = requests.get(recipe_links[j])
-	#print (r.url) #can verify information by going to URL
+	print (r.url) #can verify information by going to URL
 	content = r.content
 	soup = BeautifulSoup(content, 'html.parser')
 
@@ -56,7 +56,7 @@ while j < 30:
 		if dl:
 			servings = dl.find('dd', {'class' : 'o-RecipeInfo__a-Description'})
 	if servings != ' ':
-		Amount = Amount + servings.get_text()
+		Amount = servings.get_text()
 	#print (Cook_Time) # print cooking time
 	#print (Amount) #prints number of servings
 	#print (Directions)
