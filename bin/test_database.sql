@@ -51,4 +51,5 @@ CREATE TABLE shoppingList(
 CREATE TABLE shoppingListItems(
 	shoppingListID int,
 	ingredientName varchar(255),
+	quantity int,
 );
