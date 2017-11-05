@@ -1,15 +1,19 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('Pantry', {
+    queryInterface.createTable('ListItem', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      Owner: {
+      Name: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      complete:{
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
       },
       createdAt: {
         allowNull: false,
@@ -23,12 +27,12 @@ module.exports = {
         type: Sequelize.INTEGER,
         onDelete: 'CASCADE',
         references: {
-          model: 'User',
+          model: 'ShoppingList',
           key: 'id',
-          as: 'UserId',
+          as: 'ListId',
         },
       },
     }),
   down: (queryInterface /* , Sequelize */) =>
-    queryInterface.dropTable('Pantry'),
+    queryInterface.dropTable('ListItem'),
 };
