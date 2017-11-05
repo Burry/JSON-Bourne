@@ -1,19 +1,7 @@
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize('database', 'username', 'password', {
-    host: 'localhost',
-    dialect: 'postgres',
+const mongoose = require('./mongoose');
+const sequelize = require('./sequelize');
 
-    pool: {
-        max: 5,
-        min: 0,
-        acquire: 30000,
-        idle: 10000
-    },
-
-    // Add directive to connect to Postgres
-
-    // http://docs.sequelizejs.com/manual/tutorial/querying.html#operators
-    operatorsAliases: false
-});
-
-sequelize.sync();
+module.exports = {
+    mongo: mongoose,
+    sql: sequelize
+};
