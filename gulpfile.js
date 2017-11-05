@@ -18,40 +18,36 @@ let paths = {
         src: './node_modules/**/*.*',
         dest: './node_modules/'
     },
-    public: {
-        src: './public/**/*.*',
-        dest: './public/',
+    build: {
+        files: './build/**/*.*',
+        dest: './build/',
         vendor: {
-            src: './public/vendor/**/*.*',
-            dest: './public/vendor/'
-        },
-        css: {
-            src: './public/css/**/*.css',
-            dest: './public/css/'
+            src: './client/build/vendor/**/*.*',
+            dest: './client/build/vendor/'
         },
         js: {
-            src: './public/js/**/*.js',
-            dest: './public/js/'
+            src: './client/scripts/**/*.js',
+            dest: './client/build/js/'
         },
         images: {
-            src: './public/images/**/*.*',
-            dest: './public/images/'
+            src: './client/images/**/*.*',
+            dest: './client/build/images/'
         }
     },
-    sass: {
-        src: './sass/**/*.scss',
-        dest: './sass/'
+    styles: {
+        src: './client/styles/*.scss',
+        dest: './client/build/css/'
     },
-    serverJS: ['./**/*.js', '!./node_modules/**/*.*', '!./public/**/*.*']
+    serverJS: ['./**/*.js', '!./node_modules/**/*.*', '!./client/**/*.*']
 }
 
 // Options
 let options = {
     bower: {
-        directory: paths.public.vendor.dest
+        directory: paths.build.vendor.dest
     },
     browserSync: {
-        files: '/public/*',
+        files: '/client/build/*',
         proxy: 'http://localhost:' + (parseInt(process.env.PORT) || 3000),
         port: (parseInt(process.env.PORT) + 1 || 3001),
         ui: {
@@ -62,14 +58,14 @@ let options = {
     nodemon: {
         script: './bin/www',
         ext: 'js json pug',
-        ignore: ['gulpfile.js', paths.public.dest, paths.sass.dest, paths.modules.dest],
+        ignore: ['gulpfile.js', paths.build.dest, paths.styles.src, paths.modules.dest],
         quiet: true
     }
 }
 
 // Clean
 gulp.task('clean', () => {
-    return del([paths.public.vendor.dest, paths.public.css.dest])
+    return del(paths.build.dest)
 })
 
 // Lint server JS files
@@ -82,17 +78,17 @@ gulp.task('es-lint-server', next => {
         .on('end', next)
 })
 
-// Lint public JS files
-gulp.task('es-lint-public', next => {
+// Lint build JS files
+gulp.task('es-lint-build', next => {
     return gulp
-        .src(paths.public.js.src)
+        .src(paths.build.js.src)
         .pipe(esLint())
         .pipe(esLint.format())
         .pipe(esLint.failAfterError())
         .pipe(sourceMaps.init())
         .pipe(uglify())
         .pipe(sourceMaps.write('.'))
-        .pipe(gulp.dest(paths.public.js.dest))
+        .pipe(gulp.dest(paths.build.js.dest))
         .pipe(browserSync.stream())
         .on('end', next)
 })
@@ -100,19 +96,27 @@ gulp.task('es-lint-public', next => {
 // Compile SASS and run Autoprefixer
 gulp.task('styles', next => {
     return gulp
-        .src(paths.sass.src)
+        .src(paths.styles.src)
         .pipe(sourceMaps.init())
         .pipe(sass({errLogToConsole: true}).on('error', sass.logError))
         .pipe(autoPrefixer())
         .pipe(cleanCSS())
         .pipe(sourceMaps.write('.'))
-        .pipe(gulp.dest(paths.public.css.dest))
+        .pipe(gulp.dest(paths.styles.dest))
         .pipe(browserSync.stream())
         .on('end', next)
 })
 
+// Copy image directory
+gulp.task('images', next => {
+    return gulp
+        .src(paths.build.images.src)
+        .pipe(gulp.dest(paths.build.images.dest))
+        .on('end', next)
+})
+
 // Build application
-gulp.task('build', gulp.parallel('es-lint-server', 'es-lint-public', 'styles'), next => next())
+gulp.task('build', gulp.parallel('es-lint-server', 'es-lint-build', 'styles', 'images'), next => next())
 
 // Start/restart nodemon
 gulp.task('nodemon', next => {
@@ -144,8 +148,8 @@ gulp.task('browser-sync', next => {
 // Watch for and handle changes
 gulp.task('watch', next => {
     gulp.watch(paths.serverJS, gulp.series('es-lint-server'))
-    gulp.watch(paths.public.js.src, gulp.series('es-lint-public'))
-    gulp.watch(paths.sass.src, gulp.series('styles'))
+    gulp.watch(paths.build.js.src, gulp.series('es-lint-build'))
+    gulp.watch(paths.styles.src, gulp.series('styles'))
     next()
 })
 
