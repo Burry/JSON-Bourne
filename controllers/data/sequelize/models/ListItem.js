@@ -1,4 +1,4 @@
-models.export = (sequelize, DataTypes) => {
+module.export = (sequelize, DataTypes) => {
   const ListItem = sequelize.define('ListItem', {
     Name: {
       type: DataTypes.STRING,
