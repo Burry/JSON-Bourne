@@ -5,23 +5,23 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER
       },
       Name: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       complete:{
         type: Sequelize.BOOLEAN,
-        defaultValue: false,
+        defaultValue: false
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       UserId: {
         type: Sequelize.INTEGER,
@@ -29,10 +29,10 @@ module.exports = {
         references: {
           model: 'ShoppingList',
           key: 'id',
-          as: 'ListId',
+          as: 'ListId'
         },
       },
     }),
   down: (queryInterface /* , Sequelize */) =>
-    queryInterface.dropTable('ListItem'),
+    queryInterface.dropTable('ListItem')
 };
