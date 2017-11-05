@@ -1,7 +1,10 @@
 {
   "name": "find-my-appetite",
   "description": "Let's make something good",
-  "main": "public/stylesheets/site.scss",
+  "main": [
+      "client/styles/style.scss",
+      "client/scripts/site.js"
+  ],
   "repository" : {
     "type" : "git",
     "url" : "https://github.com/Burry/JSON-Bourne"
