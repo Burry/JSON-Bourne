@@ -8,7 +8,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       UserID: {
-        type: DataTypes.number,
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       FirstName: {
