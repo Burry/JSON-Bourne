@@ -1,5 +1,5 @@
 require('dotenv').config();
-const Sequelize = require('./sequelize');
+const Sequelize = require('sequelize');
 const sequelize = new Sequelize('findmyappetite', process.env.PGUSER, process.env.PGPASS, {
     host: 'localhost',
     dialect: 'postgres',
