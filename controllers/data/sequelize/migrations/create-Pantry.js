@@ -1,27 +1,15 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('Users', {
+    queryInterface.createTable('Pantry', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      UserID: {
-        type: DataTypes.number,
+      Owner: {
+        type: Sequelize.STRING,
         allowNull: false,
-      },
-      FirstName: {
-        type: Sequelize.STRING,
-      },
-      LastName: {
-        type: Sequelize.STRING,
-      },
-      Email: {
-        type: Sequelize.STRING,
-      },
-      Password: {
-        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
@@ -31,6 +19,16 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+      UserId: {
+        type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
+        references: {
+          model: 'User',
+          key: 'id',
+          as: 'UserId',
+        },
+      },
     }),
-  down: (queryInterface /* , Sequelize */) => queryInterface.dropTable('Todos'),
+  down: (queryInterface /* , Sequelize */) =>
+    queryInterface.dropTable('TodoItems'),
 };

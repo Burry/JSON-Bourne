@@ -1,7 +1,7 @@
 module.export = (sequelize, DataTypes) => {
   const Pantry = sequelize.define('Pantry', {
     Owner: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
 
@@ -12,7 +12,7 @@ module.export = (sequelize, DataTypes) => {
       as: 'PantryItems',
     });
     Pantry.belongsTo(models.User, {
-      foreignKey: 'Userid',
+      foreignKey: 'UserId',
       onDelete: 'CASCADE',
     });
   };
