@@ -1,38 +1,38 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('ListItem', {
+    queryInterface.createTable('Substitution', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
-      Name: {
+      Ingredient: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
-      complete:{
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
+      Replacement: {
+        type: Sequelize.STRING,
+        allowNullL: false,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
-      ListId: {
+      UserId: {
         type: Sequelize.INTEGER,
         onDelete: 'CASCADE',
         references: {
-          model: 'ShoppingList',
+          model: 'Users',
           key: 'id',
-          as: 'ListId'
+          as: 'UserId',
         },
       },
     }),
   down: (queryInterface /* , Sequelize */) =>
-    queryInterface.dropTable('ListItem')
+    queryInterface.dropTable('Substitution'),
 };
