@@ -1,21 +1,22 @@
-const Sequelize = require('./sequelize');
-const sequelize = new Sequelize('database', 'username', 'password', {
+require('dotenv').config();
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize('findmyappetite', process.env.PGUSER, process.env.PGPASS, {
     host: 'localhost',
     dialect: 'postgres',
-
     pool: {
         max: 5,
         min: 0,
         acquire: 30000,
         idle: 10000
-    },
-
-    // Add directive to connect to Postgres
-
-    // http://docs.sequelizejs.com/manual/tutorial/querying.html#operators
-    operatorsAliases: false
+    }
 });
 
-sequelize.sync();
+// sequelize.sync();
+
+sequelize.authenticate().then(() => {
+  console.log("Success!");
+}).catch((err) => {
+  console.log(err);
+});
 
 module.exports = {};
