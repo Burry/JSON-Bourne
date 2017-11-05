@@ -1,5 +1,5 @@
 const mongoose = require('./mongoose');
-// const sequelize = require('./sequelize');
+const sequelize = require('./sequelize');
 
 module.exports = {
     mongo: mongoose,
