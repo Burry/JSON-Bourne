@@ -29,6 +29,7 @@ This guide will prepare your environment and install the necessary runtimes, dat
 8. Build and start the app: `gulp`
 
 **Tip 1:** If `yarn` returns a permissions error, try running it with sudo.
+
 **Tip 2:** If the application complains that it can't find a particular Node module, it must have been added to the application's `package.json` in a recent commit. Run `yarn` again to install the new dependencies.
 
 [Gulp](https://gulpjs.com/) automates the process of compiling, optimizing, and testing the code base. Once you've prepared your environment and have a working copy of the application, running `gulp` will set everything up, run the application, open a new browser window, and automatically reload the server and webpage upon detecting changes to your local installation.
