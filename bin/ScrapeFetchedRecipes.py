@@ -20,10 +20,10 @@ with open("recipes.txt", "r") as links:
 		recipe_links.append(line)
 		if i > 500:
 			break # i only exists so loop doesnt go through every line in the text file
-j = 40
+j = 0
 #scrapes first recipe extracted from text file
 ingredient_list = []
-while j < 41:
+while j < 20:
 	ingredient_list = []
 	Directions = 'Directions: \n'
 	Amount = 'for '

@@ -1,7 +1,11 @@
 import requests
+import nltk
 import ScrapeFetchedRecipes
 import re
 from bs4 import BeautifulSoup
+# nltk.download('punkt')
+# nltk.download('maxent_treebank_pos_tagger')
+# nltk.download('averaged_perceptron_tagger')
 
 def getNVforRecipe(ingredient_list):
     errors = []
@@ -13,16 +17,68 @@ def getNVforRecipe(ingredient_list):
     while k < len(ingredient_list):
         #remove white space padding
         input_ingredient = ingredient_list[k].strip()
+        input_ingredient = input_ingredient.lower()
+        quantity_specified = re.match(r'[1-9/]{1,3}|One|Two|Three|Four', input_ingredient)
+        if ' or ' in input_ingredient or 'recipe' in input_ingredient:
+            k+=1
+            continue
+        if quantity_specified:
+            if 'parmesan' in input_ingredient:
+                ingredient = 'parmesan cheese'
+                print ingredient
+                k += 1
+                continue
+            if 'garlic' in input_ingredient and 'powder' not in input_ingredient:
+                ingredient = 'garlic'
+                print ingredient
+                k += 1
+                continue
+            if 'cucumber' in input_ingredient:
+                ingredient = 'cucumber'
+                print ingredient
+                k += 1
+                continue
+            Words = input_ingredient.split()
+            ingredient = ' '
+            for word in Words:
+                if re.match('[0-9]+-', word) or re.match('[1-9]/[1-9]-', word):
+                    continue
+                tokenized_word = nltk.word_tokenize(word)
+                POS =  nltk.pos_tag(tokenized_word)
+
+                if POS[0][1] == 'NN' or POS[0][1] == 'NNS' or POS[0][1] == 'JJ':
+                    ingredient = ingredient + POS[0][0] + ' '
+            ingredient = ingredient.lower()
+            ingredient = ingredient.replace(' bags ', ' ').replace(' bag ', '').replace(' teaspoons ', ' ').replace(' teaspoon ', ' ').replace(' cups ', ' ').replace(' cup ', ' ').replace(' container ', ' ').replace(' tablespoons ', ' ').replace(' tablespoon ', ' ').replace(' box ', ' ').replace(' ounces ', ' ').replace(' packages ', ' ').replace(' package ', ' ').replace(' packets', ' ').replace(' pounds ', ' ').replace(' pound ', ' ').replace(' pints ', ' ').replace(' cans ', ' ').replace(' can ', ' ').replace(' pint ', ' ').replace(' pure ', ' ').replace(' jar ', ' ').replace(' tsp ', ' ').replace(' tbsp ', ' ').replace(' large ', ' ').replace(' small ', ' ').replace(' medium ', ' ').replace(' dairy ', ' ').replace(' aisle ', ' ').replace(' chopped ', ' ').replace(' mix ', ' ').replace(' optional ', ' ').replace(' packed ', ' ').replace(' leftover ', ' ').replace(' delicious ', ' ').replace(' cooked ', ' ').replace(' cook ', ' ').replace(' note ', ' ').replace(' water ', ' ').replace(' store-bought ', ' ').replace(' good ', ' ').replace(' sprigs ', ' ').replace(' inches ', ' ').replace(' chunks ', ' ').replace(' head ', ' ').replace(' stalks ', ' ').replace(' extra ', ' ').replace(' ice cold ', ' ').replace(' stick ', ' ').replace(' homemade ', ' ').replace(' dry ', ' ').replace(' whole ', ' ').replace(' pieces ', ' ').replace(' cut ', ' ')
+            print ingredient
+        # tokenized_word = nltk.word_tokenize(ingredient)
+        # posArray =  nltk.pos_tag(tokenized_word)
+        # print POS
+        # i = 0
+        # ingredient = ''
+        # while i < len(posArray):
+        #     if posArray[i][1] == 'VBD' or posArray[i][1] == 'VBG' or posArray[i][1] == 'VBN':
+        #         del posArray[i]
+        #     else:
+        #         s = posArray[i][0]
+        #         ingredient = ingredient + ' ' + s
+        #         i+= 1
+        #     i += 1
+        # print ingredient
+        k += 1
+        continue
         #get rid of a few words that mess up search results, get rid of - then change format of quantity
-        input_ingredient = input_ingredient.replace('softened', '').replace('game ', '').replace(' in', '').replace('blossoms', '').replace(' if desired', '').replace('ripe', '').replace('quality', '').replace('good', '').replace(' mix' , '').replace(' blend' , '').replace('best', '').replace('slices', '').replace('minced', '').replace('small-diced', '').replace('assorted', '').replace('tops', '').replace('homemade', '').replace('toasted', '')
+        #input_ingredient = input_ingredient.replace(' bags ', ' ').replace(' bag ', ' ').replace('softened', '').replace('game ', '').replace(' in', '').replace('blossoms', '').replace(' if desired', '').replace('ripe', '').replace('quality', '').replace('good', '').replace(' mix' , '').replace(' blend' , '').replace('best', '').replace('slices', '').replace('minced', '').replace('small-diced', '').replace('assorted', '').replace('tops', '').replace('homemade', '').replace('toasted', '')
         input_ingredient = input_ingredient.replace('-', ' ')
-        input_ingredient = re.sub('to [1-9] [1-9]/[1-9] ','', input_ingredient)
+        #input_ingredient = re.sub('to [1-9] [1-9]/[1-9] ','', input_ingredient)
         #print input_ingredient
         m = re.match('[1-9] [1-9]/[1-9]', input_ingredient)
         if m:
             Num, space, rest = input_ingredient.partition(' ')
             input_ingredient = Num + '-' + rest
         #add ambiguities to error list
+
+#here, begin correcting
         if ' or ' in input_ingredient:
             errors.append(input_ingredient)
             input_ingredient = input_ingredient + '***'
@@ -460,18 +516,18 @@ def getNVforRecipe(ingredient_list):
                 i += 1
         k += 1
     #display data
-    print 'For ' + ScrapeFetchedRecipes.Amount.strip() + ':'
-    print 'There are ' , totalNVstat[0] , ' calories in this recipe'
-    print 'There are ' , totalNVstat[1] , ' calories from fat in this recipe'
-    print 'There are ' , totalNVstat[2] , 'g of fat in this recipe'
-    print 'There are ' , totalNVstat[3] , 'g of saturated fat in this recipe'
-    print 'There are ' , totalNVstat[4] , 'mg of cholesterol in this recipe'
-    print 'There are ' , totalNVstat[5] , 'mg of sodium in this recipe'
-    print 'There are ' , totalNVstat[6] , 'g total carbs in this recipe'
-    print 'There are ' , totalNVstat[7] , 'g of fiber in this recipe'
-    print 'There are ' , totalNVstat[8] , 'g of sugar in this recipe'
-    print 'There are ' , totalNVstat[9] , 'g of protein in this recipe'
-    print 'There are ' , totalNVstat[10] , 'mg of calcium in this recipe'
+    # print 'For ' + ScrapeFetchedRecipes.Amount.strip() + ':'
+    # print 'There are ' , totalNVstat[0] , ' calories in this recipe'
+    # print 'There are ' , totalNVstat[1] , ' calories from fat in this recipe'
+    # print 'There are ' , totalNVstat[2] , 'g of fat in this recipe'
+    # print 'There are ' , totalNVstat[3] , 'g of saturated fat in this recipe'
+    # print 'There are ' , totalNVstat[4] , 'mg of cholesterol in this recipe'
+    # print 'There are ' , totalNVstat[5] , 'mg of sodium in this recipe'
+    # print 'There are ' , totalNVstat[6] , 'g total carbs in this recipe'
+    # print 'There are ' , totalNVstat[7] , 'g of fiber in this recipe'
+    # print 'There are ' , totalNVstat[8] , 'g of sugar in this recipe'
+    # print 'There are ' , totalNVstat[9] , 'g of protein in this recipe'
+    # print 'There are ' , totalNVstat[10] , 'mg of calcium in this recipe'
     #print totalNVstat
     file = open('ingredient_name.txt', 'a')
     for item in filter_results:
