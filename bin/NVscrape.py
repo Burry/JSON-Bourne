@@ -51,34 +51,24 @@ def getNVforRecipe(ingredient_list):
             ingredient = ingredient.lower()
             ingredient = ingredient.replace(' bags ', ' ').replace(' bag ', '').replace(' teaspoons ', ' ').replace(' teaspoon ', ' ').replace(' cups ', ' ').replace(' cup ', ' ').replace(' container ', ' ').replace(' tablespoons ', ' ').replace(' tablespoon ', ' ').replace(' box ', ' ').replace(' ounces ', ' ').replace(' packages ', ' ').replace(' package ', ' ').replace(' packets', ' ').replace(' pounds ', ' ').replace(' pound ', ' ').replace(' pints ', ' ').replace(' cans ', ' ').replace(' can ', ' ').replace(' pint ', ' ').replace(' pure ', ' ').replace(' jar ', ' ').replace(' tsp ', ' ').replace(' tbsp ', ' ').replace(' large ', ' ').replace(' small ', ' ').replace(' medium ', ' ').replace(' dairy ', ' ').replace(' aisle ', ' ').replace(' chopped ', ' ').replace(' mix ', ' ').replace(' optional ', ' ').replace(' packed ', ' ').replace(' leftover ', ' ').replace(' delicious ', ' ').replace(' cooked ', ' ').replace(' cook ', ' ').replace(' note ', ' ').replace(' water ', ' ').replace(' store-bought ', ' ').replace(' good ', ' ').replace(' sprigs ', ' ').replace(' inches ', ' ').replace(' chunks ', ' ').replace(' head ', ' ').replace(' stalks ', ' ').replace(' extra ', ' ').replace(' ice cold ', ' ').replace(' stick ', ' ').replace(' homemade ', ' ').replace(' dry ', ' ').replace(' whole ', ' ').replace(' pieces ', ' ').replace(' cut ', ' ')
             print ingredient
-        # tokenized_word = nltk.word_tokenize(ingredient)
-        # posArray =  nltk.pos_tag(tokenized_word)
-        # print POS
-        # i = 0
-        # ingredient = ''
-        # while i < len(posArray):
-        #     if posArray[i][1] == 'VBD' or posArray[i][1] == 'VBG' or posArray[i][1] == 'VBN':
-        #         del posArray[i]
-        #     else:
-        #         s = posArray[i][0]
-        #         ingredient = ingredient + ' ' + s
-        #         i+= 1
-        #     i += 1
-        # print ingredient
         k += 1
         continue
+
+
+#************************old method*********************************************
+
+
         #get rid of a few words that mess up search results, get rid of - then change format of quantity
-        #input_ingredient = input_ingredient.replace(' bags ', ' ').replace(' bag ', ' ').replace('softened', '').replace('game ', '').replace(' in', '').replace('blossoms', '').replace(' if desired', '').replace('ripe', '').replace('quality', '').replace('good', '').replace(' mix' , '').replace(' blend' , '').replace('best', '').replace('slices', '').replace('minced', '').replace('small-diced', '').replace('assorted', '').replace('tops', '').replace('homemade', '').replace('toasted', '')
+        input_ingredient = input_ingredient.replace(' bags ', ' ').replace(' bag ', ' ').replace('softened', '').replace('game ', '').replace(' in', '').replace('blossoms', '').replace(' if desired', '').replace('ripe', '').replace('quality', '').replace('good', '').replace(' mix' , '').replace(' blend' , '').replace('best', '').replace('slices', '').replace('minced', '').replace('small-diced', '').replace('assorted', '').replace('tops', '').replace('homemade', '').replace('toasted', '')
         input_ingredient = input_ingredient.replace('-', ' ')
-        #input_ingredient = re.sub('to [1-9] [1-9]/[1-9] ','', input_ingredient)
+        input_ingredient = re.sub('to [1-9] [1-9]/[1-9] ','', input_ingredient)
         #print input_ingredient
         m = re.match('[1-9] [1-9]/[1-9]', input_ingredient)
         if m:
             Num, space, rest = input_ingredient.partition(' ')
             input_ingredient = Num + '-' + rest
         #add ambiguities to error list
-
-#here, begin correcting
+        
         if ' or ' in input_ingredient:
             errors.append(input_ingredient)
             input_ingredient = input_ingredient + '***'
