@@ -1,15 +1,19 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('Pantry', {
+    queryInterface.createTable('Substitution', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      Owner: {
+      Ingredient: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      Replacement: {
+        type: Sequelize.STRING,
+        allowNullL: false,
       },
       createdAt: {
         allowNull: false,
@@ -30,5 +34,5 @@ module.exports = {
       },
     }),
   down: (queryInterface /* , Sequelize */) =>
-    queryInterface.dropTable('Pantry'),
+    queryInterface.dropTable('Substitution'),
 };

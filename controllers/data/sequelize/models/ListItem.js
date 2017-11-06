@@ -1,7 +1,7 @@
-models.export = (sequelize, DataTypes) => {
+module.export = (sequelize, DataTypes) => {
   const ListItem = sequelize.define('ListItem', {
     Name: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     complete:{
@@ -12,7 +12,7 @@ models.export = (sequelize, DataTypes) => {
 
   ListItem.associate = (models) => {
     ListItem.belongsTo(models.ShoppingList, {
-      foreignKey: 'listId',
+      foreignKey: 'ListId',
       onDelete: 'CASCADE',
     });
   };

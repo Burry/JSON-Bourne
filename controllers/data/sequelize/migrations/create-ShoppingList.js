@@ -1,14 +1,14 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('Pantry', {
+    queryInterface.createTable('ShoppingList', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      Owner: {
-        type: Sequelize.STRING,
+      listID: {
+        type: Sequelize.NUMBER,
         allowNull: false,
       },
       createdAt: {
@@ -30,5 +30,5 @@ module.exports = {
       },
     }),
   down: (queryInterface /* , Sequelize */) =>
-    queryInterface.dropTable('Pantry'),
+    queryInterface.dropTable('ShoppingList'),
 };

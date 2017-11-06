@@ -9,7 +9,7 @@ let schema = new Schema({
         prep: Number,
         cook: Number
     },
-    author: String, // Sequelize user key
+    author: String, // Sequelize user primary key
     likes: Number,
     created: Date,
     ingredients: [{
