@@ -6,18 +6,18 @@ const bodyParser = require('body-parser')
 const controllers = require('./controllers')
 
 // Sequelize debugging
-const models = require('./models');
-const sql = models.sql;
-sql.User.create({
-    firstName: 'Jon',
-    lastName: 'Doe',
-    email: 'jondoe@gmail.com',
-    password: 'hunter2'
-}).then(() => {
-    return sql.User.findAll();
-}).then(users => {
-    console.log('Users: ', users);
-});
+// const models = require('./models');
+// const sql = models.sql;
+// sql.User.create({
+//     firstName: 'Jon',
+//     lastName: 'Doe',
+//     email: 'jondoe@gmail.com',
+//     password: 'hunter2'
+// }).then(() => {
+//     return sql.User.findAll();
+// }).then(users => {
+//     console.log('Users: ', users);
+// });
 
 const app = express()
 
