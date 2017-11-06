@@ -3,7 +3,6 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-// const loremIpsum = require('lorem-ipsum');
 const Sequelize = require('sequelize');
 const basename = path.basename(module.filename);
 const config = {
@@ -37,7 +36,6 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-
 
 // Sequelize debugging
 // const models = require('./models');
