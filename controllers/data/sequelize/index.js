@@ -2,9 +2,9 @@ const models = require('./models');
 const User = models.User;
 
 User.create({
-    UserID: 0,
-    FirstName: 'Jon',
-    LastName: 'Doe'
+    userID: 0,
+    firstName: 'Jon',
+    lastName: 'Doe'
 });
 
 module.exports = {};

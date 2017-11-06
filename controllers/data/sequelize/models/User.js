@@ -1,36 +1,29 @@
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define('User', {
-    UserID: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    FirstName: {
-      type: DataTypes.STRING
-    },
-    LastName: {
-      type: DataTypes.STRING
-    },
-    Email: {
-      type: DataTypes.STRING
-    },
-    Password: {
-      type: DataTypes.STRING
-    }
-  });
+    const User = sequelize.define('User', {
+        userID: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        firstName: DataTypes.STRING,
+        lastName: DataTypes.STRING,
+        email: DataTypes.STRING,
+        password: DataTypes.STRING
+    });
 
-  User.associate = (models) => {
-    User.hasMany(models.Substitution, {
-      foreignKey: 'UserId',
-      as: 'IngredientSubstitutions'
-    });
-    User.hasOne(models.Pantry, {
-      foreignKey: 'UserId',
-      as: 'Pantry'
-    });
-    User.hasMany(models.ShoppingList, {
-      foreignKey: 'UserId',
-      as: 'ShoppingLists'
-    });
-  };
-  return User;
+    User.associate = models => {
+        User.hasMany(models.Substitution, {
+            foreignKey: 'userId',
+            as: 'ingredientSubstitutions'
+        });
+        User.hasOne(models.Pantry, {
+            foreignKey: 'userId',
+            as: 'pantry'
+        });
+        User.hasMany(models.ShoppingList, {
+            foreignKey: 'userId',
+            as: 'shoppingLists'
+        });
+    };
+
+    return User;
 };

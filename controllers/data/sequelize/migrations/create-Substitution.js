@@ -1,38 +1,29 @@
 module.exports = {
-  up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('Substitution', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      Ingredient: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      Replacement: {
-        type: Sequelize.STRING,
-        allowNullL: false
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      UserId: {
-        type: Sequelize.INTEGER,
-        onDelete: 'CASCADE',
-        references: {
-          model: 'User',
-          key: 'id',
-          as: 'UserId'
-        }
-      }
-    }),
-  down: (queryInterface /* , Sequelize */) =>
-    queryInterface.dropTable('Substitution')
+    up: (queryInterface, Sequelize) =>
+        queryInterface.createTable('Substitution', {
+            id: {
+                allowNull: false,
+                autoIncrement: true,
+                primaryKey: true,
+                type: Sequelize.INTEGER
+            },
+            ingredient: Sequelize.STRING,
+            replacement: Sequelize.STRING,
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE
+            },
+            updatedAt: Sequelize.DATE,
+            userId: {
+                type: Sequelize.INTEGER,
+                onDelete: 'CASCADE',
+                references: {
+                    model: 'User',
+                    key: 'id',
+                    as: 'userId'
+                }
+            }
+        }),
+    down: (queryInterface /* , Sequelize */) =>
+        queryInterface.dropTable('Substitution')
 };
