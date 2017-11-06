@@ -16,4 +16,4 @@ We are using PostgreSQL for user data and data related to users, and we are usin
 <img src="https://github.com/Burry/JSON-Bourne/raw/master/doc/resources/Data%20Model.png" alt="Data Model" />
 
 ### Database Creation and Population
-The scripts to design models, create tables/collections, and populate objects are found in the project's /models](https://github.com/Burry/JSON-Bourne/models) directory.
+The scripts to design models, create tables/collections, and populate objects are found in the project's [/models](https://github.com/Burry/JSON-Bourne/tree/master/models) directory.
