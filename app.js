@@ -1,11 +1,10 @@
-require('dotenv').config()
 const express = require('express')
 const path = require('path')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
-const db = require('./controllers/data')
-const routes = require('./controllers/routes')
+const controllers = require('./controllers')
+const db = require('./models'); // for db debugging - normally goes in controllers
 
 const app = express()
 
@@ -29,7 +28,7 @@ app.use(express.static(path.join(__dirname, 'client', 'build')))
 // Set global variables
 app.locals.env = app.get('env')
 
-// Routes
-app.use('/', routes)
+// Controllers / Routes
+app.use('/', controllers)
 
 module.exports = app
