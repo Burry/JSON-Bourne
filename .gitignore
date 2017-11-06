@@ -7,7 +7,8 @@ pids
 *.pid
 *.seed
 
-
+# Environment variables
+.env
 
 # macOS Finder leftovers
 .DS_Store
