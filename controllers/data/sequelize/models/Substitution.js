@@ -1,19 +1,19 @@
 module.exports = (sequelize, DataTypes) => {
-  const Substitution = sequelize.define('Substitution' , {
+  const Substitution = sequelize.define('Substitution', {
     Ingredient: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     Replacement: {
       type: DataTypes.STRING,
-      allowNullL: false,
-    },
+      allowNullL: false
+    }
   });
 
   Substitution.associate = (models) => {
     Substitution.belongsTo(models.User, {
       foreignKey: 'UserId',
-      onDelete: 'CASCADE',
+      onDelete: 'CASCADE'
     });
   };
   return Substitution;

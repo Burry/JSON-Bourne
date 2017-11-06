@@ -4,8 +4,9 @@ const path = require('path')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
-const db = require('./controllers/data')
 const routes = require('./controllers/routes')
+
+require('./controllers/data') /* in app.js for debugging - use in route file when ready */
 
 const app = express()
 

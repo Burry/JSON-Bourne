@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
   ListItem.associate = (models) => {
     ListItem.belongsTo(models.ShoppingList, {
       foreignKey: 'ListId',
-      onDelete: 'CASCADE',
+      onDelete: 'CASCADE'
     });
   };
   return ListItem;
