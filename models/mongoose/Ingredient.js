@@ -1,9 +1,14 @@
 const mongoose = require('mongoose');
+const findOrCreate = require('mongoose-find-or-create');
 const Schema = mongoose.Schema;
 
 let schema = new Schema({
     name: String,
     avgPrice: Number, // price in USD
+    tags: [{
+        type : Schema.ObjectId,
+        ref: 'Tag'
+    }],
     nutrition: {
         calories: {
             total: Number,
@@ -24,4 +29,6 @@ let schema = new Schema({
     }
 });
 
-module.exports = mongoose.model('Recipe', schema);
+schema.plugin(findOrCreate);
+
+module.exports = mongoose.model('Ingredient', schema);

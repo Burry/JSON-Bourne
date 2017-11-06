@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const findOrCreate = require('mongoose-find-or-create');
 const Schema = mongoose.Schema;
 
 let schema = new Schema({
@@ -13,13 +14,15 @@ let schema = new Schema({
     likes: Number,
     created: Date,
     ingredients: [{
-        type : Schema.ObjectId,
+        type: Schema.ObjectId,
         ref: 'Ingredient'
     }],
     tags: [{
-        type : Schema.ObjectId,
+        type: Schema.ObjectId,
         ref: 'Tag'
     }]
 });
+
+schema.plugin(findOrCreate);
 
 module.exports = mongoose.model('Recipe', schema);
