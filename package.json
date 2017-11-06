@@ -37,20 +37,23 @@
     "private": true,
     "scripts": {
         "start": "node ./bin/www",
-        "postinstall": "node_modules/.bin/bower cache clean && node_modules/.bin/bower install"
+        "postinstall": "node ./node_modules/gulp/bin/gulp.js vendor"
     },
     "dependencies": {
+        "algoliasearch": "^3.24.5",
         "body-parser": "~1.17.1",
-        "bower": "^1.8.2",
+        "bootstrap": "4.0.0-beta.2",
         "cookie-parser": "~1.4.3",
         "debug": "~2.6.3",
         "dotenv": "^4.0.0",
         "express": "~4.15.2",
+        "jquery": "^3.2.1",
         "mongoose": "^4.13.0",
         "morgan": "~1.8.1",
         "node-sass-middleware": "0.9.8",
         "pg": "^7.4.0",
         "pg-hstore": "^2.3.2",
+        "popper.js": "^1.12.3",
         "pug": "~2.0.0-beta11",
         "sequelize": "^4.22.4",
         "sequelize-cli": "^3.0.0",
