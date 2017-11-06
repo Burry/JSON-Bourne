@@ -1,7 +1,7 @@
-module.export = (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => {
   const ShoppingList = sequelize.define('ShoppingList', {
     listID: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
 
@@ -12,7 +12,7 @@ module.export = (sequelize, DataTypes) => {
       as: 'ListItems'
     });
     ShoppingList.belongsTo(models.User, {
-      foreignKey: 'Userid',
+      foreignKey: 'UserId',
       onDelete: 'CASCADE',
     });
   };

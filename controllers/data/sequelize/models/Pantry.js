@@ -1,19 +1,18 @@
-module.export = (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => {
   const Pantry = sequelize.define('Pantry', {
     Owner: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-
+      allowNull: false
+    }
   });
   Pantry.associate = (models) => {
     Pantry.hasMany(models.PantryItem, {
       foreignKey: 'PantryId',
-      as: 'PantryItems',
+      as: 'PantryItems'
     });
     Pantry.belongsTo(models.User, {
       foreignKey: 'UserId',
-      onDelete: 'CASCADE',
+      onDelete: 'CASCADE'
     });
   };
   return Pantry;

@@ -1,5 +1,5 @@
-const Model = require('mongoose').Model;
-const Schema = require('mongoose').Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 let schema = new Schema({
     name: String,
@@ -24,4 +24,4 @@ let schema = new Schema({
     }
 });
 
-module.exports = Model('Recipe', schema);
+module.exports = mongoose.model('Recipe', schema);

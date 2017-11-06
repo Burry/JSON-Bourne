@@ -1,13 +1,13 @@
-module.export = (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => {
   const ListItem = sequelize.define('ListItem', {
     Name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     complete:{
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
+      defaultValue: false
+    }
   });
 
   ListItem.associate = (models) => {
