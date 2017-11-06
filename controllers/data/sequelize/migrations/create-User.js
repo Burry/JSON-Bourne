@@ -5,7 +5,11 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+      },
+      UserID: {
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       FirstName: {
         type: Sequelize.STRING

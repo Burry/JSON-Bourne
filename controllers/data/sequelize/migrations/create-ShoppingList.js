@@ -5,19 +5,19 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER
       },
       listID: {
         type: Sequelize.NUMBER,
-        allowNull: false,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       UserId: {
         type: Sequelize.INTEGER,
@@ -25,9 +25,9 @@ module.exports = {
         references: {
           model: 'User',
           key: 'id',
-          as: 'UserId',
-        },
-      },
+          as: 'UserId'
+        }
+      }
     }),
   down: (queryInterface /* , Sequelize */) =>
     queryInterface.dropTable('ShoppingList'),

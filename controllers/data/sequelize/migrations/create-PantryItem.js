@@ -5,19 +5,19 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER
       },
       Name: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       PantryId: {
         type: Sequelize.INTEGER,
@@ -25,10 +25,10 @@ module.exports = {
         references: {
           model: 'Pantry',
           key: 'id',
-          as: 'PantryId',
-        },
-      },
+          as: 'PantryId'
+        }
+      }
     }),
   down: (queryInterface /* , Sequelize */) =>
-    queryInterface.dropTable('PantryItem'),
+    queryInterface.dropTable('PantryItem')
 };

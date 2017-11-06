@@ -30,9 +30,9 @@ module.exports = {
           model: 'ShoppingList',
           key: 'id',
           as: 'ListId'
-        },
-      },
-    }),
+        }
+      }
+  }),
   down: (queryInterface /* , Sequelize */) =>
     queryInterface.dropTable('ListItem')
 };

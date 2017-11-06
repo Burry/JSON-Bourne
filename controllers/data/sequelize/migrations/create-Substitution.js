@@ -5,34 +5,34 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER
       },
       Ingredient: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
       },
       Replacement: {
         type: Sequelize.STRING,
-        allowNullL: false,
+        allowNullL: false
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       UserId: {
         type: Sequelize.INTEGER,
         onDelete: 'CASCADE',
         references: {
-          model: 'Users',
+          model: 'User',
           key: 'id',
-          as: 'UserId',
-        },
-      },
+          as: 'UserId'
+        }
+      }
     }),
   down: (queryInterface /* , Sequelize */) =>
-    queryInterface.dropTable('Substitution'),
+    queryInterface.dropTable('Substitution')
 };
