@@ -1,12 +1,23 @@
-require('dotenv').config()
 const express = require('express')
 const path = require('path')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
-const routes = require('./controllers/routes')
+const controllers = require('./controllers')
 
-require('./controllers/data') /* in app.js for debugging - use in route file when ready */
+// Sequelize debugging
+const models = require('./models');
+const sql = models.sql;
+sql.User.create({
+    firstName: 'Jon',
+    lastName: 'Doe',
+    email: 'jondoe@gmail.com',
+    password: 'hunter2'
+}).then(() => {
+    return sql.User.findAll();
+}).then(users => {
+    console.log('Users: ', users);
+});
 
 const app = express()
 
@@ -30,7 +41,7 @@ app.use(express.static(path.join(__dirname, 'client', 'build')))
 // Set global variables
 app.locals.env = app.get('env')
 
-// Routes
-app.use('/', routes)
+// Controllers / Routes
+app.use('/', controllers)
 
 module.exports = app

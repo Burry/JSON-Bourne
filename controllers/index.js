@@ -5,7 +5,7 @@ const router = require('express').Router()
 router.use(middleware.initLocals)
 router.use(middleware.catchErrors)
 
-// pages
+// Pages
 router.use('/', require('./pages/index'))
 router.use('/discover', require('./pages/discover'))
 router.use('/favorites', require('./pages/favorites'))

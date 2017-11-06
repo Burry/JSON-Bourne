@@ -39,4 +39,4 @@ mongo.once('open', () => {
     // console.log(chickenPotPie);
 });
 
-module.exports = {};
+module.exports = mongo;
