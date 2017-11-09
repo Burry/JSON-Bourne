@@ -1,34 +1,33 @@
-const express = require('express')
-const path = require('path')
-const logger = require('morgan')
-const cookieParser = require('cookie-parser')
-const bodyParser = require('body-parser')
-const controllers = require('./controllers')
-const db = require('./models'); // for db debugging - normally goes in controllers
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const controllers = require('./controllers');
 
-const app = express()
+const app = express();
 
 // View engine setup
-app.set('views', path.join(__dirname, 'client', 'views', 'pages'))
-app.set('view engine', 'pug')
+app.set('views', path.join(__dirname, 'client', 'views', 'pages'));
+app.set('view engine', 'pug');
 
 // Log for development enviornment
-app.use(logger('dev'))
+app.use(logger('dev'));
 
 // Parse incoming request bodies
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // Parse cookie headers, populate req.cookies with an object keyed by cookie names
-app.use(cookieParser())
+app.use(cookieParser());
 
 // Host static files from /client/build
-app.use(express.static(path.join(__dirname, 'client', 'build')))
+app.use(express.static(path.join(__dirname, 'client', 'build')));
 
 // Set global variables
-app.locals.env = app.get('env')
+app.locals.env = app.get('env');
 
 // Controllers / Routes
-app.use('/', controllers)
+app.use('/', controllers);
 
-module.exports = app
+module.exports = app;
