@@ -4,8 +4,8 @@
 require('dotenv').config();
 const app = require('../app');
 const debug = require('debug')('findmyappetite:server');
-const http = require('http');
-const sequelize = require('../models/sequelize').sequelize;
+const models = require('../models');
+const server = require('http').createServer(app);
 
 // Normalize a port into a number, string, or false
 const normalizePort = val => {
@@ -57,14 +57,20 @@ let port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 // Create HTTP server
-const server = http.createServer(app);
-
-// Sync with SQL database, then listen on provided
-// port on all network interfaces
-sequelize.sync().then(() => {
+const startServer = () => {
     server.listen(port, () => {
         debug('Express server listening on port ' + server.address().port);
     });
+};
+
+// Sync with SQL database, then listen on provided
+// port on all network interfaces
+models.sql.sequelize.sync().then(() => {
+    // Populate test data in development or testing enviornment
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')
+        models.mongo.populateTestData();
+    startServer();
+    // /*else*/ startServer();
     server.on('error', onError);
     server.on('listening', onListening);
 });

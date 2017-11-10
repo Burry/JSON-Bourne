@@ -1,10 +1,10 @@
 'use strict';
 
 require('dotenv').config();
-const fs = require('fs');
+const importModels = require('../import');
 const path = require('path');
-const Sequelize = require('sequelize');
-const basename = path.basename(module.filename);
+// const populateTestData = require('./test-data');
+const sequelize = require('sequelize');
 const config = {
     username: process.env.PGUSER || 'root',
     password: process.env.PGPASS || null,
@@ -12,43 +12,41 @@ const config = {
     host: '127.0.0.1',
     dialect: 'postgres'
 };
-const db = {};
 
 // Connect to PostgreSQL
-const sequelize = new Sequelize(config.database, config.username, config.password, config);
+const db = {
+    Sequelize: sequelize,
+    sequelize: new sequelize(config.database, config.username, config.password, config)
+};
 
 // Import models
-fs.readdirSync(__dirname)
-    .filter(file =>
-        (file.indexOf('.') !== 0) &&
-        (file !== basename) &&
-        (file.slice(-3) === '.js'))
-    .forEach(file => {
-        const model = sequelize.import(path.join(__dirname, file));
-        db[model.name] = model;
+importModels(__dirname, model => new Promise(resolve => {
+    db[model] = db.sequelize.import(path.join(__dirname, model));
+    resolve();
+})).then(() => {
+    // Add associations to model objects
+    Object.keys(db).forEach(model => {
+        if (db[model].associate)
+            db[model].associate(db);
     });
-
-// Add associations to model objects
-Object.keys(db).forEach(modelName => {
-    if (db[modelName].associate)
-        db[modelName].associate(db);
 });
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
-// Sequelize debugging
-// const models = require('./models');
-// const sql = models.sql;
-// sql.User.create({
-//     firstName: 'Jon',
-//     lastName: 'Doe',
-//     email: 'jondoe@gmail.com',
-//     password: 'hunter2'
-// }).then(() => {
-//     return sql.User.findAll();
-// }).then(users => {
-//     console.log('Users: ', users);
-// });
+// Utility to delete database
+db.drop = next => {
+    let dropPromises = [];
+    Object.keys(db).forEach(model => {
+        if (/^[A-Z](?!.*equelize).*$/.test(model))
+            dropPromises.push(db[model].destroy({where: {}}));
+    });
+    Promise.all(dropPromises)
+        .then(() => {
+            next();
+            db.sequelize.close();
+        })
+        .catch(err => {
+            console.error(err);
+            throw err;
+        });
+};
 
 module.exports = db;
