@@ -82,5 +82,7 @@ while j < 20:
 	#print (Cook_Time) # print cooking time
 	#print (Amount) #prints number of servings
 	#print (Directions)
+	json_data = json.dumps({})
+	json_data["title"] = ""
 	NVscrape.getNVforRecipe(ingredient_list)
 	j+=1

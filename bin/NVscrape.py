@@ -28,17 +28,17 @@ def getNVforRecipe(ingredient_list):
         if quantity_specified:
             if 'parmesan' in input_ingredient:
                 ingredient = 'parmesan cheese'
-                print ingredient
+                #print ingredient
                 k += 1
                 continue
             if 'garlic' in input_ingredient and 'powder' not in input_ingredient:
                 ingredient = 'garlic'
-                print ingredient
+                #print ingredient
                 k += 1
                 continue
             if 'cucumber' in input_ingredient:
                 ingredient = 'cucumber'
-                print ingredient
+                #print ingredient
                 k += 1
                 continue
             Words = input_ingredient.split()
@@ -369,7 +369,7 @@ def getNVforRecipe(ingredient_list):
                     elif 'ounces' in quantity or 'oz' in quantity:
                         ingredient_qtyOZ = ingredient_qty
                     else:
-                        print 'bad unit is: ' + quantity + 'for ingredient: ' + ingredient
+                        print 'bad unit is: ' + quantity + ' for ingredient: ' + ingredient
                         errors.append(input_ingredient)
                         input_ingredient = input_ingredient + '***'
                         filter_results.append(input_ingredient)
