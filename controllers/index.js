@@ -5,8 +5,9 @@ const router = require('express').Router()
 router.use(middleware.initLocals)
 router.use(middleware.catchErrors)
 
-// pages
+// Pages
 router.use('/', require('./pages/index'))
+router.use('/recipe/:id', require('./pages/recipe'))
 router.use('/discover', require('./pages/discover'))
 router.use('/favorites', require('./pages/favorites'))
 router.use('/pantry', require('./pages/pantry'))

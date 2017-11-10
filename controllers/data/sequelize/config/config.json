@@ -1,7 +1,0 @@
-{
-    "username": "root",
-    "password": null,
-    "database": "findmyappetite",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
-}
