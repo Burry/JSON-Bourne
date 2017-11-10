@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 // Import models
-module.exports = (directory, handleModel, next) => {
+module.exports = (directory, handleModel) => {
     return new Promise(resolve => {
         const modelNames = fs.readdirSync(directory)
             .filter(file =>

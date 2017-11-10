@@ -4,7 +4,6 @@ require('dotenv').config();
 const autoPrefixer = require('gulp-autoprefixer');
 const browserSync = require('browser-sync').create();
 const cleanCSS = require('gulp-clean-css');
-const del = require('del');
 const esLint = require('gulp-eslint');
 const gulp = require('gulp');
 const nodemon = require('gulp-nodemon');

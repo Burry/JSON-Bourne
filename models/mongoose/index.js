@@ -38,6 +38,6 @@ db.drop = next => {
 };
 
 // Utility to populate test data
-db.populateTestData = next => db.drop(() => populateTestData(db, next));
+db.populateTestData = next => db.drop(() => populateTestData(db, next && next));
 
 module.exports = db;
