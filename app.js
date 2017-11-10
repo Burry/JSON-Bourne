@@ -7,6 +7,11 @@ const controllers = require('./controllers');
 
 const app = express();
 
+// Populate test data in development or testing enviornment
+const mongo = require('./models').mongo;
+if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')
+    mongo.populateTestData(db);
+
 // View engine setup
 app.set('views', path.join(__dirname, 'client', 'views', 'pages'));
 app.set('view engine', 'pug');

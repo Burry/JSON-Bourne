@@ -1,16 +1,17 @@
-'use strict'
+'use strict';
 
-require('dotenv').config()
-const autoPrefixer = require('gulp-autoprefixer')
-const browserSync = require('browser-sync').create()
-const cleanCSS = require('gulp-clean-css')
-const del = require('del')
-const esLint = require('gulp-eslint')
-const gulp = require('gulp')
-const nodemon = require('gulp-nodemon')
-const sass = require('gulp-sass')
-const sourceMaps = require('gulp-sourcemaps')
-const uglify = require('gulp-uglify')
+require('dotenv').config();
+const autoPrefixer = require('gulp-autoprefixer');
+const browserSync = require('browser-sync').create();
+const cleanCSS = require('gulp-clean-css');
+const del = require('del');
+const esLint = require('gulp-eslint');
+const gulp = require('gulp');
+const nodemon = require('gulp-nodemon');
+const sass = require('gulp-sass');
+const sourceMaps = require('gulp-sourcemaps');
+const uglify = require('gulp-uglify');
+const models = require('./models');
 
 // Paths
 let paths = {
@@ -60,9 +61,22 @@ let options = {
 }
 
 // Clean
-gulp.task('clean', () => {
-    return del(paths.build.dest)
-})
+gulp.task('clean', next => require('del')(paths.build.dest, next));
+
+// Populate MongoDB database with test data
+gulp.task('pop-mongo', next => models.mongo.populateTestData(next));
+
+// Delete both databases
+// gulp.task('popdb', gulp.parallel('pop-mongo', 'pop-sql'), next => next());
+
+// Delete MongoDB database
+gulp.task('drop-mongo', next => models.mongo.drop(next));
+
+// Delete PostgreSQL database
+gulp.task('drop-sql', next => models.sql.drop(next));
+
+// Delete both databases
+gulp.task('dropdb', gulp.parallel('drop-mongo', 'drop-sql'), next => next());
 
 // Lint server JS files
 gulp.task('es-lint-server', next => {
@@ -71,8 +85,8 @@ gulp.task('es-lint-server', next => {
         .pipe(esLint())
         .pipe(esLint.format())
         .pipe(esLint.failAfterError())
-        .on('end', next)
-})
+        .on('end', next);
+});
 
 // Lint build JS files
 gulp.task('es-lint-build', next => {
@@ -86,8 +100,8 @@ gulp.task('es-lint-build', next => {
         .pipe(sourceMaps.write('.'))
         .pipe(gulp.dest(paths.js.dest))
         .pipe(browserSync.stream())
-        .on('end', next)
-})
+        .on('end', next);
+});
 
 // Compile SASS and run Autoprefixer
 gulp.task('styles', next => {
@@ -100,23 +114,23 @@ gulp.task('styles', next => {
         .pipe(sourceMaps.write('.'))
         .pipe(gulp.dest(paths.styles.dest))
         .pipe(browserSync.stream())
-        .on('end', next)
-})
+        .on('end', next);
+});
 
 // Copy image directory
 gulp.task('images', next => {
     return gulp
         .src(paths.images.src)
         .pipe(gulp.dest(paths.images.dest))
-        .on('end', next)
-})
+        .on('end', next);
+});
 
 // Copy vendor dependencies
 function copyVendorDependency(dependency, subDependency, next) {
     return gulp
         .src(paths.modules.dest + `${dependency}/${subDependency}/**/*.*`)
         .pipe(gulp.dest(paths.vendor.dest + `${dependency}/`))
-        .on('end', next)
+        .on('end', next);
 }
 
 gulp.task('jquery', next => {
@@ -135,46 +149,46 @@ gulp.task('algolia', next => {
     return copyVendorDependency('algoliasearch', 'dist', next);
 })
 
-gulp.task('vendor', gulp.parallel('jquery', 'popper.js', 'bootstrap', 'algolia'), next => next())
+gulp.task('vendor', gulp.parallel('jquery', 'popper.js', 'bootstrap', 'algolia'), next => next());
 
 
 // Build application
-gulp.task('build', gulp.parallel('es-lint-server', 'es-lint-build', 'styles', 'images'), next => next())
+gulp.task('build', gulp.parallel('es-lint-server', 'es-lint-build', 'styles', 'images'), next => next());
 
 // Start/restart nodemon
 gulp.task('nodemon', next => {
-    let running = false
+    let running = false;
     let stream = nodemon(options.nodemon)
         .on('start', () => {
-            if (!running) next()
-            running = true
+            if (!running) next();
+            running = true;
         })
         .on('restart', () => {
             setTimeout(() => {
-                browserSync.reload({stream: false})
-                next()
-            }, 1500)
+                browserSync.reload({stream: false});
+                next();
+            }, 1500);
         })
         .on('crash', function() {
-            console.error('The application has crashed! Restarting in 10s...')
-            stream.emit('restart', 10)
-        })
-    return stream
+            console.error('The application has crashed! Restarting in 10s...');
+            stream.emit('restart', 10);
+        });
+    return stream;
 })
 
 // Start BrowserSync
 gulp.task('browser-sync', next => {
-    browserSync.init(options.browserSync)
-    next()
+    browserSync.init(options.browserSync);
+    next();
 })
 
 // Watch for and handle changes
 gulp.task('watch', next => {
-    gulp.watch(paths.serverJs, gulp.series('es-lint-server'))
-    gulp.watch(paths.js.src, gulp.series('es-lint-build'))
-    gulp.watch(paths.styles.src, gulp.series('styles'))
-    next()
+    gulp.watch(paths.serverJs, gulp.series('es-lint-server'));
+    gulp.watch(paths.js.src, gulp.series('es-lint-build'));
+    gulp.watch(paths.styles.src, gulp.series('styles'));
+    next();
 })
 
 // Default task
-gulp.task('default', gulp.series('build', 'nodemon', 'browser-sync', 'watch'))
+gulp.task('default', gulp.series('build', 'nodemon', 'browser-sync', 'watch'));
