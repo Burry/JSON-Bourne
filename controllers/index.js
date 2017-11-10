@@ -7,6 +7,7 @@ router.use(middleware.catchErrors)
 
 // Pages
 router.use('/', require('./pages/index'))
+router.use('/recipe/:id', require('./pages/recipe'))
 router.use('/discover', require('./pages/discover'))
 router.use('/favorites', require('./pages/favorites'))
 router.use('/pantry', require('./pages/pantry'))

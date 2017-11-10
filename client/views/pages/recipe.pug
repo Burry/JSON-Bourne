@@ -1,0 +1,14 @@
+extends ../layout
+
+block header
+    .jumbotron.jumbotron-fluid: .container
+        h1=recipe.name
+        h5='by ' + recipe.author
+
+block content
+    .container
+        ol
+            each step in recipe.steps
+                li=step
+        hr
+        pre=recipe
