@@ -17,7 +17,6 @@ let schema = new Schema({
         fat: { // in grams
             total: Number,
             saturated: Number,
-            trans: Number
         },
         cholesterol: Number, // in mg
         sodium: Number, // in mg

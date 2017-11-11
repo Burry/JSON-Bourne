@@ -1,5 +1,5 @@
 import requests
-import nltk
+import nltk, json
 import ScrapeFetchedRecipes
 import re
 from bs4 import BeautifulSoup
@@ -9,8 +9,9 @@ from bs4 import BeautifulSoup
 
 def getNVforRecipe(ingredient_list):
     errors = []
+    jsonIngredientList = []
     filter_results = []
-    totalNVstat = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0.0]
+    totalNVstat = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
     k = 0
     #loop through each ingredient in ingredient list from ScrapeFetchedRecipes.py file
 
@@ -19,9 +20,9 @@ def getNVforRecipe(ingredient_list):
         input_ingredient = ingredient_list[k].strip()
         input_ingredient = input_ingredient.lower()
         quantity_specified = re.match(r'[1-9/]{1,3}|One|Two|Three|Four', input_ingredient)
-        if ' or ' in input_ingredient or 'recipe' in input_ingredient or 'pepper' in input_ingredient or 'salt' in input_ingredient or ' spray ' in input_ingredient:
+        if ' or ' in input_ingredient or 'recipe' in input_ingredient or 'black pepper' in input_ingredient or 'salt' in input_ingredient or ' spray ' in input_ingredient:
             errors.append(input_ingredient)
-            input_ingredient = input_ingredient + '***'
+            input_ingredient = input_ingredient + ' (or/salt/pepper/spray/recipe,)'
             filter_results.append(input_ingredient)
             k+=1
             continue
@@ -52,7 +53,7 @@ def getNVforRecipe(ingredient_list):
                 if POS[0][1] == 'NN' or POS[0][1] == 'NNS' or POS[0][1] == 'JJ':
                     ingredient = ingredient + POS[0][0] + ' '
             ingredient = ingredient.lower()
-            ingredient = ingredient.replace(' bags ', ' ').replace(' bag ', '').replace(' teaspoons ', ' ').replace(' teaspoon ', ' ').replace(' cups ', ' ').replace(' cup ', ' ').replace(' container ', ' ').replace(' tablespoons ', ' ').replace(' tablespoon ', ' ').replace(' box ', ' ').replace(' ounces ', ' ').replace(' packages ', ' ').replace(' package ', ' ').replace(' packets', ' ').replace(' pounds ', ' ').replace(' pound ', ' ').replace(' pints ', ' ').replace(' cans ', ' ').replace(' can ', ' ').replace(' pint ', ' ').replace(' pure ', ' ').replace(' jar ', ' ').replace(' tsp ', ' ').replace(' tbsp ', ' ').replace(' large ', ' ').replace(' small ', ' ').replace(' medium ', ' ').replace(' dairy ', ' ').replace(' aisle ', ' ').replace(' chopped ', ' ').replace(' mix ', ' ').replace(' optional ', ' ').replace(' packed ', ' ').replace(' leftover ', ' ').replace(' delicious ', ' ').replace(' cooked ', ' ').replace(' cook ', ' ').replace(' note ', ' ').replace(' water ', ' ').replace(' store-bought ', ' ').replace(' good ', ' ').replace(' sprigs ', ' ').replace(' inches ', ' ').replace(' chunks ', ' ').replace(' head ', ' ').replace(' stalks ', ' ').replace(' extra ', ' ').replace(' ice cold ', ' ').replace(' stick ', ' ').replace(' homemade ', ' ').replace(' dry ', ' ').replace(' whole ', ' ').replace(' pieces ', ' ').replace(' cut ', ' ')
+            ingredient = ingredient.replace(' bags ', ' ').replace(' bag ', '').replace(' teaspoons ', ' ').replace(' teaspoon ', ' ').replace(' cups ', ' ').replace(' cup ', ' ').replace(' container ', ' ').replace(' tablespoons ', ' ').replace(' tablespoon ', ' ').replace(' box ', ' ').replace(' ounces ', ' ').replace(' packages ', ' ').replace(' package ', ' ').replace(' packets', ' ').replace(' pounds ', ' ').replace(' pound ', ' ').replace(' pints ', ' ').replace(' cans ', ' ').replace(' can ', ' ').replace(' pint ', ' ').replace(' pure ', ' ').replace(' jar ', ' ').replace(' tsp ', ' ').replace(' tbsp ', ' ').replace(' large ', ' ').replace(' small ', ' ').replace(' medium ', ' ').replace(' dairy ', ' ').replace(' aisle ', ' ').replace(' chopped ', ' ').replace(' optional ', ' ').replace(' packed ', ' ').replace(' leftover ', ' ').replace(' delicious ', ' ').replace(' cooked ', ' ').replace(' cook ', ' ').replace(' note ', ' ').replace(' water ', ' ').replace(' store-bought ', ' ').replace(' good ', ' ').replace(' sprigs ', ' ').replace(' inches ', ' ').replace(' chunks ', ' ').replace(' head ', ' ').replace(' stalks ', ' ').replace(' extra ', ' ').replace(' ice cold ', ' ').replace(' stick ', ' ').replace(' homemade ', ' ').replace(' dry ', ' ').replace(' whole ', ' ').replace(' pieces ', ' ').replace(' cut ', ' ')
             #print ingredient
 
 
@@ -93,7 +94,7 @@ def getNVforRecipe(ingredient_list):
         else:#no quantity specified, add to error list
             k+=1
             errors.append(input_ingredient)
-            input_ingredient = input_ingredient + '***'
+            input_ingredient = input_ingredient + ' (no quantity specified)'
             filter_results.append(input_ingredient)
             continue
         filter_results.append(ingredient)#add re-formatted ingredient to list for debugging
@@ -309,7 +310,34 @@ def getNVforRecipe(ingredient_list):
                 if calcium_td :
                     calcium = calcium_td.get_text()
                     IngredientNVdataG.append(calcium)
-################# BEGIN CALCULATING NUTRITIONAL VALUE #######################
+############CREATE JSON OBJECT FROM DATA############################
+            ingredient_data = {}
+            fat_data = {}
+            calorie_data = {}
+            nutrition_data = {}
+            fat_data['total'] = totalFat
+            fat_data['saturated'] = satFat
+
+            calorie_data['total'] = calories
+            calorie_data['fromFat'] = fatCal
+
+            nutrition_data['calories'] = calorie_data
+            nutrition_data['fat'] = fat_data
+            nutrition_data['cholesterol'] = cholesterol
+            nutrition_data['sodium'] = sodium
+            nutrition_data['carbs'] = totalCarbs
+            nutrition_data['fiber'] = fiber
+            nutrition_data['sugar'] = sugar
+            nutrition_data['protein'] = protein
+            nutrition_data['calcium'] = calcium
+
+            ingredient_data['name'] = ingredient
+            ingredient_data ['author']= ScrapeFetchedRecipes.author
+            ingredient_data['nutrition'] = nutrition_data
+
+            jsonIngredientList.append(ingredient_data)
+
+################# BEGIN CALCULATING NUTRITIONAL VALUE OF ENTIRE RECIPE #######################
             g = len(units)-1
             if g > 0:
                 if ')' == units[g] and 'oz' in units:#only preform calculation if NV data specifies oz for its unit in parenthesis at the end
@@ -371,35 +399,61 @@ def getNVforRecipe(ingredient_list):
                     else:
                         print 'bad unit is: ' + quantity + ' for ingredient: ' + ingredient
                         errors.append(input_ingredient)
-                        input_ingredient = input_ingredient + '***'
+                        input_ingredient = input_ingredient + ' (bad units)'
                         filter_results.append(input_ingredient)
+                        #filter_results.append('Bad unit specifier')
                         ingredient_qtyOZ = 0.0
                         # NVunitOZ = 1
 
                     factor = ingredient_qtyOZ/NVunitOZ #multiply fetched NV data by this constant to get NV of ingredient
                     #print 'factor is: ' , factor
-                #sum it all up
+            #sum it all up
                 i = 0
                 #j = len(IngredientNVdataG)
-            while i < len(IngredientNVdataG):
-                IngredientNVdataG[i] = IngredientNVdataG[i].replace('g','').replace('m', '').replace('<' , '')
-                IngredientNVdataG[i] = float(IngredientNVdataG[i])
-                totalNVstat[i] = (factor * IngredientNVdataG[i]) + totalNVstat[i]
-                i += 1
+                while i < len(IngredientNVdataG):
+                    IngredientNVdataG[i] = IngredientNVdataG[i].replace('g','').replace('m', '').replace('<' , '')
+                    IngredientNVdataG[i] = float(IngredientNVdataG[i])
+                    totalNVstat[i] = (factor * IngredientNVdataG[i]) + totalNVstat[i]
+                    i += 1
         k += 1
     #display data
-    print 'For ' + ScrapeFetchedRecipes.Amount.strip() + ':'
-    print 'There are ' , totalNVstat[0] , ' calories in this recipe'
-    print 'There are ' , totalNVstat[1] , ' calories from fat in this recipe'
-    print 'There are ' , totalNVstat[2] , 'g of fat in this recipe'
-    print 'There are ' , totalNVstat[3] , 'g of saturated fat in this recipe'
-    print 'There are ' , totalNVstat[4] , 'mg of cholesterol in this recipe'
-    print 'There are ' , totalNVstat[5] , 'mg of sodium in this recipe'
-    print 'There are ' , totalNVstat[6] , 'g total carbs in this recipe'
-    print 'There are ' , totalNVstat[7] , 'g of fiber in this recipe'
-    print 'There are ' , totalNVstat[8] , 'g of sugar in this recipe'
-    print 'There are ' , totalNVstat[9] , 'g of protein in this recipe'
-    print 'There are ' , totalNVstat[10] , 'mg of calcium in this recipe'
+    # print 'For ' + ScrapeFetchedRecipes.Amount.strip() + ':'
+    # print 'There are ' , totalNVstat[0] , ' calories in this recipe'
+    # print 'There are ' , totalNVstat[1] , ' calories from fat in this recipe'
+    # print 'There are ' , totalNVstat[2] , 'g of fat in this recipe'
+    # print 'There are ' , totalNVstat[3] , 'g of saturated fat in this recipe'
+    # print 'There are ' , totalNVstat[4] , 'mg of cholesterol in this recipe'
+    # print 'There are ' , totalNVstat[5] , 'mg of sodium in this recipe'
+    # print 'There are ' , totalNVstat[6] , 'g total carbs in this recipe'
+    # print 'There are ' , totalNVstat[7] , 'g of fiber in this recipe'
+    # print 'There are ' , totalNVstat[8] , 'g of sugar in this recipe'
+    # print 'There are ' , totalNVstat[9] , 'g of protein in this recipe'
+    # print 'There are ' , totalNVstat[10] , 'mg of calcium in this recipe'
+
+    recipe_nutrition_data = {}
+    recipe_nutrition_data['calTotal'] = totalNVstat[0]
+    recipe_nutrition_data['calFromFat'] = totalNVstat[1]
+    recipe_nutrition_data['totalFat'] = totalNVstat[2]
+    recipe_nutrition_data['saturatedFat'] = totalNVstat[3]
+    recipe_nutrition_data['cholesterol'] = totalNVstat[4]
+    recipe_nutrition_data['sodium'] = totalNVstat[5]
+    recipe_nutrition_data['carbs'] = totalNVstat[6]
+    recipe_nutrition_data['fiber'] = totalNVstat[7]
+    recipe_nutrition_data['sugar'] = totalNVstat[8]
+    recipe_nutrition_data['protein'] = totalNVstat[9]
+    recipe_nutrition_data['calcium'] = totalNVstat[10]
+
+    recipe_data = {}
+    recipe_data['name'] = ScrapeFetchedRecipes.title
+    recipe_data['origURL'] = ScrapeFetchedRecipes.r.url
+    recipe_data['steps'] = ScrapeFetchedRecipes.dirList
+    recipe_data['time'] = ScrapeFetchedRecipes.Cook_Time
+    recipe_data['servings'] = ScrapeFetchedRecipes.Amount.strip()
+    recipe_data['ingredients'] = jsonIngredientList
+    recipe_data['nutrition'] = recipe_nutrition_data
+    json_data = json.dumps(recipe_data)
+    print json_data
+
     file = open('ingredient_name.txt', 'a')
     for item in filter_results:
         item = item.encode('utf-8')

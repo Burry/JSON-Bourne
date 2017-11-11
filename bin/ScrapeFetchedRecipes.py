@@ -18,14 +18,14 @@ with open("recipes.txt", "r") as links:
 	for line in links:
 		i += 1
 		recipe_links.append(line)
-		if i > 500:
+		if i > 11:
 			break # i only exists so loop doesnt go through every line in the text file
-j = 1
+j = 2
 #scrapes first recipe extracted from text file
 ingredient_list = []
-while j < 20:
+while j < 12:
 	ingredient_list = []
-	Directions = 'Directions: \n'
+	Directions = ''#'Directions: \n'
 	Amount = 'for '
 	Cook_Time = 'Total Cooking Time: '
 	time = ' '
@@ -73,6 +73,14 @@ while j < 20:
 			servings = dl.find('dd', {'class' : 'o-RecipeInfo__a-Description'})
 	if servings != ' ':
 		Amount = servings.get_text()
+	#get author
+	yield_section = soup.find('span' , {'class' : 'o-Attribution__a-Name'})
+	if yield_section:
+		a = yield_section.find('a')
+		if a:
+			author = a.get_text()
+
+
 	#write name of recipe and ingredient to file
 	myfile = open("IngredientString.txt", "a")
 	# myfile.write("\n\nTitle: %s\n\n" % title)
@@ -81,8 +89,17 @@ while j < 20:
 		myfile.write("%s\n\n" % item)
 	#print (Cook_Time) # print cooking time
 	#print (Amount) #prints number of servings
-	#print (Directions)
-	json_data = json.dumps({})
-	json_data["title"] = ""
+	#print Directions
+
+	dirList = Directions.split("\n")#break directions into array
+	m = 0
+	while m < len(dirList):
+		if dirList[m] == "":
+			del dirList[m]
+		else:
+			dirList[m] = dirList[m].strip()
+			m += 1
+
+
 	NVscrape.getNVforRecipe(ingredient_list)
 	j+=1
