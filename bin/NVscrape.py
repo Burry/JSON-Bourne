@@ -6,9 +6,9 @@ import nltk, json
 import ScrapeFetchedRecipes
 import re
 from bs4 import BeautifulSoup
-nltk.download('punkt')
-nltk.download('maxent_treebank_pos_tagger')
-nltk.download('averaged_perceptron_tagger')
+# nltk.download('punkt')
+# nltk.download('maxent_treebank_pos_tagger')
+# nltk.download('averaged_perceptron_tagger')
 
 def getNVforRecipe(ingredient_list):
     errors = []
@@ -258,8 +258,6 @@ def getNVforRecipe(ingredient_list):
             nutrition_data['calFromFat'] = fatCal
             nutrition_data['totalFat'] = totalFat
             nutrition_data['saturatedFat'] = satFat
-            nutrition_data['calories'] = calorie_data
-            nutrition_data['fat'] = fat_data
             nutrition_data['cholesterol'] = cholesterol
             nutrition_data['sodium'] = sodium
             nutrition_data['carbs'] = totalCarbs
@@ -416,7 +414,7 @@ def getNVforRecipe(ingredient_list):
     recipe_data['nutrition'] = recipe_nutrition_data
     recipe_data ['author']= ScrapeFetchedRecipes.author
     json_data = json.dumps(recipe_data)
-    print 'start response'
+    #print 'start response'
     print json_data
 
     file = open('ingredient_name.txt', 'a')
