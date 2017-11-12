@@ -3,9 +3,9 @@ import nltk, json
 import ScrapeFetchedRecipes
 import re
 from bs4 import BeautifulSoup
-# nltk.download('punkt')
-# nltk.download('maxent_treebank_pos_tagger')
-# nltk.download('averaged_perceptron_tagger')
+nltk.download('punkt')
+nltk.download('maxent_treebank_pos_tagger')
+nltk.download('averaged_perceptron_tagger')
 
 def getNVforRecipe(ingredient_list):
     errors = []
