@@ -18,21 +18,23 @@ with open("recipes.txt", "r") as links:
 	for line in links:
 		i += 1
 		recipe_links.append(line)
-		if i > 11:
+		if i > 10:
 			break # i only exists so loop doesnt go through every line in the text file
-j = 2
+j = 0
 #scrapes first recipe extracted from text file
-ingredient_list = []
-while j < 12:
+#ingredient_list = []
+title = ' '
+while j < 11:
 	ingredient_list = []
 	Directions = ''#'Directions: \n'
 	Amount = 'for '
 	Cook_Time = 'Total Cooking Time: '
 	time = ' '
 	servings = ' '
+	previous_title = title
 	title = ' '
 	r = requests.get(recipe_links[j])
-	print (r.url) #can verify information by going to URL
+	#print (r.url) #can verify information by going to URL
 	content = r.content
 	soup = BeautifulSoup(content, 'html.parser')
 	#get title
@@ -41,6 +43,7 @@ while j < 12:
 		title_span = title_h.find('span', {'class' : 'o-AssetTitle__a-HeadlineText'})
 		if title_span:
 			title = title_span.get_text()
+			title = title.lower()
 			#print title
 	#Get directions
 	for item in soup.find_all('div' , {'class' : 'o-Method__m-Body'}):
@@ -83,7 +86,7 @@ while j < 12:
 
 	#write name of recipe and ingredient to file
 	myfile = open("IngredientString.txt", "a")
-	# myfile.write("\n\nTitle: %s\n\n" % title)
+	myfile.write("Author: %s\n\n" % author)
 	for item in ingredient_list:
 		item = item.encode('utf-8')
 		myfile.write("%s\n\n" % item)
@@ -99,7 +102,14 @@ while j < 12:
 		else:
 			dirList[m] = dirList[m].strip()
 			m += 1
-
-
+	#print title
+	#print previous_title
+	if title == previous_title:
+		j+= 1
+		#previous_title = title
+		continue
+	#previous_title = title
+	print 'Author: ' + author
 	NVscrape.getNVforRecipe(ingredient_list)
+
 	j+=1
