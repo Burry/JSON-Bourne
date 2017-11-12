@@ -416,6 +416,7 @@ def getNVforRecipe(ingredient_list):
     recipe_data['nutrition'] = recipe_nutrition_data
     recipe_data ['author']= ScrapeFetchedRecipes.author
     json_data = json.dumps(recipe_data)
+    print 'start response'
     print json_data
 
     file = open('ingredient_name.txt', 'a')
