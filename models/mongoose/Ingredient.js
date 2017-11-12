@@ -10,14 +10,10 @@ let schema = new Schema({
         ref: 'Tag'
     }],
     nutrition: {
-        calories: {
-            total: Number,
-            fromFat: Number
-        },
-        fat: { // in grams
-            total: Number,
-            saturated: Number,
-        },
+        calTotal: Number,
+        calFromFat: Number
+        totalFat: Number,//in grams
+        saturatedFat: Number,//in grams
         cholesterol: Number, // in mg
         sodium: Number, // in mg
         carbs: Number, // in grams
