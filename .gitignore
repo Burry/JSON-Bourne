@@ -40,3 +40,4 @@ yarn.lock
 
 # Debug log from npm
 npm-debug.log
+/.ropeproject

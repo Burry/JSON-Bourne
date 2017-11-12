@@ -11,10 +11,7 @@ let schema = new Schema({
     name: String,
     origURL: String,
     steps: [String],
-    time: { // time in minutes
-        prep: Number,
-        cook: Number
-    },
+    time: Number,   // time in minutes
     author: String, // Sequelize user primary key
     likes: Number,
     created: Date,
