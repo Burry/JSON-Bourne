@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 from __future__ import print_function
+from random import *
+import hashlib
 import requests
 import time
 import sys
@@ -282,13 +284,13 @@ def getNVforRecipe(ingredient_list):
             ingredient_data['name'] = ingredient
             ingredient_data['type'] = 'ingredient'
 
-            ingredient_id = hash(ingredient) % ((sys.maxsize + 1) * 2)
+            ingredient_id = str(hashlib.md5(ingredient + str(random())).hexdigest())
             ingredient_data['_id'] = ingredient_id
             ingredient_data['nutrition'] = nutrition_data
             IngredientIDList.append(ingredient_id)
             ingredientJSON = json.dumps(ingredient_data)
-            if hash(ingredient) not in ScrapeFetchedRecipes.all_unique_ingredientID:
-                ScrapeFetchedRecipes.all_unique_ingredientID.append(hash(ingredient))
+            if ingredient_id not in ScrapeFetchedRecipes.all_unique_ingredientID:
+                ScrapeFetchedRecipes.all_unique_ingredientID.append(ingredient_id)
                 print (ingredientJSON)
 ################# BEGIN CALCULATING NUTRITIONAL VALUE OF ENTIRE RECIPE #######################
             g = len(units)-1
