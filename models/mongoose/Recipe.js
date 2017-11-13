@@ -13,12 +13,15 @@ let schema = new Schema({
     origURL: String,
     steps: [String],
     time: Number, //in minutes
-    servings: Number, //in servings
+    servings: String, //in servings
     author: String, // Sequelize user primary key
     likes: Number,
     photoURL: String,
     created: Date,
-    ingredients: [Number],
+    ingredients: [{
+        type: Schema.ObjectId,
+        ref: 'Ingredients'
+    }],
     tags: [{
         type: Schema.ObjectId,
         ref: 'Tag'

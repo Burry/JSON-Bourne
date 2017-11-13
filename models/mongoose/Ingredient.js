@@ -3,9 +3,9 @@ const findOrCreate = require('mongoose-find-or-create');
 const Schema = mongoose.Schema;
 
 let schema = new Schema({
+    _id: String,
     name: String,
     type: String,
-    _id: Number,
     avgPrice: Number, // price in USD
     tags: [{
         type : Schema.ObjectId,
