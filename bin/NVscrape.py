@@ -113,7 +113,6 @@ def getNVforRecipe(ingredient_list):
                     Num, space, rest = input_ingredient.partition(' ')
                     input_ingredient = Num + '-' + rest
                 #grab the '1 cup' or '1 pound' part of ingredient, store as string called quantity
-                #I need to account for cases like this: 1 (15-ounce) can
                 array = input_ingredient.split()
                 quantity = array[0] + ' ' + array[1]
         else:#no quantity specified, add to error list
@@ -288,7 +287,9 @@ def getNVforRecipe(ingredient_list):
             ingredient_data['nutrition'] = nutrition_data
             IngredientIDList.append(ingredient_id)
             ingredientJSON = json.dumps(ingredient_data)
-            print (ingredientJSON)
+            if hash(ingredient) not in ScrapeFetchedRecipes.all_unique_ingredientID:
+                ScrapeFetchedRecipes.all_unique_ingredientID.append(hash(ingredient))
+                print (ingredientJSON)
 ################# BEGIN CALCULATING NUTRITIONAL VALUE OF ENTIRE RECIPE #######################
             g = len(units)-1
             if g > 0:
