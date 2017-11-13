@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import argparse
 import requests
 import NVscrape
@@ -122,3 +124,5 @@ while i < int(args.count):
 	NVscrape.getNVforRecipe(ingredient_list)
 
 	i+=1
+
+sys.stdout.flush()

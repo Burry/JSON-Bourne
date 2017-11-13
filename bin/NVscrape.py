@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+
+from __future__ import print_function
 import requests
 import time
 import sys
@@ -10,6 +13,20 @@ from bs4 import BeautifulSoup
 # nltk.download('punkt')
 # nltk.download('maxent_treebank_pos_tagger')
 # nltk.download('averaged_perceptron_tagger')
+
+class Unbuffered(object):
+   def __init__(self, stream):
+       self.stream = stream
+   def write(self, data):
+       self.stream.write(data)
+       self.stream.flush()
+   def writelines(self, datas):
+       self.stream.writelines(datas)
+       self.stream.flush()
+   def __getattr__(self, attr):
+       return getattr(self.stream, attr)
+
+sys.stdout = Unbuffered(sys.stdout)
 
 def getNVforRecipe(ingredient_list):
     errors = []
@@ -271,7 +288,7 @@ def getNVforRecipe(ingredient_list):
             ingredient_data['nutrition'] = nutrition_data
             IngredientIDList.append(ingredient_id)
             ingredientJSON = json.dumps(ingredient_data)
-            print ingredientJSON
+            print (ingredientJSON)
 ################# BEGIN CALCULATING NUTRITIONAL VALUE OF ENTIRE RECIPE #######################
             g = len(units)-1
             if g > 0:
@@ -431,8 +448,7 @@ def getNVforRecipe(ingredient_list):
     recipe_data['photoURL'] = ScrapeFetchedRecipes.image_src
     json_data = json.dumps(recipe_data)
     #print 'start response'
-    print json_data
-    sys.stdout.flush()
+    print(json_data)
 
     file = open('ingredient_name.txt', 'a')
     for item in filter_results:
