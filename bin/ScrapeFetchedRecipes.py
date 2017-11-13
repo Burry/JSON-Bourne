@@ -1,6 +1,7 @@
 import requests
 import NVscrape
 import re
+import sys
 from bs4 import BeautifulSoup
 myfile = open('IngredientString.txt', 'w')
 myfile.write('')
@@ -18,21 +19,22 @@ with open("recipes.txt", "r") as links:
 	for line in links:
 		i += 1
 		recipe_links.append(line)
-		if i > 10:
+		if i >= int(sys.argv[1]):
 			break # i only exists so loop doesnt go through every line in the text file
 j = 0
 #scrapes first recipe extracted from text file
 #ingredient_list = []
 title = ' '
-while j < 11:
+while j < int(sys.argv[1]):
 	ingredient_list = []
 	Directions = ''#'Directions: \n'
-	Amount = 'for '
-	Cook_Time = 'Total Cooking Time: '
-	time = ' '
-	servings = ' '
+	Amount = ''
+	Cook_Time = ''
+	time = ''
+	servings = ''
 	previous_title = title
-	title = ' '
+	title = ''
+	author = ''
 	r = requests.get(recipe_links[j])
 	#print (r.url) #can verify information by going to URL
 	content = r.content
@@ -54,7 +56,7 @@ while j < 11:
 	if image_div:
 		image_obj = image_div.find('img' , {'class' : 'o-AssetMultiMedia__a-Image'})
 		if image_obj:
-			image_src = image_obj.find('src' ) #if there is an image, grab the source
+			image_src = image_obj['src'] #if there is an image, grab the source
 			#print ("There is an image!")
 	#get ingredients
 	ingredients_div = soup.find('div', {'class' : 'o-Ingredients__m-Body'})
@@ -109,7 +111,7 @@ while j < 11:
 		#previous_title = title
 		continue
 	#previous_title = title
-	# print 'Author: ' + author
+	#print 'Author: ' + author
 	NVscrape.getNVforRecipe(ingredient_list)
 
 	j+=1

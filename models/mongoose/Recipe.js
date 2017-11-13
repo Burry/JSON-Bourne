@@ -9,17 +9,16 @@ let schema = new Schema({
         default: shortid.generate
     },
     name: String,
+    type: String,
     origURL: String,
     steps: [String],
     time: Number, //in minutes
     servings: Number, //in servings
     author: String, // Sequelize user primary key
     likes: Number,
+    photoURL: String,
     created: Date,
-    ingredients: [{
-        type: Schema.ObjectId,
-        ref: 'Ingredient'
-    }],
+    ingredients: [Number],
     tags: [{
         type: Schema.ObjectId,
         ref: 'Tag'

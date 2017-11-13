@@ -4,6 +4,8 @@ const Schema = mongoose.Schema;
 
 let schema = new Schema({
     name: String,
+    type: String,
+    _id: Number,
     avgPrice: Number, // price in USD
     tags: [{
         type : Schema.ObjectId,
