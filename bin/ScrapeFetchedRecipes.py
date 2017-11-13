@@ -109,7 +109,7 @@ while j < 11:
 		#previous_title = title
 		continue
 	#previous_title = title
-	print 'Author: ' + author
+	# print 'Author: ' + author
 	NVscrape.getNVforRecipe(ingredient_list)
 
 	j+=1

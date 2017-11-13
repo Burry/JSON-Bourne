@@ -412,7 +412,7 @@ def getNVforRecipe(ingredient_list):
     recipe_data['servings'] = ScrapeFetchedRecipes.Amount.strip()
     recipe_data['ingredients'] = jsonIngredientList
     recipe_data['nutrition'] = recipe_nutrition_data
-    recipe_data ['author']= ScrapeFetchedRecipes.author
+    recipe_data ['author'] = ScrapeFetchedRecipes.author
     json_data = json.dumps(recipe_data)
     #print 'start response'
     print json_data
