@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 const findOrCreate = require('mongoose-find-or-create');
 const Schema = mongoose.Schema;
-const shortid = new require('shortid').generate();
+const shortid = require('shortid');
 
 let schema = new Schema({
     _id: {
         type: String,
-        default: shortid
+        default: shortid.generate
     },
     name: String,
     type: String,

@@ -63,7 +63,7 @@ let options = {
 gulp.task('clean', next => require('del')(paths.build.dest, next));
 
 // Populate MongoDB database with test data
-gulp.task('pop-mongo', next => models.mongo.populateData(next));
+gulp.task('pop-mongo', next => models.mongo.populateTestData(next));
 
 // Delete both databases
 // gulp.task('popdb', gulp.parallel('pop-mongo', 'pop-sql'), next => next());

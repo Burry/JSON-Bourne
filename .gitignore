@@ -7,6 +7,9 @@ pids
 *.pid
 *.seed
 
+# Compiled python
+*.pyc
+
 # Environment variables
 /.env
 
@@ -41,3 +44,6 @@ yarn.lock
 # Debug log from npm
 npm-debug.log
 /.ropeproject
+/bin/noSearchResults.txt
+/bin/IngredientString.txt
+/bin/ingredient_name.txt
