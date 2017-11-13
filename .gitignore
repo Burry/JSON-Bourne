@@ -7,11 +7,7 @@ pids
 *.pid
 *.seed
 
-# Python
-/bin/*.pyc
-/bin/noSearchResults.txt
-/bin/IngredientString.txt
-/bin/ingredient_name.txt
+# Python scraper
 noSearchResults.txt
 IngredientString.txt
 ingredient_name.txt
