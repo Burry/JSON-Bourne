@@ -284,7 +284,7 @@ def getNVforRecipe(ingredient_list):
             ingredient_data['name'] = ingredient
             ingredient_data['type'] = 'ingredient'
 
-            ingredient_id = str(hashlib.md5(ingredient + str(random())).hexdigest())
+            ingredient_id = str(hashlib.md5(ingredient + str(random())).hexdigest())[:24]
             ingredient_data['_id'] = ingredient_id
             ingredient_data['nutrition'] = nutrition_data
             IngredientIDList.append(ingredient_id)

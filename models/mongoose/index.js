@@ -2,8 +2,8 @@
 
 require('dotenv').config();
 const importModels = require('../import');
+const importScraper = require('./recipe-ingredient-importer');
 const mongoose = require('mongoose');
-const populateTestData = require('./test-data');
 const db = {};
 
 // Use native promises
@@ -31,7 +31,7 @@ db.close = next => db.connection.close(next && next);
 // Utility to delete database
 db.drop = next => db.connection.on('open', () => db.connection.db.dropDatabase(() => db.close(next)));
 
-// Utility to populate test data
-db.populateTestData = next => db.connection.on('open', () => populateTestData(db, next));
+// Utility to call scraper and populate Ingredient and Recipe collections
+db.populate = next => importScraper(db, next);
 
 module.exports = db;

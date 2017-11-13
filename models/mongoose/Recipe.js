@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongooseAlgolia = require('mongoose-algolia');
 const findOrCreate = require('mongoose-find-or-create');
 const Schema = mongoose.Schema;
 const shortid = require('shortid');
@@ -20,7 +21,7 @@ let schema = new Schema({
     created: Date,
     ingredients: [{
         type: Schema.ObjectId,
-        ref: 'Ingredients'
+        ref: 'Ingredient'
     }],
     tags: [{
         type: Schema.ObjectId,
@@ -43,4 +44,19 @@ let schema = new Schema({
 
 schema.plugin(findOrCreate);
 
-module.exports = mongoose.model('Recipe', schema);
+schema.plugin(mongooseAlgolia, {
+	appId: process.env.ALGOLIA_APP_ID,
+	apiKey: process.env.ALGOLIA_ADMIN_API_KEY,
+	indexName: 'Recipes',
+	populate: {
+		path: 'ingredients tags',
+		select: 'name'
+	},
+	debug: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test' ? true : false
+});
+
+const model = mongoose.model('Recipe', schema);
+
+model.SyncToAlgolia();
+
+module.exports = model;

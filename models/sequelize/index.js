@@ -1,6 +1,5 @@
 'use strict';
 
-require('dotenv').config();
 const importModels = require('../import');
 const path = require('path');
 // const populateTestData = require('./test-data');
