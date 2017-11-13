@@ -13,7 +13,10 @@ module.exports = (db, next) => {
     const createObject = (obj, model) => {
         return new Promise((resolve, reject) => {
             model.findOrCreate(obj, (err, newObj) => {
-                if (err) reject(err);
+                if (err) {
+                    reject(err);
+                    console.error(obj);
+                }
                 else resolve(newObj);
             });
         });
@@ -43,8 +46,7 @@ module.exports = (db, next) => {
 
     for (let i = 0; i < 500; i++) {
         let calFromFat = getRandomInt(0, 901);
-        let satFat = getRandomInt(0, 50);
-        let transFat = getRandomInt(0, 50);
+        let saturatedFat = getRandomInt(0, 50);
         let ingredient = {
             name: loremIpsum({
                 count: getRandomInt(1, 3),
@@ -54,15 +56,10 @@ module.exports = (db, next) => {
             avgPrice: getRandomInt(1, 11), // price in USD
             tags: [],
             nutrition: {
-                calories: {
-                    fromFat: calFromFat,
-                    total: calFromFat + getRandomInt(0, 500)
-                },
-                fat: { // in grams
-                    saturated: satFat,
-                    trans: transFat,
-                    total: satFat + transFat + getRandomInt(0, 50)
-                },
+                calTotal: calFromFat + getRandomInt(0, 500),
+                calFromFat: calFromFat,
+                totalFat: saturatedFat + getRandomInt(0, 50),
+                saturatedFat: saturatedFat,
                 cholesterol: getRandomInt(0, 101), // in mg
                 sodium: getRandomInt(0, 801), // in mg
                 carbs: getRandomInt(0, 51), // in grams
@@ -91,10 +88,8 @@ module.exports = (db, next) => {
             }),
             origURL: '',
             steps: steps,
-            time: { // time in minutes
-                prep: getRandomInt(0, 61),
-                cook: getRandomInt(0, 61)
-            },
+            time: getRandomInt(0, 180), // time in minutes
+            servings: getRandomInt(0, 5),
             author: loremIpsum({
                 count: 1,
                 units: 'words',
