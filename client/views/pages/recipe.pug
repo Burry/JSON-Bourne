@@ -1,14 +1,58 @@
 extends ../layout
 
+mixin nutrition(label, value, unit)
+    if value
+        li.list-group-item.d-flex.justify-content-between
+            span=label
+            span=Math.round(value) + (unit ? ` ${unit}` : '')
+
 block header
-    .jumbotron.jumbotron-fluid: .container
-        h1=recipe.name
-        h5='by ' + recipe.author
+    .jumbotron.jumbotron-fluid.recipe-header: .container
+        .media
+            img.recipe-img.mr-3(src=recipe.photoURL)
+            .media-body
+                h1=recipe.name
+                h5
+                    i.fa.fa-pie-chart.mr-2
+                    =recipe.servings
+                //- h5
+                //-     i.fa.fa-clock-o.mr-2
+                //-     =recipe.time
+                h5
+                    i.fa.fa-user.mr-2
+                    ='by ' + recipe.author
 
 block content
     .container
-        ol
-            each step in recipe.steps
-                li=step
-        hr
-        pre=recipe
+        .row
+            .col-md-8
+                h5 Ingredients
+                ul
+                    each ingredient in recipe.ingredients
+                        li=ingredient.name
+                br
+                h5 Steps
+                ol
+                    each step in recipe.steps
+                        if step != ''
+                            li=step
+                br
+                sup
+                    | Source: 
+                    a(href=recipe.origURL, target='_blank') Food Network
+            .col-md-4
+                h5 Nutrition Information
+                ul.list-group
+                    +nutrition('Calories', recipe.nutrition.calTotal)
+                    +nutrition('Calories from fat', recipe.nutrition.calFromFat)
+                    +nutrition('Total fat', recipe.nutrition.totalFat, 'g')
+                    +nutrition('Saturated fat', recipe.nutrition.saturatedFat, 'g')
+                    +nutrition('Carbohydrates', recipe.nutrition.carbs, 'g')
+                    +nutrition('Protein', recipe.nutrition.protein, 'g')
+                    +nutrition('Fiber', recipe.nutrition.fiber, 'g')
+                    +nutrition('Sugars', recipe.nutrition.sugars, 'g')
+                    +nutrition('Sodium', recipe.nutrition.sodium, 'mg')
+                    +nutrition('Calcium', recipe.nutrition.calcium, 'mg')
+                    +nutrition('Cholesterol', recipe.nutrition.cholesterol, 'mg')
+                    li.list-group-item
+                        sup.text-muted Values are in aggregate for all servings. Subject to variance.
