@@ -9,7 +9,6 @@ const gulp = require('gulp');
 const nodemon = require('gulp-nodemon');
 const sass = require('gulp-sass');
 const sourceMaps = require('gulp-sourcemaps');
-const uglify = require('gulp-uglify');
 const models = require('./models');
 
 // Paths
@@ -19,8 +18,8 @@ let paths = {
         dest: './node_modules/'
     },
     build: {
-        files: './build/**/*.*',
-        dest: './build/'
+        files: './client/build/**/*.*',
+        dest: './client/build/'
     },
     vendor: {
         dest: './client/build/vendor/'
@@ -56,6 +55,9 @@ let options = {
         ext: 'js json pug',
         ignore: ['gulpfile.js', paths.build.dest, paths.styles.src, paths.modules.dest],
         quiet: true
+    },
+    importer: {
+        recipeCount: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test' ? 10 : 1000
     }
 }
 
@@ -64,21 +66,15 @@ let options = {
 gulp.task('disconnect-mongo-from-gulp', next => models.mongo.close(next));
 
 // Clean
-gulp.task('clean', next => gulp.series(require('del')(paths.build.dest, next), 'disconnect-mongo-from-gulp'));
+gulp.task('clean', next => require('del')(paths.build.dest, next));
 
-// Populate MongoDB database with test data
-gulp.task('pop-mongo', next => gulp.series(models.mongo.populateTestData(next), 'disconnect-mongo-from-gulp'));
+// Scrape and import recipes and ingredients
+gulp.task('recipe-ingredient-importer', next => models.mongo.populate(next));
+gulp.task('pop-mongo', gulp.series('recipe-ingredient-importer', 'disconnect-mongo-from-gulp'));
 
-// Delete both databases
-// gulp.task('popdb', gulp.parallel('pop-mongo', 'pop-sql'), next => next());
-
-// Delete MongoDB database
+// Delete databases
 gulp.task('drop-mongo', next => models.mongo.drop(next));
-
-// Delete PostgreSQL database
 gulp.task('drop-sql', next => models.sql.drop(next));
-
-// Delete both databases
 gulp.task('dropdb', gulp.parallel('drop-mongo', 'drop-sql'), next => next());
 
 // Lint server JS files
@@ -87,7 +83,6 @@ gulp.task('es-lint-server', next => {
         .src(paths.serverJs)
         .pipe(esLint())
         .pipe(esLint.format())
-        .pipe(esLint.failAfterError())
         .on('end', next);
 });
 
@@ -97,9 +92,7 @@ gulp.task('es-lint-build', next => {
         .src(paths.js.src)
         .pipe(esLint())
         .pipe(esLint.format())
-        .pipe(esLint.failAfterError())
         .pipe(sourceMaps.init())
-        .pipe(uglify())
         .pipe(sourceMaps.write('.'))
         .pipe(gulp.dest(paths.js.dest))
         .pipe(browserSync.stream())
@@ -136,6 +129,13 @@ function copyVendorDependency(dependency, subDependency, next) {
         .on('end', next);
 }
 
+function copyFAFonts(next) {
+    return gulp
+        .src(paths.modules.dest + 'font-awesome/fonts/*.*')
+        .pipe(gulp.dest(paths.build.dest + 'fonts/'))
+        .on('end', next);
+}
+
 gulp.task('jquery', next => {
     return copyVendorDependency('jquery', 'dist', next);
 })
@@ -148,11 +148,15 @@ gulp.task('bootstrap', next => {
     return copyVendorDependency('bootstrap', '', next);
 })
 
-gulp.task('algolia', next => {
-    return copyVendorDependency('algoliasearch', 'dist', next);
+gulp.task('fontawesome', next => {
+    return copyVendorDependency('font-awesome', '', () => copyFAFonts(next));
 })
 
-gulp.task('vendor', gulp.parallel('jquery', 'popper.js', 'bootstrap', 'algolia', 'disconnect-mongo-from-gulp'), next => next());
+gulp.task('algolia', next => {
+    return copyVendorDependency('instantsearch.js', 'dist', next);
+})
+
+gulp.task('vendor', gulp.parallel('jquery', 'popper.js', 'bootstrap', 'fontawesome', 'algolia', 'disconnect-mongo-from-gulp'), next => next());
 
 // Build application
 gulp.task('build', gulp.parallel('es-lint-server', 'es-lint-build', 'styles', 'images', 'disconnect-mongo-from-gulp'), next => next());
