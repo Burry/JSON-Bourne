@@ -59,11 +59,15 @@ let options = {
     }
 }
 
+// Disconnect from MongoDB
+// (otherwise it keeps its connection open indefinitely)
+gulp.task('disconnect-mongo-from-gulp', next => models.mongo.close(next));
+
 // Clean
-gulp.task('clean', next => require('del')(paths.build.dest, next));
+gulp.task('clean', next => gulp.series(require('del')(paths.build.dest, next), 'disconnect-mongo-from-gulp'));
 
 // Populate MongoDB database with test data
-gulp.task('pop-mongo', next => models.mongo.populateTestData(next));
+gulp.task('pop-mongo', next => gulp.series(models.mongo.populateTestData(next), 'disconnect-mongo-from-gulp'));
 
 // Delete both databases
 // gulp.task('popdb', gulp.parallel('pop-mongo', 'pop-sql'), next => next());
@@ -148,11 +152,10 @@ gulp.task('algolia', next => {
     return copyVendorDependency('algoliasearch', 'dist', next);
 })
 
-gulp.task('vendor', gulp.parallel('jquery', 'popper.js', 'bootstrap', 'algolia'), next => next());
-
+gulp.task('vendor', gulp.parallel('jquery', 'popper.js', 'bootstrap', 'algolia', 'disconnect-mongo-from-gulp'), next => next());
 
 // Build application
-gulp.task('build', gulp.parallel('es-lint-server', 'es-lint-build', 'styles', 'images'), next => next());
+gulp.task('build', gulp.parallel('es-lint-server', 'es-lint-build', 'styles', 'images', 'disconnect-mongo-from-gulp'), next => next());
 
 // Start/restart nodemon
 gulp.task('nodemon', next => {

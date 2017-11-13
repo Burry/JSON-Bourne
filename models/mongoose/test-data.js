@@ -13,10 +13,7 @@ module.exports = (db, next) => {
     const createObject = (obj, model) => {
         return new Promise((resolve, reject) => {
             model.findOrCreate(obj, (err, newObj) => {
-                if (err) {
-                    reject(err);
-                    console.error(obj);
-                }
+                if (err) reject(err);
                 else resolve(newObj);
             });
         });

@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+
+import argparse
 import requests
 import NVscrape
 import re
@@ -12,20 +15,26 @@ myfile.close()
 myfile = open('ingredient_name.txt', 'w')
 myfile.write('')
 myfile.close()
-i = 0
+
+parser = argparse.ArgumentParser(description='Scrape recipe and ingredient data')
+parser.add_argument('count', type=int, help='an integer number of recipes to scrape')
+parser.add_argument('chromedriver', type=str, help='location to chromedriver executable')
+args = parser.parse_args()
+
+recipeCount = 0
 with open("recipes.txt", "r") as links:
 	recipe_links = []
-
 	for line in links:
-		i += 1
+		recipeCount += 1
 		recipe_links.append(line)
-		if i >= int(sys.argv[1]):
-			break # i only exists so loop doesnt go through every line in the text file
-j = 0
+		if recipeCount >= args.count:
+			break # recipeCount only exists so loop doesnt go through every line in the text file
+
+i = 0
 #scrapes first recipe extracted from text file
 #ingredient_list = []
 title = ' '
-while j < int(sys.argv[1]):
+while i < int(args.count):
 	ingredient_list = []
 	Directions = ''#'Directions: \n'
 	Amount = ''
@@ -35,7 +44,7 @@ while j < int(sys.argv[1]):
 	previous_title = title
 	title = ''
 	author = ''
-	r = requests.get(recipe_links[j])
+	r = requests.get(recipe_links[i])
 	#print (r.url) #can verify information by going to URL
 	content = r.content
 	soup = BeautifulSoup(content, 'html.parser')
@@ -107,11 +116,13 @@ while j < int(sys.argv[1]):
 	#print title
 	#print previous_title
 	if title == previous_title:
-		j+= 1
+		i+= 1
 		#previous_title = title
 		continue
 	#previous_title = title
 	#print 'Author: ' + author
 	NVscrape.getNVforRecipe(ingredient_list)
 
-	j+=1
+	i+=1
+
+sys.stdout.flush()
