@@ -12,6 +12,9 @@ pids
 /bin/noSearchResults.txt
 /bin/IngredientString.txt
 /bin/ingredient_name.txt
+noSearchResults.txt
+IngredientString.txt
+ingredient_name.txt
 
 # Environment variables
 /.env
@@ -47,5 +50,3 @@ yarn.lock
 # Debug log from npm
 npm-debug.log
 /.ropeproject
-/bin/ScrapeFetchedRecipes.pyc
-/bin/NVscrape.pyc
