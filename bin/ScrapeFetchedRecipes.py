@@ -34,6 +34,7 @@ i = 0
 #scrapes first recipe extracted from text file
 #ingredient_list = []
 title = ' '
+all_unique_ingredientID = []
 while i < int(args.count):
 	ingredient_list = []
 	Directions = ''#'Directions: \n'
