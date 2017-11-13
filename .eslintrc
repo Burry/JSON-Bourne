@@ -23,6 +23,7 @@
         comma-style: ["warn", "last"],
         no-console: ["warn", { allow: ["warn", "error", "info"] }],
         no-unused-vars: ["warn", { "vars": "local" }],
+        no-mixed-spaces-and-tabs: ["warn"],
         eqeqeq: ["warn", "smart"]
     }
 }
