@@ -11,7 +11,7 @@ let schema = new Schema({
     }],
     nutrition: {
         calTotal: Number,
-        calFromFat: Number
+        calFromFat: Number,
         totalFat: Number,//in grams
         saturatedFat: Number,//in grams
         cholesterol: Number, // in mg
