@@ -20,12 +20,10 @@ db.exec = mongoose.connection.db;
 db.connection.on('error', console.error.bind('Mongoose error: ', console));
 
 // Import models
-db.connection.on('open', () => {
-    importModels(__dirname, model => new Promise(resolve => {
-        db[model] = require('./' + model);
-        resolve();
-    }));
-});
+importModels(__dirname, model => new Promise(resolve => {
+    db[model] = require('./' + model);
+    resolve();
+}));
 
 // Utility to close database connection
 db.close = next => db.connection.close(next && next);
