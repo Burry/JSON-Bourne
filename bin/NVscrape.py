@@ -265,9 +265,11 @@ def getNVforRecipe(ingredient_list):
 
             ingredient_data['name'] = ingredient
             ingredient_data['type'] = 'ingredient'
-            ingredient_data['_id'] = hash(ingredient)
+
+            ingredient_id = hash(ingredient) % ((sys.maxsize + 1) * 2)
+            ingredient_data['_id'] = ingredient_id
             ingredient_data['nutrition'] = nutrition_data
-            IngredientIDList.append(hash(ingredient))
+            IngredientIDList.append(ingredient_id)
             ingredientJSON = json.dumps(ingredient_data)
             print ingredientJSON
 ################# BEGIN CALCULATING NUTRITIONAL VALUE OF ENTIRE RECIPE #######################
@@ -430,6 +432,7 @@ def getNVforRecipe(ingredient_list):
     json_data = json.dumps(recipe_data)
     #print 'start response'
     print json_data
+    sys.stdout.flush()
 
     file = open('ingredient_name.txt', 'a')
     for item in filter_results:

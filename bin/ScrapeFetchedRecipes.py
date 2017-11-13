@@ -1,3 +1,4 @@
+import argparse
 import requests
 import NVscrape
 import re
@@ -13,20 +14,25 @@ myfile = open('ingredient_name.txt', 'w')
 myfile.write('')
 myfile.close()
 
+parser = argparse.ArgumentParser(description='Scrape recipe and ingredient data')
+parser.add_argument('count', type=int, help='an integer number of recipes to scrape')
+parser.add_argument('chromedriver', type=str, help='location to chromedriver executable')
+args = parser.parse_args()
+
 recipeCount = 0
 with open("recipes.txt", "r") as links:
 	recipe_links = []
 	for line in links:
 		recipeCount += 1
 		recipe_links.append(line)
-		if (sys.argv[1] && recipeCount >= int(sys.argv[1])):
+		if recipeCount >= args.count:
 			break # recipeCount only exists so loop doesnt go through every line in the text file
 
 i = 0
 #scrapes first recipe extracted from text file
 #ingredient_list = []
 title = ' '
-while i < int(sys.argv[1]):
+while i < int(args.count):
 	ingredient_list = []
 	Directions = ''#'Directions: \n'
 	Amount = ''
