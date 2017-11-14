@@ -1,5 +1,14 @@
+#!/usr/bin/python3
+
+from __future__ import print_function
+from random import *
+import hashlib
 import requests
-import nltk
+import time
+import sys
+from selenium import webdriver #type sudo easy-install selenium (mac)
+#from selenium.webdriver.support.ui import Select
+import nltk, json
 import ScrapeFetchedRecipes
 import re
 from bs4 import BeautifulSoup
@@ -7,185 +16,131 @@ from bs4 import BeautifulSoup
 # nltk.download('maxent_treebank_pos_tagger')
 # nltk.download('averaged_perceptron_tagger')
 
+class Unbuffered(object):
+   def __init__(self, stream):
+       self.stream = stream
+   def write(self, data):
+       self.stream.write(data)
+       self.stream.flush()
+   def writelines(self, datas):
+       self.stream.writelines(datas)
+       self.stream.flush()
+   def __getattr__(self, attr):
+       return getattr(self.stream, attr)
+
+sys.stdout = Unbuffered(sys.stdout)
+
 def getNVforRecipe(ingredient_list):
     errors = []
+    IngredientIDList = []
     filter_results = []
-    totalNVstat = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0.0]
+    totalNVstat = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
     k = 0
     #loop through each ingredient in ingredient list from ScrapeFetchedRecipes.py file
 
     while k < len(ingredient_list):
-        #remove white space padding
+        #remove white space padding, periods, and make all lowercase
         input_ingredient = ingredient_list[k].strip()
         input_ingredient = input_ingredient.lower()
-        quantity_specified = re.match(r'[1-9/]{1,3}|One|Two|Three|Four', input_ingredient)
-        if ' or ' in input_ingredient or 'recipe' in input_ingredient or 'pepper' in input_ingredient or 'salt' in input_ingredient or ' spray ' in input_ingredient:
+        input_ingredient.replace('.','').replace(' cold, ', ' ')
+        #used to address "4 to 6 cups..."
+        if re.match(r'[1-9] to [1-9]', input_ingredient):#need to check this
+            input_ingredient = input_ingredient.split(' to ', 1)[1]
+            input_ingredient.strip()
+        if ',' in input_ingredient:
+            input_ingredient = input_ingredient.split(',',1)[0]
+        if ' or ' in input_ingredient:
+            right = input_ingredient.split(' or ', 1)[1]
+            left = input_ingredient.split(' or ', 1)[0]
+            #print 'right is: ' + right
+            if ' ' in right:
+                right = right.split(' ', 1)[1]
+                input_ingredient = input_ingredient.split(' or ',1)[0] + ' ' + right
+            else:
+                input_ingredient = left
+            #print 'resulting string of extracted \'or\': ' + input_ingredient
+
+        quantity_specified = re.match(r'[1-9/]{1,3}|one|two|three|four|five|six', input_ingredient)
+        if 'recipe' in input_ingredient or 'black pepper' in input_ingredient or ' salt' in input_ingredient or ' spray ' in input_ingredient or ':' in input_ingredient or 'recipe' in input_ingredient:
             errors.append(input_ingredient)
-            input_ingredient = input_ingredient + '***'
+            input_ingredient = input_ingredient + ' (or/salt/pepper/spray/recipe,)'
             filter_results.append(input_ingredient)
             k+=1
             continue
         if quantity_specified:
             if 'parmesan' in input_ingredient:
                 ingredient = 'parmesan cheese'
-                print ingredient
-                k += 1
-                continue
-            if 'garlic' in input_ingredient and 'powder' not in input_ingredient:
+                #print ingredient
+                #k += 1
+
+            elif 'garlic' in input_ingredient and 'powder' not in input_ingredient:
                 ingredient = 'garlic'
-                print ingredient
-                k += 1
-                continue
-            if 'cucumber' in input_ingredient:
+                #print ingredient
+                #k += 1
+
+            elif 'cucumber' in input_ingredient:
                 ingredient = 'cucumber'
-                print ingredient
-                k += 1
-                continue
-            Words = input_ingredient.split()
-            ingredient = ' '
-            for word in Words:
-                if re.match('[0-9]+-', word) or re.match('[1-9]/[1-9]-', word):
-                    continue
-                tokenized_word = nltk.word_tokenize(word)
-                POS =  nltk.pos_tag(tokenized_word)
+                #print ingredient
+                #k += 1
+            elif 'unsalted butter' in input_ingredient:
+                ingredient = 'unsalted butter'
 
-                if POS[0][1] == 'NN' or POS[0][1] == 'NNS' or POS[0][1] == 'JJ':
-                    ingredient = ingredient + POS[0][0] + ' '
-            ingredient = ingredient.lower()
-            ingredient = ingredient.replace(' bags ', ' ').replace(' bag ', '').replace(' teaspoons ', ' ').replace(' teaspoon ', ' ').replace(' cups ', ' ').replace(' cup ', ' ').replace(' container ', ' ').replace(' tablespoons ', ' ').replace(' tablespoon ', ' ').replace(' box ', ' ').replace(' ounces ', ' ').replace(' packages ', ' ').replace(' package ', ' ').replace(' packets', ' ').replace(' pounds ', ' ').replace(' pound ', ' ').replace(' pints ', ' ').replace(' cans ', ' ').replace(' can ', ' ').replace(' pint ', ' ').replace(' pure ', ' ').replace(' jar ', ' ').replace(' tsp ', ' ').replace(' tbsp ', ' ').replace(' large ', ' ').replace(' small ', ' ').replace(' medium ', ' ').replace(' dairy ', ' ').replace(' aisle ', ' ').replace(' chopped ', ' ').replace(' mix ', ' ').replace(' optional ', ' ').replace(' packed ', ' ').replace(' leftover ', ' ').replace(' delicious ', ' ').replace(' cooked ', ' ').replace(' cook ', ' ').replace(' note ', ' ').replace(' water ', ' ').replace(' store-bought ', ' ').replace(' good ', ' ').replace(' sprigs ', ' ').replace(' inches ', ' ').replace(' chunks ', ' ').replace(' head ', ' ').replace(' stalks ', ' ').replace(' extra ', ' ').replace(' ice cold ', ' ').replace(' stick ', ' ').replace(' homemade ', ' ').replace(' dry ', ' ').replace(' whole ', ' ').replace(' pieces ', ' ').replace(' cut ', ' ')
-            #print ingredient
+            else:
+                Words = input_ingredient.split()
+                ingredient = ' '
+                for word in Words:
+                    if re.match(r'[0-9]+-', word) or re.match(r'[1-9]/[1-9]-', word):
+                        continue
+                    tokenized_word = nltk.word_tokenize(word)
+                    POS =  nltk.pos_tag(tokenized_word)
 
+                    if POS[0][1] == 'NN' or POS[0][1] == 'NNS' or POS[0][1] == 'JJ':
+                        ingredient = ingredient + POS[0][0] + ' '
+                ingredient = ingredient.lower()
+                ingredient = ingredient.replace(' miniature ', ' ').replace(' beaten ', ' ').replace(' bags ', ' ').replace(' bag ', '').replace(' teaspoons ', ' ').replace(' teaspoon ', ' ').replace(' cups ', ' ').replace(' cup ', ' ').replace(' container ', ' ').replace(' tablespoons ', ' ').replace(' tablespoon ', ' ').replace(' box ', ' ').replace(' ounces ', ' ').replace(' packages ', ' ').replace(' package ', ' ').replace(' packets', ' ').replace(' pounds ', ' ')
+                ingredient = ingredient.replace(' pound ','').replace(' pints ', ' ').replace(' cans ', ' ').replace(' can ', ' ').replace(' pint ', ' ').replace(' pure ', ' ').replace(' jar ', ' ').replace(' tsp ', ' ').replace(' tbsp ', ' ').replace(' large ', ' ').replace(' small ', ' ').replace(' medium ', ' ').replace(' dairy ', ' ').replace(' aisle ', ' ').replace(' chopped ', ' ').replace(' optional ', ' ').replace(' packed ', ' ').replace(' leftover ', ' ')
+                ingredient = ingredient.replace(' delicious ', ' ').replace(' cooked ', ' ').replace(' cook ', ' ').replace(' note ', ' ').replace(' water ', ' ').replace(' store-bought ', ' ').replace(' good ', ' ').replace(' sprigs ', ' ').replace(' inches ', ' ').replace(' chunks ', ' ').replace(' head ', ' ').replace(' stalks ', ' ').replace(' extra ', ' ').replace(' ice cold ', ' ').replace(' stick ', ' ').replace(' homemade ', ' ').replace(' dry ', ' ')
 
-            #get rid of - then change format of quantity
-            input_ingredient = input_ingredient.replace('-', ' ')
-            m = re.match('[1-9] [1-9]/[1-9]', input_ingredient)
-            if m:
-                Num, space, rest = input_ingredient.partition(' ')
-                input_ingredient = Num + '-' + rest
-            #grab the '1 cup' or '1 pound' part of ingredient, store as string called quantity
-            #I need to account for cases like this: 1 (15-ounce) can
-            array = input_ingredient.split()
-            quantity = array[0] + ' ' + array[1]
-#------------------------------------------------------------------------------------------------------------------
-            #do i need this? Was originally for I Cant Believe Its not Butter! spread
+                ingredient = ingredient.replace(' pieces ', ' ').replace(' cut ', ' ')
+                #special cases
+                if 'goya' in ingredient:
+                    ingredient = '16 bean soup mix'
+                elif 'red pepper flakes' in ingredient:
+                    ingredient = 'crushed red pepper'
 
-            # if '!' in input_ingredient:
-            #     k+=1
-            #     errors.append(input_ingredient)
-            #     input_ingredient = input_ingredient + '***'
-            #     filter_results.append(input_ingredient)
-            #     continue
-            #
-            #
-            # #handles case of '1 egg beated with 1 cup water'
-            # if ' egg beaten ' in input_ingredient:
-            #     ingredient = 'egg'
-            #
-            # ingredient = ingredient.lower()
-            #
-            # elif 'in ' in ingredient or 'water' in ingredient:
-            #     errors.append(ingredient)
-            #     k += 1
-            #     input_ingredient = input_ingredient + '***'
-            #     filter_results.append(input_ingredient)
-            #     continue
-#------------------------------------------------------------------------------------------------------------------
+                #get rid of - then change format of quantity
+                input_ingredient = input_ingredient.replace('-', ' ')
+                m = re.match(r'[1-9] [1-9]/[1-9]', input_ingredient)
+                if m:
+                    Num, space, rest = input_ingredient.partition(' ')
+                    input_ingredient = Num + '-' + rest
+                #grab the '1 cup' or '1 pound' part of ingredient, store as string called quantity
+                array = input_ingredient.split()
+                quantity = array[0] + ' ' + array[1]
         else:#no quantity specified, add to error list
             k+=1
             errors.append(input_ingredient)
-            input_ingredient = input_ingredient + '***'
+            input_ingredient = input_ingredient + ' (no quantity specified)'
             filter_results.append(input_ingredient)
             continue
         filter_results.append(ingredient)#add re-formatted ingredient to list for debugging
 ############        BEGIN SEARCH        ##############
-        keywords = ingredient.split() #split ingredients into array of keywords
-        search = ingredient.replace(' ', '+')#this used to construct a link to search results (search uses GET requests)
-
-        #construct link to search results
-        part1 = 'http://www.calorieking.com/foods/search.php?keywords='
-        part2 = '&go.x=0&go.y=0&go=Go'
-        url = part1 + search + part2
-
-        #grab HTML for page of search results
-        r = requests.get(url)
-        content = r.content
-        soup = BeautifulSoup(content, 'html.parser')
-        #initialize empty string (used to check for no results case)
-        link_to_data = ' '
-        #filter through links on search results page to find best result
-        #most intellegent search, checks if category of link contains keywords
-        for category in soup.find_all('div', {'class' : 'food-search-result left-vertical-border-green'}):
-            subCategorySpan = category.find('span' , {'class' : 'food-search-category'} )
-            subCategory = subCategorySpan.get_text()
-            # print keywords[len(keywords) - 1]
-            # print subCategory.lower()
-            i = len(keywords) - 1
-
-            if i == 0 and keywords[i] in subCategory.lower():
-                #print 'yes!'
-                optimizedLink = category.find('a',{'class' : 'food-search-result-name'}, href = True)
-                if optimizedLink:
-                    link_to_data = optimizedLink['href']
-                    #print quantity + ' of ' + ingredient + ': ' + link_to_data
-                    #print 'found'
-                    break
-            elif i == 1 and (keywords[i] in subCategory.lower() or keywords[0] in subCategory.lower()):
-                optimizedLink = category.find('a',{'class' : 'food-search-result-name'}, href = True)
-                if optimizedLink:
-                    link_to_data = optimizedLink['href']
-                    #print quantity + ' of ' + ingredient + ': ' + link_to_data
-                    #print 'found'
-                    break
-            elif i == 2 and (keywords[i] in subCategory.lower() or keywords[1] in subCategory.lower() or keywords[0] in subCategory.lower()):
-                optimizedLink = category.find('a',{'class' : 'food-search-result-name'}, href = True)
-                if optimizedLink:
-                    link_to_data = optimizedLink['href']
-                    #print quantity + ' of ' + ingredient + ': ' + link_to_data
-                    #print 'found'
-                    break
-        #intellegent search, checks if there is a link in green category with all keywords in it
-        if link_to_data == ' ':#if havent found link yet
-            for category in soup.find_all('div', {'class' : 'food-search-result left-vertical-border-green'}):
-                link = category.find('a',{'class' : 'food-search-result-name'}, href = True)
-                if len(keywords) == 3:
-                    if '+' not in link['href'] and keywords[0] in link['href'] and keywords[1] in link['href'] and keywords[0] in link['href']:
-                        #print quantity + ' of ' + ingredient + ': ' + link['href']
-                        link_to_data = link['href']
-                        break
-                elif len(keywords) == 2:
-                    if '+' not in link['href'] and keywords[0] in link['href'] and keywords[1] in link['href']:
-                        #print quantity + ' of ' + ingredient + ': ' + link['href']
-                        link_to_data = link['href']
-                        break
-                elif len(keywords) == 1:
-                    if '+' not in link['href'] and keywords[0] in link['href']:
-                        #print quantity + ' of ' + ingredient + ': ' + link['href']
-                        link_to_data = link['href']
-                        break
-        #least intellegent search, goes through all the links
-        if(link_to_data == ' '):#if no link found yet
-            for link in soup.find_all('a', href = True):
-                if len(keywords) == 3:
-                    if '+' not in link['href'] and keywords[0] in link['href'] and keywords[1] in link['href'] and keywords[0] in link['href']:
-                        #print quantity + ' of ' + ingredient + ': ' + link['href']
-                        link_to_data = link['href']
-                        break
-                elif len(keywords) == 2:
-                    if '+' not in link['href'] and keywords[0] in link['href'] and keywords[1] in link['href']:
-                        #print quantity + ' of ' + ingredient + ': ' + link['href']
-                        link_to_data = link['href']
-                        break
-                elif len(keywords) == 1:
-                    if '+' not in link['href'] and keywords[0] in link['href']:
-                        #print quantity + ' of ' + ingredient + ': ' + link['href']
-                        link_to_data = link['href']
-                        break
-
-        r.close()
+        link_to_data = search(ingredient)
+        if (link_to_data == ' '):
+            ingredient = ingredient.replace('dinner','')
+            g = len(ingredient.split())
+            if g >= 3:
+                split = ingredient.rsplit(' ', 3)
+                ingredient = split[1] + ' ' + split[2]
+                filter_results.append(ingredient)
+            elif g <= 2:
+                ingredient = ingredient.rsplit(' ', 2)[1]
+                filter_results.append(ingredient)
+            link_to_data = search(ingredient)
 ############# BEGIN SCRAPE #################
         #if no search results
         if(link_to_data == ' '):
-            print 'ingredient not found'
+            #print 'ingredient not found'
             errors.append(ingredient)
             filter_results.append('No link found.')
         #if search results, get all nutritional value
@@ -205,6 +160,7 @@ def getNVforRecipe(ingredient_list):
             fiber = ' '
             totalCarbs = ' '
             calcium = ' '
+            units = ' '
             r = requests.get(link_to_data)
             content = r.content
             soup = BeautifulSoup(content, 'html.parser')
@@ -309,7 +265,34 @@ def getNVforRecipe(ingredient_list):
                 if calcium_td :
                     calcium = calcium_td.get_text()
                     IngredientNVdataG.append(calcium)
-################# BEGIN CALCULATING NUTRITIONAL VALUE #######################
+############CREATE JSON OBJECT FROM DATA############################
+            ingredient_data = {}
+            nutrition_data = {}
+
+            nutrition_data['calTotal'] = calories.replace('m','').replace('g','').replace('<', '')
+            nutrition_data['calFromFat'] = fatCal.replace('m','').replace('g','').replace('<', '')
+            nutrition_data['totalFat'] = totalFat.replace('m','').replace('g','').replace('<', '')
+            nutrition_data['saturatedFat'] = satFat.replace('m','').replace('g','').replace('<', '')
+            nutrition_data['cholesterol'] = cholesterol.replace('m','').replace('g','').replace('<', '')
+            nutrition_data['sodium'] = sodium.replace('m','').replace('g','').replace('<', '')
+            nutrition_data['carbs'] = totalCarbs.replace('m','').replace('g','').replace('<', '')
+            nutrition_data['fiber'] = fiber.replace('m','').replace('g','').replace('<', '')
+            nutrition_data['sugar'] = sugar.replace('m','').replace('g','').replace('<', '')
+            nutrition_data['protein'] = protein.replace('m','').replace('g','').replace('<', '')
+            nutrition_data['calcium'] = calcium.replace('m','').replace('g','').replace('<', '')
+
+            ingredient_data['name'] = ingredient
+            ingredient_data['type'] = 'ingredient'
+
+            ingredient_id = str(hashlib.md5(ingredient + str(random())).hexdigest())[:24]
+            ingredient_data['_id'] = ingredient_id
+            ingredient_data['nutrition'] = nutrition_data
+            IngredientIDList.append(ingredient_id)
+            ingredientJSON = json.dumps(ingredient_data)
+            if ingredient_id not in ScrapeFetchedRecipes.all_unique_ingredientID:
+                ScrapeFetchedRecipes.all_unique_ingredientID.append(ingredient_id)
+                print (ingredientJSON)
+################# BEGIN CALCULATING NUTRITIONAL VALUE OF ENTIRE RECIPE #######################
             g = len(units)-1
             if g > 0:
                 if ')' == units[g] and 'oz' in units:#only preform calculation if NV data specifies oz for its unit in parenthesis at the end
@@ -325,19 +308,23 @@ def getNVforRecipe(ingredient_list):
                     #print quantity #string specifying amount of ingredient and unit
                     #extract amount and convert to floating point
                     if '-' not in q and '/' not in q: #if q is a whole number
-                        if q == 'One':
+                        if q == 'one':
                             q = 1.0
-                        elif q == 'Two':
+                        elif q == 'two':
                             q = 2.0
-                        elif q == 'Three':
+                        elif q == 'three':
                             q = 3.0
-                        elif q == 'Four':
+                        elif q == 'four':
                             q = 4.0
+                        elif q == 'five':
+                            q = 5.0
+                        elif q == 'six':
+                            q = 6.0
                         else:
                             ingredient_qty = float(q)
                     else:
                         if '-' in q and '/' in q: #if q is a whole number plus a fraction
-                            whole = q.rsplit('-',)[0]
+                            whole = q.rsplit('-')[0]
                             a = q.split('-')[1]
                         elif '/' in q: #if q is just a fraction
                             a = q
@@ -345,13 +332,23 @@ def getNVforRecipe(ingredient_list):
                         denominator = a.split('/')[1]
                         n = float(numerator)
                         d = float(denominator)
-                        r = n/d
+                        r = n/d #float version of fraction
 
                         ingredient_qty = float(r)
                         if '-' in q:
                             ingredient_qty = ingredient_qty + float(whole)
 
-
+                    #naming convention sucks here
+                    if re.match(r'.*\([1-9]',input_ingredient):#figure out pattern here
+                        unit_extract = input_ingredient.split('(', 1)[1]
+                        unit_extract = unit_extract.split(')',1)[0]
+                        #print unit_extract
+                        q_extract = unit_extract.split()[0]
+                        #print q_extract
+                        ingredient_qty = ingredient_qty * float(q_extract)
+                        quantity = unit_extract.split()[1]
+                        #print quantity
+                        #print input_ingredient
                     #unit conversion on ingredient side
                     if 'teaspoon' in  quantity:
                         ingredient_qtyOZ = ingredient_qty*0.16667
@@ -366,40 +363,96 @@ def getNVforRecipe(ingredient_list):
                     elif 'pint' in quantity or 'pound' in quantity:
                         ingredient_qtyOZ = ingredient_qty*16
 
-                    elif 'ounces' in quantity or 'oz' in quantity:
+                    elif 'ounce' in quantity or 'oz' in quantity:
                         ingredient_qtyOZ = ingredient_qty
+                    elif True:
+                        if 'onion' in ingredient:
+                            NVunitOZ = 1.0
+                            ingredient_qtyOZ = SelectUnits(link_to_data, 'whole \[6')
+                            #print 'Called dropdown function on: ' + ingredient + 'with key of: ' + array[1] + ' which returned factor of: ', ingredient_qtyOZ
+                        elif 'celery' in ingredient:
+                            NVunitOZ = 1.0
+                            ingredient_qtyOZ = SelectUnits(link_to_data, 'stalk, 12')
+                            #print 'Called dropdown function on: ' + ingredient + 'with key of: ' + array[1] + ' which returned factor of: ', ingredient_qtyOZ
+                        else:
+                            NVunitOZ = 1.0
+                            ingredient_qtyOZ = SelectUnits(link_to_data, 'large')
+                            #print 'Called dropdown function on: ' + ingredient + 'with key of: ' + array[1] + ' which returned factor of: ', ingredient_qtyOZ
                     else:
-                        print 'bad unit is: ' + quantity + 'for ingredient: ' + ingredient
+                        #print 'bad unit is: ' + quantity + ' for ingredient: ' + ingredient
                         errors.append(input_ingredient)
-                        input_ingredient = input_ingredient + '***'
+                        input_ingredient = input_ingredient + ' (bad units)'
                         filter_results.append(input_ingredient)
+                        #filter_results.append('Bad unit specifier')
                         ingredient_qtyOZ = 0.0
                         # NVunitOZ = 1
 
                     factor = ingredient_qtyOZ/NVunitOZ #multiply fetched NV data by this constant to get NV of ingredient
                     #print 'factor is: ' , factor
-                #sum it all up
+            #sum it all up
                 i = 0
                 #j = len(IngredientNVdataG)
-            while i < len(IngredientNVdataG):
-                IngredientNVdataG[i] = IngredientNVdataG[i].replace('g','').replace('m', '').replace('<' , '')
-                IngredientNVdataG[i] = float(IngredientNVdataG[i])
-                totalNVstat[i] = (factor * IngredientNVdataG[i]) + totalNVstat[i]
-                i += 1
+                while i < len(IngredientNVdataG):
+                    IngredientNVdataG[i] = IngredientNVdataG[i].replace('g','').replace('m', '').replace('<' , '')
+                    IngredientNVdataG[i] = float(IngredientNVdataG[i])
+                    totalNVstat[i] = (factor * IngredientNVdataG[i]) + totalNVstat[i]
+                    i += 1
         k += 1
     #display data
-    print 'For ' + ScrapeFetchedRecipes.Amount.strip() + ':'
-    print 'There are ' , totalNVstat[0] , ' calories in this recipe'
-    print 'There are ' , totalNVstat[1] , ' calories from fat in this recipe'
-    print 'There are ' , totalNVstat[2] , 'g of fat in this recipe'
-    print 'There are ' , totalNVstat[3] , 'g of saturated fat in this recipe'
-    print 'There are ' , totalNVstat[4] , 'mg of cholesterol in this recipe'
-    print 'There are ' , totalNVstat[5] , 'mg of sodium in this recipe'
-    print 'There are ' , totalNVstat[6] , 'g total carbs in this recipe'
-    print 'There are ' , totalNVstat[7] , 'g of fiber in this recipe'
-    print 'There are ' , totalNVstat[8] , 'g of sugar in this recipe'
-    print 'There are ' , totalNVstat[9] , 'g of protein in this recipe'
-    print 'There are ' , totalNVstat[10] , 'mg of calcium in this recipe'
+    # print 'For ' + ScrapeFetchedRecipes.Amount.strip() + ':'
+    # print 'There are ' , totalNVstat[0] , ' calories in this recipe'
+    # print 'There are ' , totalNVstat[1] , ' calories from fat in this recipe'
+    # print 'There are ' , totalNVstat[2] , 'g of fat in this recipe'
+    # print 'There are ' , totalNVstat[3] , 'g of saturated fat in this recipe'
+    # print 'There are ' , totalNVstat[4] , 'mg of cholesterol in this recipe'
+    # print 'There are ' , totalNVstat[5] , 'mg of sodium in this recipe'
+    # print 'There are ' , totalNVstat[6] , 'g total carbs in this recipe'
+    # print 'There are ' , totalNVstat[7] , 'g of fiber in this recipe'
+    # print 'There are ' , totalNVstat[8] , 'g of sugar in this recipe'
+    # print 'There are ' , totalNVstat[9] , 'g of protein in this recipe'
+    # print 'There are ' , totalNVstat[10] , 'mg of calcium in this recipe'
+
+    recipe_nutrition_data = {}
+    recipe_nutrition_data['calTotal'] = totalNVstat[0]
+    recipe_nutrition_data['calFromFat'] = totalNVstat[1]
+    recipe_nutrition_data['totalFat'] = totalNVstat[2]
+    recipe_nutrition_data['saturatedFat'] = totalNVstat[3]
+    recipe_nutrition_data['cholesterol'] = totalNVstat[4]
+    recipe_nutrition_data['sodium'] = totalNVstat[5]
+    recipe_nutrition_data['carbs'] = totalNVstat[6]
+    recipe_nutrition_data['fiber'] = totalNVstat[7]
+    recipe_nutrition_data['sugar'] = totalNVstat[8]
+    recipe_nutrition_data['protein'] = totalNVstat[9]
+    recipe_nutrition_data['calcium'] = totalNVstat[10]
+
+    recipe_data = {}
+    time = ScrapeFetchedRecipes.Cook_Time
+    #print time
+    if time != '':
+        if 'hr' in time:
+            hours = float(time.split('hr')[0])
+            if 'min' in time:
+                minutes = time.split('hr')[1]
+                minutes = float(minutes.split('min')[0])
+                time = hours*60 + minutes
+            else:
+                time = hours*60
+        else:
+            time = float(time.replace(' min', ''))
+    recipe_data['name'] = ScrapeFetchedRecipes.title
+    recipe_data['type'] = 'recipe'
+    recipe_data['origURL'] = ScrapeFetchedRecipes.r.url
+    recipe_data['steps'] = ScrapeFetchedRecipes.dirList
+    recipe_data['time'] = time
+    recipe_data['servings'] = ScrapeFetchedRecipes.Amount.strip()
+    recipe_data['ingredients'] = IngredientIDList
+    recipe_data['nutrition'] = recipe_nutrition_data
+    recipe_data ['author']= ScrapeFetchedRecipes.author
+    recipe_data['photoURL'] = ScrapeFetchedRecipes.image_src
+    json_data = json.dumps(recipe_data)
+    #print 'start response'
+    print(json_data)
+
     file = open('ingredient_name.txt', 'a')
     for item in filter_results:
         item = item.encode('utf-8')
@@ -411,3 +464,110 @@ def getNVforRecipe(ingredient_list):
         file.write("%s\n" % item)
     file.close()
     return
+def SelectUnits(link, key):
+    driver = webdriver.Chrome(sys.argv[2])#this path is the path to chromedriver, downloadale from https://chromedriver.storage.googleapis.com/index.html?path=2.33/
+    driver.get(link)
+    time.sleep(2)
+    calories_div = driver.find_element_by_id('mCal')
+    caloriesOld = calories_div.text
+    #print calories
+    form = driver.find_element_by_id('units')
+    for option in form.find_elements_by_tag_name('option'):
+        if re.match(key, option.text):
+            option.click()
+            time.sleep(2)
+            break
+    calories_div = driver.find_element_by_id('mCal')
+    caloriesNew = calories_div.text
+    n = float(caloriesNew)
+    d = float(caloriesOld)
+
+    factor = n/d
+    driver.quit()
+    return factor
+def search(ingredient):
+    keywords = ingredient.split() #split ingredients into array of keywords
+    search = ingredient.replace(' ', '+')#this used to construct a link to search results (search uses GET requests)
+
+    #construct link to search results
+    part1 = 'http://www.calorieking.com/foods/search.php?keywords='
+    part2 = '&go.x=0&go.y=0&go=Go'
+    url = part1 + search + part2
+
+    #grab HTML for page of search results
+    r = requests.get(url)
+    content = r.content
+    soup = BeautifulSoup(content, 'html.parser')
+    #initialize empty string (used to check for no results case)
+    link_to_data = ' '
+    #filter through links on search results page to find best result
+    #most intellegent search, checks if category of link contains keywords
+    for category in soup.find_all('div', {'class' : 'food-search-result left-vertical-border-green'}):
+        subCategorySpan = category.find('span' , {'class' : 'food-search-category'} )
+        subCategory = subCategorySpan.get_text()
+        # print keywords[len(keywords) - 1]
+        # print subCategory.lower()
+        i = len(keywords) - 1
+
+        if i == 0 and keywords[i] in subCategory.lower():
+            #print 'yes!'
+            optimizedLink = category.find('a',{'class' : 'food-search-result-name'}, href = True)
+            if optimizedLink:
+                link_to_data = optimizedLink['href']
+                #print quantity + ' of ' + ingredient + ': ' + link_to_data
+                #print 'found'
+                break
+        elif i == 1 and (keywords[i] in subCategory.lower() and keywords[0] in subCategory.lower()):
+            optimizedLink = category.find('a',{'class' : 'food-search-result-name'}, href = True)
+            if optimizedLink:
+                link_to_data = optimizedLink['href']
+                #print quantity + ' of ' + ingredient + ': ' + link_to_data
+                #print 'found'
+                break
+        elif i == 2 and (keywords[i] in subCategory.lower() or keywords[1] in subCategory.lower() or keywords[0] in subCategory.lower()):
+            optimizedLink = category.find('a',{'class' : 'food-search-result-name'}, href = True)
+            if optimizedLink:
+                link_to_data = optimizedLink['href']
+                #print quantity + ' of ' + ingredient + ': ' + link_to_data
+                #print 'found'
+                break
+    #intellegent search, checks if there is a link in green category with all keywords in it
+    if link_to_data == ' ':#if havent found link yet
+        for category in soup.find_all('div', {'class' : 'food-search-result left-vertical-border-green'}):
+            link = category.find('a',{'class' : 'food-search-result-name'}, href = True)
+            if len(keywords) == 3:
+                if '+' not in link['href'] and keywords[0] in link['href'] and keywords[1] in link['href'] and keywords[0] in link['href']:
+                    #print quantity + ' of ' + ingredient + ': ' + link['href']
+                    link_to_data = link['href']
+                    break
+            elif len(keywords) == 2:
+                if '+' not in link['href'] and keywords[0] in link['href'] and keywords[1] in link['href']:
+                    #print quantity + ' of ' + ingredient + ': ' + link['href']
+                    link_to_data = link['href']
+                    break
+            elif len(keywords) == 1:
+                if '+' not in link['href'] and keywords[0] in link['href']:
+                    #print quantity + ' of ' + ingredient + ': ' + link['href']
+                    link_to_data = link['href']
+                    break
+    #least intellegent search, goes through all the links
+    if(link_to_data == ' '):#if no link found yet
+        for link in soup.find_all('a', href = True):
+            if len(keywords) == 3:
+                if '+' not in link['href'] and keywords[0] in link['href'] and keywords[1] in link['href'] and keywords[0] in link['href']:
+                    #print quantity + ' of ' + ingredient + ': ' + link['href']
+                    link_to_data = link['href']
+                    break
+            elif len(keywords) == 2:
+                if '+' not in link['href'] and keywords[0] in link['href'] and keywords[1] in link['href']:
+                    #print quantity + ' of ' + ingredient + ': ' + link['href']
+                    link_to_data = link['href']
+                    break
+            elif len(keywords) == 1:
+                if '+' not in link['href'] and keywords[0] in link['href']:
+                    #print quantity + ' of ' + ingredient + ': ' + link['href']
+                    link_to_data = link['href']
+                    break
+
+    r.close()
+    return link_to_data

@@ -7,6 +7,11 @@ pids
 *.pid
 *.seed
 
+# Python scraper
+noSearchResults.txt
+IngredientString.txt
+ingredient_name.txt
+
 # Environment variables
 /.env
 
@@ -40,3 +45,4 @@ yarn.lock
 
 # Debug log from npm
 npm-debug.log
+/.ropeproject

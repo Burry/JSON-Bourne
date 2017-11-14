@@ -61,16 +61,22 @@ const startServer = () => {
     server.listen(port, () => {
         debug('Express server listening on port ' + server.address().port);
     });
+    server.on('error', onError);
+    server.on('listening', onListening);
 };
+
+let recipeCount = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test' ? 10 : 1000;
 
 // Sync with SQL database, then listen on provided
 // port on all network interfaces
 models.sql.sequelize.sync().then(() => {
     // Populate test data in development or testing enviornment
-    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')
-        models.mongo.populateTestData();
-    startServer();
-    // /*else*/ startServer();
-    server.on('error', onError);
-    server.on('listening', onListening);
+    models.mongo.Recipe.count({}, (err, count) => {
+        if (err) {
+            console.error(err);
+            throw err;
+        }
+        else if (count <= 0) models.mongo.populate(startServer);
+        else startServer();
+    });
 });

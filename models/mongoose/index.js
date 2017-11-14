@@ -2,8 +2,8 @@
 
 require('dotenv').config();
 const importModels = require('../import');
+const importScraper = require('./recipe-ingredient-importer');
 const mongoose = require('mongoose');
-const populateTestData = require('./test-data');
 const db = {};
 
 // Use native promises
@@ -11,33 +11,27 @@ mongoose.Promise = global.Promise;
 
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost/findmyappetite', {useMongoClient: true});
+
 db.connection = mongoose.connection;
+db.close = mongoose.connection.close;
+db.exec = mongoose.connection.db;
 
 // Error logging
 db.connection.on('error', console.error.bind('Mongoose error: ', console));
 
 // Import models
-db.connection.on('open', () => {
-    importModels(__dirname, model => new Promise(resolve => {
-        db[model] = require('./' + model);
-        resolve();
-    }));
-});
+importModels(__dirname, model => new Promise(resolve => {
+    db[model] = require('./' + model);
+    resolve();
+}));
+
+// Utility to close database connection
+db.close = next => db.connection.close(next && next);
 
 // Utility to delete database
-db.drop = next => {
-    db.connection.on('open', () => {
-        db.connection.db.dropDatabase()
-            .then(() => db.connection.close())
-            .then(next())
-            .catch(err => {
-                console.error(err);
-                throw err;
-            });
-    });
-};
+db.drop = next => db.connection.on('open', () => db.connection.db.dropDatabase(() => db.close(next)));
 
-// Utility to populate test data
-db.populateTestData = next => db.drop(() => populateTestData(db, next && next));
+// Utility to call scraper and populate Ingredient and Recipe collections
+db.populate = next => importScraper(db, next);
 
 module.exports = db;
