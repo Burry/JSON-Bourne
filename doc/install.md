@@ -16,7 +16,7 @@ This guide will prepare your environment and install the necessary runtimes, dat
 	- Windows: [Installation Guide](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)
 	- Ubuntu: [Installation Guide](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
 	- Debian: [Installation Guide](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/)
-	- If you aren't already running it as a daemon, start the database with `mongodb`. You can open another shell and run `mongo` to access the MongoDB client.
+	- If you aren't already running it as a daemon, start the database with `mongod`. You can open another shell and run `mongo` to access the MongoDB client.
 3. Install [PostgreSQL](https://www.postgresql.org/)
 	- macOS: [Get Postgres.app](http://postgresapp.com)
 	- Windows: [Get Installer](https://www.postgresql.org/download/windows/)
