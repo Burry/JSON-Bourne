@@ -16,15 +16,13 @@ const capitalize = str => str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase
 const createObject = (obj, model) => {
     return new Promise((resolve, reject) => {
         model.findOrCreate(obj, (err, newObj) => {
-            if (err) {
-                logError(newObj);
-                reject(err);
-            } else resolve(newObj);
+            if (err) reject(err);
+            else resolve(newObj);
         });
     });
 };
 
-const recipeCount = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test' ? 20 : 1000;
+const recipeCount = process.env.RECIPE_COUNT || 100;
 
 let ingredients = [];
 let recipes = [];
