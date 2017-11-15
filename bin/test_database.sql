@@ -20,6 +20,7 @@ CREATE TABLE users (
 CREATE TABLE recipes (
 	RecipeID int,
 	UserID int,
+	name varchar (255),
 	picture int,
 	rating int,
 );
@@ -52,4 +53,5 @@ CREATE TABLE shoppingListItems(
 	shoppingListID int,
 	ingredientName varchar(255),
 	quantity int,
+	measurementUnit varchar(255),
 );
