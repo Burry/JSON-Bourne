@@ -5,8 +5,8 @@ const router = require('express').Router();
 const key = 'recipe';
 
 // GET /recipe
-router.get('/:id', (req, res) => {
-    const query = Recipe.findOne({_id: req.params.id}).populate('ingredients tags');
+router.get('/:uuid', (req, res) => {
+    const query = Recipe.findOne({uuid: req.params.uuid}).populate('ingredients tags');
 
     // TODO: cross-reference user key in recipe.author with User entity
 

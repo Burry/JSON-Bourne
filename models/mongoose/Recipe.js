@@ -1,14 +1,11 @@
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const mongooseAlgolia = require('mongoose-algolia');
 const findOrCreate = require('mongoose-find-or-create');
 const Schema = mongoose.Schema;
-const shortid = require('shortid');
 
 let schema = new Schema({
-    _id: {
-        type: String,
-        default: shortid.generate
-    },
+    uuid: String,
     name: String,
     type: String,
     origURL: String,
@@ -40,6 +37,11 @@ let schema = new Schema({
         protein: Number, // in grams
         calcium: Number // in mg
     }
+});
+
+schema.pre('validate', function(next) {
+    this.uuid = crypto.createHash('md5').update(this.name).digest('hex').toString().slice(8);
+    next();
 });
 
 schema.plugin(findOrCreate);
