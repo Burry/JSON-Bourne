@@ -28,7 +28,7 @@ $(function() {
             item: '\
                 <div class="row mb-3">\
                     <div class="col">\
-                        <a href="/recipe/{{objectID}}">\
+                        <a href="/recipe/{{uuid}}">\
                             <div class="media">\
                                 <img class="recipe-img mr-3" src="{{{photoURL}}}" alt="Recipe photo">\
                                 <div class="media-body">\

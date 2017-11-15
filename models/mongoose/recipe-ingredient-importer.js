@@ -22,8 +22,6 @@ const createObject = (obj, model) => {
     });
 };
 
-const recipeCount = process.env.RECIPE_COUNT || 100;
-
 let ingredients = [];
 let recipes = [];
 
@@ -33,7 +31,7 @@ module.exports = (db, next) => {
 
     const scraper = spawn('python', [
         'NVscrape.py',
-        recipeCount,
+        process.env.RECIPE_COUNT || 100,
         path.join(__dirname, '..', '..', 'node_modules', 'chromedriver', 'bin', 'chromedriver')
     ], {
         cwd: path.join(__dirname, '..', '..', 'bin')
