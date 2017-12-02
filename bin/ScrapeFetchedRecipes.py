@@ -37,7 +37,8 @@ title = ' '
 all_unique_ingredientID = []
 while i < int(args.count):
 	ingredient_list = []
-	Directions = ''#'Directions: \n'
+	image_src = ''
+	Directions = ''
 	Amount = ''
 	Cook_Time = ''
 	time = ''
