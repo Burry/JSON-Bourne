@@ -4,13 +4,14 @@ require('dotenv').config();
 const importModels = require('../import');
 const importScraper = require('./recipe-ingredient-importer');
 const mongoose = require('mongoose');
+const dbURL = 'mongodb://' + (process.env.MONGOURL || 'localhost/findmyappetite');
 const db = {};
 
 // Use native promises
 mongoose.Promise = global.Promise;
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost/findmyappetite', {useMongoClient: true});
+mongoose.connect(dbURL, {useMongoClient: true});
 
 db.connection = mongoose.connection;
 db.close = mongoose.connection.close;

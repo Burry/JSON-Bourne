@@ -22,4 +22,4 @@ router.get('/:uuid', (req, res) => {
     });
 });
 
-module.exports = router
+exports = module.exports = router;
