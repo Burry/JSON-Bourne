@@ -1,0 +1,17 @@
+extends ../../layouts/default
+
+block intro
+	.jumbotron.jumbotron-light.no-margin-bottom: .container
+		row: .col.mx-auto
+			.header.text-center
+				h2 Join
+	
+block content
+	.container.mb-5: .row: .col-10.col-md-8.col-lg-6.col-xl-5.mx-auto.mb-5
+		+auth-forms({ modal: false, initial: 'join' })
+
+block js
+	script.
+		jQuery(function($) {
+			$('.auth-form').find('.form-control').eq(0).focus().select();
+		});

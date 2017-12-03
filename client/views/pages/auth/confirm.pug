@@ -1,0 +1,28 @@
+extends ../../layouts/default
+include ../../mixins/flash-messages
+
+block intro
+	.jumbotron.jumbotron-light.no-margin-bottom: .container
+		row: .col.col-md-8.mx-auto
+			.header.text-center
+				h2 Welcome!
+				p.lead.mb-2 Thanks for joining! Please confirm your details.
+				
+block content
+	.container.mb-5: .row: .col-md-6.mx-auto.mb-5
+		form(method='post', autocomplete='off', novalidate)
+			input(type='hidden', name='action', value='confirm.details')
+
+			//- TODO Gravatar / Optional image
+			
+			.form-group.form-row
+				.col-6: input.form-control(type='text' name='name.first' placeholder='First Name' value=authUser.name.first)
+				.col-6: input.form-control(type='text' name='name.last' placeholder='Last Name' value=authUser.name.last)
+			.form-group
+				input.form-control.form-control-labelled(type='email' name='email' placeholder='Email' value=authUser.email)
+			.form-group: .form-check
+				label.form-check-label
+					input.form-check-input(type='checkbox', name='newsletter', checked)
+					|  Subscribe to email updates
+			.row: .col-6.mx-auto
+				button(type='submit').btn.btn-lg.btn-primary.btn-block Confirm
