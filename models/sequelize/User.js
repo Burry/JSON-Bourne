@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
 
-    User.create({ firstName: 'BillyBob'});
+    //User.create({ firstName: 'BillyBob'});
 
 
 

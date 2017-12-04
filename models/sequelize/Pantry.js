@@ -23,9 +23,9 @@ module.exports = (sequelize, DataTypes) => {
     models.User.findAll().then(users => {
       console.info(users)
     }); */
-    console.info("yo")
+    //console.info("yo")
 
-    Pantry.create({ owner: 'BillyOwner'});
+    //Pantry.create({ owner: 'BillyOwner'});
 /*
     Pantry.findAll().then(owners => {
       console.log(owners)
