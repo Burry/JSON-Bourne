@@ -73,8 +73,8 @@ gulp.task('recipe-ingredient-importer', next => models.mongo.populate(next));
 gulp.task('pop-mongo', gulp.series('recipe-ingredient-importer', 'disconnect-mongo-from-gulp'));
 
 // Delete databases
-gulp.task('drop-mongo', next => models.mongo.drop(next));
-gulp.task('drop-sql', next => models.sql.drop(next));
+gulp.task('drop-mongo', next => models.mongo.dropAndClose(next));
+gulp.task('drop-sql', next => models.sql.dropAndClose(next));
 gulp.task('dropdb', gulp.parallel('drop-mongo', 'drop-sql'), next => next());
 
 // Lint server JS files

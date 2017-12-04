@@ -4,13 +4,14 @@ require('dotenv').config();
 const importModels = require('../import');
 const importScraper = require('./recipe-ingredient-importer');
 const mongoose = require('mongoose');
+const dbURL = 'mongodb://' + (process.env.MONGOURL || 'localhost/findmyappetite');
 const db = {};
 
 // Use native promises
 mongoose.Promise = global.Promise;
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost/findmyappetite', {useMongoClient: true});
+mongoose.connect(dbURL, {useMongoClient: true});
 
 db.connection = mongoose.connection;
 db.close = mongoose.connection.close;
@@ -29,7 +30,9 @@ importModels(__dirname, model => new Promise(resolve => {
 db.close = next => db.connection.close(next && next);
 
 // Utility to delete database
-db.drop = next => db.connection.on('open', () => db.connection.db.dropDatabase(() => db.close(next)));
+db.drop = next => db.connection.on('open', () => db.connection.db.dropDatabase(next && next));
+
+db.dropAndClose = next => db.drop(db.close(next));
 
 // Utility to call scraper and populate Ingredient and Recipe collections
 db.populate = next => importScraper(db, next);

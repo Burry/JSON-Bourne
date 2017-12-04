@@ -1,0 +1,13 @@
+extends ../../layouts/session
+
+block intro
+	.jumbotron.jumbotron-light.no-margin-bottom: .container
+		row: .col.mx-auto
+			.header.text-center
+				h2 Signed Out
+				p.lead See you again soon...
+				
+block content
+	.container.mb-5: .row: .col-5.col-md-4.col-lg-3.mx-auto.mb-5
+		p: a(href='/').btn.btn-default.btn-block Home
+		p: a(href='/sign-in').btn.btn-primary.btn-block Sign in

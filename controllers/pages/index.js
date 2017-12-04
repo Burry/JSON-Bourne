@@ -1,8 +1,8 @@
-const router = require('express').Router()
+const router = require('express').Router();
 
 // GET home page
 router.get('/', (req, res) => {
-    res.render('index')
-})
+    res.render('index');
+});
 
-module.exports = router
+exports = module.exports = router;

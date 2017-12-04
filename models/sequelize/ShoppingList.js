@@ -8,11 +8,11 @@ module.exports = (sequelize, DataTypes) => {
 
     ShoppingList.associate = models => {
         ShoppingList.hasMany(models.ListItem, {
-            foreignKey: 'listId',
+            foreignKey: 'listID',
             as: 'listItems'
         });
         ShoppingList.belongsTo(models.User, {
-            foreignKey: 'userId',
+            foreignKey: 'userID',
             onDelete: 'CASCADE'
         });
     };

@@ -36,6 +36,10 @@ let schema = new Schema({
         sugars: Number, // in grams
         protein: Number, // in grams
         calcium: Number // in mg
+    },
+    test: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -54,6 +58,7 @@ schema.plugin(mongooseAlgolia, {
 		path: 'ingredients tags',
 		select: 'name'
 	},
+    filter: doc => !doc.test,
 	debug: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test' ? true : false
 });
 

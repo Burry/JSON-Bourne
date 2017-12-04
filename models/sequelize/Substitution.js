@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Substitution.associate = models => {
         Substitution.belongsTo(models.User, {
-            foreignKey: 'userId',
+            foreignKey: 'userID',
             onDelete: 'CASCADE'
         });
     };

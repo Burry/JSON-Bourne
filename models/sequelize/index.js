@@ -30,6 +30,9 @@ importModels(__dirname, model => new Promise(resolve => {
     });
 });
 
+// Utility to close database connection
+db.close = next => db.sequelize.close(next && next);
+
 // Utility to delete database
 db.drop = next => {
     let dropPromises = [];
@@ -38,14 +41,13 @@ db.drop = next => {
             dropPromises.push(db[model].destroy({where: {}}));
     });
     Promise.all(dropPromises)
-        .then(() => {
-            next();
-            db.sequelize.close();
-        })
+        .then(next && next)
         .catch(err => {
             console.error(err);
             throw err;
         });
 };
+
+db.dropAndClose = next => db.drop(db.close(next));
 
 module.exports = db;

@@ -29,7 +29,9 @@ block content
                 h5 Ingredients
                 ul
                     each ingredient in recipe.ingredients
-                        li=ingredient.name
+                        li
+                            =ingredient.name
+                            button.btn.btn-sm.btn-primary.btn-add-pantry(data-item-id=ingredient._id) Add to pantry
                 br
                 h5 Steps
                 ol
