@@ -12,6 +12,7 @@ router.use('/discover', require('./pages/discover'))
 router.use('/favorites', require('./pages/favorites'))
 router.use('/pantry', require('./pages/pantry'))
 router.use('/design', require('./pages/design'))
+router.use('/test', require('./pages/test'))
 
 // Authentication
 

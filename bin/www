@@ -71,12 +71,7 @@ let recipeCount = process.env.NODE_ENV === 'development' || process.env.NODE_ENV
 // port on all network interfaces
 models.sql.sequelize.sync().then(() => {
     // Populate test data in development or testing enviornment
-    models.mongo.Recipe.count({}, (err, count) => {
-        if (err) {
-            console.error(err);
-            throw err;
-        }
-        else if (count <= 0) models.mongo.populate(startServer);
-        else startServer();
-    });
+     startServer();
+    
+
 });
