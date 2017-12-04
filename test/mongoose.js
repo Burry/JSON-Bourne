@@ -12,7 +12,7 @@ const Ingredient = mongo.Ingredient;
 const Recipe = mongo.Recipe;
 const Tag = mongo.Tag;
 
-const dbURL = 'mongodb://' + (process.env.MONGOURL || 'localhost/findmyappetite') + '_test';
+const dbURL = 'mongodb://' + (process.env.MONGOURL || 'localhost/findmyappetite');
 
 describe('Mongoose Models', () => {
     const nutrition = {
@@ -54,13 +54,17 @@ describe('Mongoose Models', () => {
         tags: [],
         nutrition: nutrition
     });
+    let db = null;
 
-    beforeEach(() =>
+    before(() =>
         Camo.connect(dbURL)
-            .then(db => db.dropDatabase())
+            .then(_db => {
+                db = _db;
+                db.dropDatabase();
+            })
     );
 
-    after(done => mongo.dropAndClose(done));
+    after(() => db.dropDatabase());
 
     describe('Tag.save()', () => {
         it('should save new tag to database', () => {

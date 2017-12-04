@@ -2,12 +2,15 @@
 
 process.env.NODE_ENV = 'test';
 
+const Camo = require('camo');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const chaiSpies = require('chai-spies');
 const expect = chai.expect;
 const mongo = require('../models').mongo;
 const Recipe = mongo.Recipe;
+
+const dbURL = 'mongodb://' + (process.env.MONGOURL || 'localhost/findmyappetite');
 
 const testExpectOkHtml = path =>
     it(`GET ${path} responds with 200 and HTML`, () => {
@@ -20,12 +23,6 @@ const testExpectOkHtml = path =>
                 throw new Error(err);
             });
     });
-
-const throwError = (err, msg) => {
-    if (msg)
-        throw new Error(msg);
-    else throw new Error(err);
-};
 
 chai.use(chaiHttp);
 chai.use(chaiSpies);
@@ -61,8 +58,19 @@ describe('Express Server', function() {
             calcium: 150 // in mg
         }
     });
+    let db = null;
 
     this.timeout(1000);
+
+    before(() =>
+        Camo.connect(dbURL)
+            .then(_db => {
+                db = _db;
+                db.dropDatabase();
+            })
+    );
+
+    after(() => db.dropDatabase());
 
     testExpectOkHtml('/');
     testExpectOkHtml('/design');
@@ -70,21 +78,19 @@ describe('Express Server', function() {
     testExpectOkHtml('/favorites');
     testExpectOkHtml('/pantry');
 
-    // it(`GET /recipe/[new test recipe] responds with 200 and HTML`, () => {
-    //     console.info(recipe);
-    //     return recipe.save()
-    //         .then(newRecipe => {
-    //             console.log(newRecipe);
-    //             server.get(`/recipe/${newRecipe.uuid}`);
-    //         })
-    //         .then(res => {
-    //             expect(res).to.have.status(200);
-    //             expect(res).to.be.html;
-    //         })
-    //         .catch(err => {
-    //             throw new Error(err);
-    //         });
-    // });
+    it(`GET /recipe/[new test recipe] responds with 200 and HTML`, () => {
+        return recipe.save()
+            .then(newRecipe => {
+                return server.get(`/recipe/${newRecipe.uuid}`);
+            })
+            .then(res => {
+                expect(res).to.have.status(200);
+                expect(res).to.be.html;
+            })
+            .catch(err => {
+                throw new Error(err);
+            });
+    });
 
     it('GET /NOT_A_RESOURCE responds with 404', () => {
         const spy = chai.spy();
