@@ -16,6 +16,13 @@ exports.initLocals = (req, res, next) => {
 		{label: 'Discover', key: 'discover', href: '/discover'},
 		{label: 'Favorites', key: 'favorites', href: '/favorites'},
 		{label: 'Pantry', key: 'pantry', href: '/pantry'},
+<<<<<<< HEAD
+		{label: 'Design', key: 'design', href: '/design'},
+		{label: 'Test', key: 'test', href: '/test'}
+	]
+	next()
+}
+=======
 		{label: 'Design', key: 'design', href: '/design'}
 	];
 	res.locals.user = req.user;
@@ -33,6 +40,7 @@ exports.initLocals = (req, res, next) => {
 //     res.locals.messages = _.any(flashMessages, msgs => msgs.length) ? flashMessages : false;
 //     next();
 // };
+>>>>>>> origin
 
 // Catches 404 errors
 exports.catch404 = (req, res) => {

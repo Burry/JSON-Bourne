@@ -7,6 +7,15 @@ router.use(middleware.catchErrors)
 // router.use(middleware.flashMessages)
 
 // Pages
+<<<<<<< HEAD
+router.use('/', require('./pages/index'))
+router.use('/recipe', require('./pages/recipe'))
+router.use('/discover', require('./pages/discover'))
+router.use('/favorites', require('./pages/favorites'))
+router.use('/pantry', require('./pages/pantry'))
+router.use('/design', require('./pages/design'))
+router.use('/test', require('./pages/test'))
+=======
 router.use('/', require('./pages/index'));
 router.use('/recipe', require('./pages/recipe'));
 router.use('/discover', require('./pages/discover'));
@@ -22,6 +31,7 @@ router.use('/design', require('./pages/design'));
 // router.get('/sign-out', require('./pages/session/signout'));
 // router.use('/forgot-password', require('./pages/session/forgot-password'));
 // router.use('/reset-password/:key', require('./pages/session/reset-password'));
+>>>>>>> origin
 
 // Authentication
 // router.use('/auth/confirm', require('./auth/confirm'));

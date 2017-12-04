@@ -36,9 +36,13 @@
     ],
     "private": true,
     "scripts": {
+<<<<<<< HEAD
+        "start": "node ./bin/www"
+=======
         "start": "node ./bin/www",
         "postinstall": "node ./node_modules/.bin/gulp vendor",
         "test": "node ./node_modules/.bin/mocha test/*"
+>>>>>>> origin
     },
     "dependencies": {
         "algoliasearch": "^3.24.5",

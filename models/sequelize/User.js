@@ -26,5 +26,9 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
 
+    //User.create({ firstName: 'BillyBob'});
+
+
+
     return User;
 };
