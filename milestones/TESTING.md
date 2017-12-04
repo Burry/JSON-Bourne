@@ -14,10 +14,10 @@ Our mission is to create an application that makes cooking easier, more accessib
 
 ## Automated Testing
 
-##### How to run Tests
+#### How to Run Tests
 Administering tests will be done with yarn, so to run tests, simply run the command `yarn test`.
 
-##### Screenshot of Test Output
+#### Screenshot of Test Output
 
 ## User Acceptance Tests
 
@@ -34,7 +34,7 @@ FindMyAppetite will have the capability for users to search for recipes that the
 ##### Testing Data
 	Recipe Names: 1-2-3 Jambalaya, Chipotle Hummus, 1-2-3 Lasagna, Pasta e Fagioli, Beef Stroganoff, Apple Pie
 
-#####Testing Procedure
+##### Testing Procedure
 1.	Using a compatible web browser, navigate to http://findmyappetite.com.
 2.	Upon reaching the front page of the site, confirm that there is a search bar in the middle of the page.
 3.	Click on the search bar and enter ‘1-2-3 Jambalaya’.
@@ -60,13 +60,14 @@ FindMyAppetite will have to ability for users to sign up for a profile that trac
 6.	The user can navigate to the aforementioned pages and add information about pantry items or view saved recipes.
 7.	The user can log out of the site, at which point the user cannot access the profile page without signing back in.
 8.	The user can return to the site and use the previously used information to log in to the site again. Once logged in, the user can view the profile page.
+
 ##### Testing Data
 	User’s Name: John Doe
 	User’s email: john.d@gmail.com
 	Username: jd123
 	Password: jd456
 
-##### Testing Procedure:
+##### Testing Procedure
 1.	Using a supported web browser, navigate to http://findmyappetite.com.
 2.	Click on the ‘Login’ button in the navbar at the top of the page.
 3.	Click on the ‘Sign-Up’ link below the login credential form.
@@ -96,7 +97,7 @@ FindMyAppetite will have the ability for users to, after logging in, save recipe
 7.	From this page, users can also view and click a ‘Remove Saved Recipe’ button.
 8.	This button will remove the saved recipe record.
 
-##### Testing Data:
+##### Testing Data
 	User’s Name: John Doe
 	User’s email: john.d@gmail.com
 	Username: jd123
