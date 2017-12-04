@@ -2,7 +2,8 @@ const _ = require('lodash');
 
 // Renders the error page
 function renderError(req, res, err) {
-	res.status(err.status || 500).render('error', {
+	res.status(err.status || 500);
+	res.render('error', {
 		err: req.app.get('env') === 'development' ? err.err : {},
 		title: err.title,
 		errorMsg: err.message
@@ -36,9 +37,9 @@ exports.initLocals = (req, res, next) => {
 // Catches 404 errors
 exports.catch404 = (req, res) => {
 	let err = new Error('Not Found');
-	err.status = 404;
 	renderError(req, res, {
 		err: err,
+		status: 404,
 		title: 'Not Found',
 		message: 'Oops, looks like you tried to access a page that doesn\'t exist.'
 	});
