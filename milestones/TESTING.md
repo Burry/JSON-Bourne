@@ -17,7 +17,8 @@ Our mission is to create an application that makes cooking easier, more accessib
 #### How to Run Tests
 Administering tests will be done with yarn, so to run tests, simply run the command `yarn test`.
 
-#### Screenshot of Test Output
+#### Automated Test Output
+<img src="https://github.com/Burry/JSON-Bourne/raw/master/doc/resources/Mocha%20Output.png" alt="Mocha Output" />
 
 ## User Acceptance Tests
 
