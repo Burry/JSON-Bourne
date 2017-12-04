@@ -1,4 +1,9 @@
-const expect = require('chai').expect;
+'use strict';
+
+process.env.NODE_ENV = 'test';
+
+const chai = require('chai');
+const expect = chai.expect;
 const sql = require('../models').sql;
 const User = sql.User;
 const ListItem = sql.ListItem;

@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const mongooseAlgolia = require('mongoose-algolia');
 const findOrCreate = require('mongoose-find-or-create');
 const Schema = mongoose.Schema;
+const isTest = process.env.NODE_ENV === 'test';
 
 let schema = new Schema({
     uuid: String,
@@ -36,10 +37,6 @@ let schema = new Schema({
         sugars: Number, // in grams
         protein: Number, // in grams
         calcium: Number // in mg
-    },
-    test: {
-        type: Boolean,
-        default: false
     }
 });
 
@@ -50,7 +47,7 @@ schema.pre('validate', function(next) {
 
 schema.plugin(findOrCreate);
 
-schema.plugin(mongooseAlgolia, {
+if (!isTest) schema.plugin(mongooseAlgolia, {
 	appId: process.env.ALGOLIA_APP_ID,
 	apiKey: process.env.ALGOLIA_ADMIN_API_KEY,
 	indexName: 'Recipes',
@@ -58,12 +55,11 @@ schema.plugin(mongooseAlgolia, {
 		path: 'ingredients tags',
 		select: 'name'
 	},
-    filter: doc => !doc.test,
 	debug: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test' ? true : false
 });
 
 const model = mongoose.model('Recipe', schema);
 
-model.SyncToAlgolia();
+if (!isTest) model.SyncToAlgolia();
 
 module.exports = model;

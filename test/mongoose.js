@@ -1,15 +1,21 @@
+'use strict';
+
 require('dotenv').config();
-const expect = require('chai').expect;
+process.env.NODE_ENV = 'test';
+
 const Camo = require('camo');
+const chai = require('chai');
+const expect = chai.expect;
 const mongo = require('../models').mongo;
+const ObjectId = require('mongoose').Types.ObjectId;
 const Ingredient = mongo.Ingredient;
 const Recipe = mongo.Recipe;
 const Tag = mongo.Tag;
-const dbURL = 'mongodb://' + (process.env.MONGOURL || 'localhost/findmyappetite');
+
+const dbURL = 'mongodb://' + (process.env.MONGOURL || 'localhost/findmyappetite') + '_test';
 
 describe('Mongoose Models', () => {
-    let db = null;
-    let nutrition = {
+    const nutrition = {
         calTotal: 500,
         calFromFat: 100,
         totalFat: 15, //in grams
@@ -22,83 +28,76 @@ describe('Mongoose Models', () => {
         protein: 25, // in grams
         calcium: 150 // in mg
     };
-    let newTagID = null;
+    const tag = new Tag({
+        name: 'Test Tag',
+        type: 'health'
+    });
+    const ingredient = new Ingredient({
+        _id: ObjectId(),
+        name: 'Test Ingredient',
+        type: 'ingredient',
+        tags: [],
+        nutrition: nutrition
+    });
+    const recipe = new Recipe({
+        uuid: 'TEST1234',
+        name: 'Test Recipe',
+        type: 'recipe',
+        origURL: 'https://findmyappetite.com',
+        steps: ['Step 1', 'Step 2', 'Step 3'],
+        time: 30,
+        servings: 2,
+        author: 'Anonymous',
+        likes: 0,
+        photoURL: 'http://via.placeholder.com/500x500',
+        ingredients: [],
+        tags: [],
+        nutrition: nutrition
+    });
 
-    before(done => {
+    beforeEach(() =>
         Camo.connect(dbURL)
             .then(db => db.dropDatabase())
-            .then(mongo.connection.on('open', done));
-    });
+    );
 
     after(done => mongo.dropAndClose(done));
 
     describe('Tag.save()', () => {
-        it('should save new tag to database', done => {
-            let tag = new Tag({
-                name: 'Test Tag',
-                type: 'health'
-            });
-            tag.save((err, tag) => {
-               if (err) done(err);
-               else {
-                   newTagID = tag._id;
-                   done();
-               }
-            });
+        it('should save new tag to database', () => {
+            return tag.save();
         });
     });
 
     describe('Ingredient.save()', () => {
-        it('should save new ingredient with new tag to database', done => {
-            let ingredient = new Ingredient({
-                _id: 'TEST_INGREDIENT_0',
-                name: 'Test Ingredient',
-                type: 'ingredient',
-                tags: [newTagID],
-                nutrition: nutrition,
-                test: true
-            });
-            ingredient.save(done);
+        it('should save new ingredient to database', () => {
+            return ingredient.save();
         });
     });
 
     describe('Recipe.save()', () => {
-        it('should save new recipe with new ingredient and tag to database', done => {
-            let recipe = new Recipe({
-                uuid: '1234ABCD',
-                name: 'Test Recipe',
-                type: 'recipe',
-                origURL: 'https://findmyappetite.com',
-                steps: ['Step 1', 'Step 2', 'Step 3'],
-                time: 30, //in minutes
-                servings: 2,
-                author: 'Anonymous',
-                likes: 0,
-                photoURL: 'https://findmyappetite.com',
-                // ingredients: ['TEST_INGREDIENT_0', 'TEST_INGREDIENT_0'],
-                tags: [newTagID],
-                nutrition: nutrition,
-                test: true
-            });
-            recipe.save(done);
+        it('should save new recipe to database', () => {
+            return recipe.save();
         });
     });
 
     describe('Tag.findOne()', () => {
-        it('should load new tag from database', done => {
-            Tag.findOne({_id: newTagID}, done);
+        it('should load new tag from database', () => {
+            return tag.save()
+                .then(newTag => Tag.findById(newTag._id));
         });
     });
 
     describe('Ingredient.findOne()', () => {
-        it('should load new ingredient from database', done => {
-            Ingredient.findOne({_id: 'TEST_INGREDIENT_0'}, done);
+        it('should load new ingredient from database', () => {
+            return ingredient.save()
+                .then(newIngredient => Ingredient.findById(newIngredient._id));
         });
     });
 
     describe('Recipe.findOne()', () => {
-        it('should load new recipe from database', done => {
-            Recipe.findOne({name: 'Test Recipe'}, done);
+        it('should load new recipe from database', () => {
+            return recipe.save()
+                .then(newRecipe => Recipe.findById(newRecipe._id));
         });
     });
 });
