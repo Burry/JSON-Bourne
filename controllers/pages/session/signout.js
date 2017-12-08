@@ -5,4 +5,7 @@ router.get('/', (req, res) => {
 	// keystone.session.signout(req, res, function() {
 	// 	res.redirect('/');
 	// });
+    res.send('Sign out functionality in progress');
 });
+
+exports = module.exports = router;

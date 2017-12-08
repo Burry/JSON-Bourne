@@ -2,7 +2,7 @@ const router = require('express').Router();
 const User = require('../../../models').sql.User;
 
 const render = (req, res) =>
-	res.render('session/signin', {
+	res.render('session/sign-in', {
 		title: 'Sign In',
 		section: 'session',
 		form: req.body

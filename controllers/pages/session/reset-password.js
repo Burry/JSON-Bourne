@@ -21,7 +21,7 @@ const init = (req, res, next) =>
 router.get('/', (req, res) => init(req, res, render));
 
 // POST /reset-password
-router.post('/', (req, res) =>
+router.post('/', (req, res) => {
 	init(req, res, newRes => {
 		if (!req.body.password || !req.body.password_confirm) {
 			// req.flash('error', "Please enter, and confirm your new password.")
@@ -41,5 +41,6 @@ router.post('/', (req, res) =>
 			newRes.redirect('/sign-in');
 		});
 	});
+});
 
 exports = module.exports = router;

@@ -18,6 +18,7 @@ exports.initLocals = (req, res, next) => {
 		{label: 'Pantry', key: 'pantry', href: '/pantry'},
 		{label: 'Design', key: 'design', href: '/design'}
 	];
+	res.locals.query = req.url.split("?")[0];
 	res.locals.user = req.user;
 	next();
 };

@@ -15,13 +15,13 @@ router.use('/pantry', require('./pages/pantry'));
 router.use('/design', require('./pages/design'));
 
 // Session
-// router.use('/join', middleware.requireNoUser);
-// router.use('/join', require('./pages/session/join'));
-// router.use('/sign-in', middleware.requireNoUser);
-// router.use('/sign-in', require('./pages/session/signin'));
-// router.get('/sign-out', require('./pages/session/signout'));
-// router.use('/forgot-password', require('./pages/session/forgot-password'));
-// router.use('/reset-password/:key', require('./pages/session/reset-password'));
+router.use('/join', middleware.requireNoUser);
+router.use('/join', require('./pages/session/join'));
+router.use('/sign-in', middleware.requireNoUser);
+router.use('/sign-in', require('./pages/session/signin'));
+router.get('/sign-out', require('./pages/session/signout'));
+router.use('/forgot-password', require('./pages/session/forgot-password'));
+router.use('/reset-password/:key', require('./pages/session/reset-password'));
 
 // Authentication
 // router.use('/auth/confirm', require('./auth/confirm'));

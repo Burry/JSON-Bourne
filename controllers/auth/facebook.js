@@ -1,16 +1,15 @@
-const _ = require('lodash')
-const async = require('async')
-const keystone = require('keystone')
-const passport = require('passport')
-const passportFacebookStrategy = require('passport-facebook').Strategy
-const User = keystone.list('User')
+const _ = require('lodash');
+const async = require('async');
+const passport = require('passport');
+const passportFacebookStrategy = require('passport-facebook').Strategy;
+const User = require('../../../models').sql.User;
 
-let credentials = {
+const credentials = {
 	clientID: process.env.FACEBOOK_CLIENT_ID,
 	clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
 	callbackURL: process.env.FACEBOOK_CALLBACK_URL,
 	profileFields: ['id', 'email', 'displayName']
-}
+};
 
 exports.authenticateUser = function(req, res, next) {
 	console.log('[services.facebook] - Triggered authentication process...')

@@ -8,7 +8,7 @@ const render = res =>
     });
 
 // GET /forgot-password
-router.get('/', render(res));
+router.get('/', res => render(res));
 
 // POST /forgot-password
 router.post('/', (req, res) => {
