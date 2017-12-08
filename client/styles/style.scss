@@ -68,11 +68,27 @@ a {
 
 // Log in
 a.btn.facebook {
-    color: #fff !important;
-    background: #3b5998 !important;
+    color: #fff;
+    background: #3b5998;
 
     i,svg {
         margin-right: 0.25rem;
+    }
+}
+
+.modal-dialog {
+    .btn {
+        cursor: pointer;
+    }
+    
+    a:not([href]):not([tabindex]) {
+        color: $link-color;
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+            color: $link-hover-color;
+        }
     }
 }
 

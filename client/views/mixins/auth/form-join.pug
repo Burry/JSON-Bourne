@@ -13,10 +13,10 @@ mixin form-join(args)
 				h4.modal-title Join
 				button(type="button", class="close", data-dismiss="modal", aria-hidden="true") &times;
 		div(class=args.modal ? 'modal-body' : null)
-			a.btn.facebook(href='/auth/facebook?target=' + query, title='Sign in with Facebook')
+			div.text-center: a.btn.facebook(href='/auth/facebook?target=' + query, title='Sign in with Facebook')
 				i.fab.fa-facebook(aria-hidden='true')
-				span Facebook
-			.fancy: span or
+				span Join with Facebook
+			div.my-3.text-center: i.text-muted or
 			//- p Or use your email, that's okay too:
 			form(method='post', action='/join', autocomplete='off', novalidate).auth-form
 				input(type='hidden', name='action', value='join')
@@ -49,8 +49,8 @@ mixin form-join(args)
 					.form-group(class=!args.modal ? checkFormError('password') : null)
 						label(for='password').sr-only Password
 						input(type='password', name='password', placeholder='Password', value=!args.modal ? form.password : null).form-control
-				.row: .col-6.mx-auto
+				.row: .col-6.mx-auto.my-3
 					button(type='submit').btn.btn-lg.btn-block.btn-primary.btn-submit Join
-			p.text-center.text-muted.mt-3
+			p.text-center.text-muted.mt-1
 				| Have an account? 
 				a(href=args.modal ? js : '/sign-in', rel=args.modal ? 'modal-pane' : null, data-modal-pane=args.modal ? 'sign-in' : null) Sign in
