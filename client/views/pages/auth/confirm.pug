@@ -16,13 +16,9 @@ block content
 			//- TODO Gravatar / Optional image
 			
 			.form-group.form-row
-				.col-6: input.form-control(type='text' name='name.first' placeholder='First Name' value=authUser.name.first)
-				.col-6: input.form-control(type='text' name='name.last' placeholder='Last Name' value=authUser.name.last)
+				.col-6: input.form-control(type='text' name='firstName' placeholder='First Name' value=authUser.name.first)
+				.col-6: input.form-control(type='text' name='lastName' placeholder='Last Name' value=authUser.name.last)
 			.form-group
 				input.form-control.form-control-labelled(type='email' name='email' placeholder='Email' value=authUser.email)
-			.form-group: .form-check
-				label.form-check-label
-					input.form-check-input(type='checkbox', name='newsletter', checked)
-					|  Subscribe to email updates
 			.row: .col-6.mx-auto
 				button(type='submit').btn.btn-lg.btn-primary.btn-block Confirm

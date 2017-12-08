@@ -9,16 +9,17 @@ nav.navbar.navbar-expand-md.navbar-light
                 each link in navLinks
                     li.nav-item
                         a.nav-link(href=link.href, class=(section == link.key ? 'active' : null))=link.label
-                li.nav-item
-                    a.nav-link(href='#') Sign In
-                li.nav-item
-                    a.nav-link(href='#') Join
-
-
-//- ul.nav.nav-tabs
-//-   li.active
-//-     a(href='#') BBQ
-//-   li
-//-     a(href='#') Vegan
-//-   li
-//-     a(href='#') Asian
+                if user
+                    li.nav-item.dropdown
+                        a.nav-link.dropdown-toggle(data-toggle='dropdown', href='#', role='button', aria-haspopup='true', aria-expanded='false')=user.firstName
+                        .dropdown-menu
+                            //- a.dropdown-item(href='/settings', class=(section == 'settings' ? 'active' : null))
+                            //- 	i.fa.fa-cog(aria-hidden='true')
+                            //- 	| Settings
+                            a.dropdown-item(href='/sign-out')
+                                | Sign Out
+                else
+                    li.nav-item: a.nav-link.auth-trigger(href='/sign-in', data-from=query, data-initial='sign-in')
+                        | Sign In
+                    li.nav-item: a.nav-link.auth-trigger(href='/join', data-from=query)
+                        | Join

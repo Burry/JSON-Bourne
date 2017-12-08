@@ -1,3 +1,5 @@
+include mixins/auth/auth-forms
+
 doctype html
 html
     head
@@ -33,6 +35,13 @@ html
         
         //- Page footer
         include includes/footer
+        
+        //- Modals		
+        block modal
+        if !user
+            #modal-auth(tabindex="-1", role="dialog", aria-labelledby="signin", aria-hidden="true").modal.fade
+                .modal-dialog: .modal-content
+                    +auth-forms({ modal: true, initial: 'signin' })
     
         //- Global scripts
         include includes/scripts

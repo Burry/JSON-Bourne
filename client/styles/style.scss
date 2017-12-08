@@ -1,5 +1,4 @@
 @import '../build/vendor/bootstrap/scss/bootstrap';
-@import '../build/vendor/font-awesome/scss/font-awesome';
 
 // Variables
 $primary-color: rgba(253, 110, 106, 1);
@@ -68,6 +67,13 @@ a {
 
 
 // Log in
+a.btn.facebook {
+    color: #fff !important;
+    background: #3b5998 !important;
 
+    i,svg {
+        margin-right: 0.25rem;
+    }
+}
 
 // Loading page

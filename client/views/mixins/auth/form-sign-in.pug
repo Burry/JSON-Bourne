@@ -1,0 +1,36 @@
+//-
+	Sign in
+	------------------------------
+	
+	Args
+	* modal  - boolean
+	* initial [default "join"] - accepts "sign-in" | "join" | "password"
+	
+mixin form-sign-in(args)
+	.auth-box.modal-pane-sign-in(class=args.modal && args.initial != 'sign-in' ? 'hidden' : null)
+		if args.modal
+			.modal-header
+				h4.modal-title Sign In
+				button(type="button", class="close", data-dismiss="modal", aria-hidden="true") &times;
+		div(class=args.modal ? 'modal-body' : null)
+			a.btn.facebook(href='/auth/facebook?target=' + query, title='Sign in with Facebook')
+				i.fab.fa-facebook(aria-hidden='true')
+				span Facebook
+			.fancy: span or
+			form(method='post', action='/sign-in', role='sign-in', novalidate).auth-form
+				input(type='hidden', name='action', value='sign-in')
+				input(type='hidden', name='target', value=args.modal ? query : null)
+				.form-groups
+					.form-group
+						label(for='sign-in-email').sr-only Email
+						input(type='email', name='email', placeholder='Email', id='sign-in-email', value=locals.form ? locals.form.email : null).form-control.form-control--first
+					.form-group
+						label(for='sign-in-password').sr-only Password
+						input(type='password', name='password', placeholder='Password', id='sign-in-password', value='').form-control.form-control--last
+				.row: .col-6.mx-auto
+					button(type='submit').btn.btn-lg.btn-block.btn-primary.btn-submit Sign in
+			.row.text-muted.mt-3
+				.col-6 No account? 
+					a(href=args.modal ? js : '/join', rel=args.modal ? 'modal-pane' : null, data-modal-pane=args.modal ? 'join' : null) Join
+				.col-6.text-right
+					a(href=args.modal ? js : '/forgot-password', rel=args.modal ? 'modal-pane' : null, data-modal-pane=args.modal ? 'password' : null) Forgot password?
