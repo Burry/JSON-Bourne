@@ -63,7 +63,7 @@ let options = {
 
 // Disconnect from MongoDB
 // (otherwise it keeps its connection open indefinitely)
-gulp.task('disconnect-mongo-from-gulp', next => models.mongo.close(next));
+gulp.task('disconnect-mongo-from-gulp', next => models.mongo.connection.close(next));
 
 // Clean
 gulp.task('clean', next => require('del')(paths.build.dest, next));
@@ -129,13 +129,6 @@ function copyVendorDependency(dependency, subDependency, next) {
         .on('end', next);
 }
 
-function copyFAFonts(next) {
-    return gulp
-        .src(paths.modules.dest + 'font-awesome/fonts/*.*')
-        .pipe(gulp.dest(paths.build.dest + 'fonts/'))
-        .on('end', next);
-}
-
 gulp.task('jquery', next => {
     return copyVendorDependency('jquery', 'dist', next);
 })
@@ -148,15 +141,11 @@ gulp.task('bootstrap', next => {
     return copyVendorDependency('bootstrap', '', next);
 })
 
-gulp.task('fontawesome', next => {
-    return copyVendorDependency('font-awesome', '', () => copyFAFonts(next));
-})
-
 gulp.task('algolia', next => {
     return copyVendorDependency('instantsearch.js', 'dist', next);
 })
 
-gulp.task('vendor', gulp.parallel('jquery', 'popper.js', 'bootstrap', 'fontawesome', 'algolia', 'disconnect-mongo-from-gulp'), next => next());
+gulp.task('vendor', gulp.parallel('jquery', 'popper.js', 'bootstrap', 'algolia', 'disconnect-mongo-from-gulp'), next => next());
 
 // Build application
 gulp.task('build', gulp.parallel('es-lint-server', 'es-lint-build', 'styles', 'images', 'disconnect-mongo-from-gulp'), next => next());
