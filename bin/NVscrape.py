@@ -29,43 +29,57 @@ class Unbuffered(object):
        return getattr(self.stream, attr)
 
 sys.stdout = Unbuffered(sys.stdout)
-
+#this function is called for each recipe that is scraped.
+#The input is a list of all the ingredients in the recipe, an output is a printed JSON object
+#containing nutritional data for every ingredient, and nutritional value for the recipe
+#in addition to all the other information about the recipe.
 def getNVforRecipe(ingredient_list):
-    errors = []
+    searchFlag = 0
+    quantityFlag = 0
+    errors = []#this list contains ingredients that are insignificant, or just dont provide enough information,
+    #or provide too much information.
     IngredientIDList = []
-    filter_results = []
-    totalNVstat = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-    k = 0
+    filter_results = [] #list containing output ingredient
+    totalNVstat = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]#This list sums the nutritional value of every ingredient in a recipe. each entry in this list corresponds to a field of nutritional value e.g. Carbs or Total Fat.
+    k = 0 #ingredient list index
     #loop through each ingredient in ingredient list from ScrapeFetchedRecipes.py file
 
     while k < len(ingredient_list):
+        searchFlag = 0
         #remove white space padding, periods, and make all lowercase
-        input_ingredient = ingredient_list[k].strip()
-        input_ingredient = input_ingredient.lower()
-        input_ingredient.replace('.','').replace(' cold, ', ' ')
-        #used to address "4 to 6 cups..."
-        if re.match(r'[1-9] to [1-9]', input_ingredient):#need to check this
+        input_ingredient = ingredient_list[k].strip() #grab an ingredient string from list
+        input_ingredient = input_ingredient.lower()#convert to all lowercase
+        input_ingredient = input_ingredient.replace('.','').replace(' cold, ', ' ')#remove "." and "cold"
+        #used to address "4 to 6 cups...". Selects the larger quantity
+        if re.match(r'[1-9] to [1-9]', input_ingredient):
+            #selects the string on the right side of " to " e.g. 6 cups
             input_ingredient = input_ingredient.split(' to ', 1)[1]
-            input_ingredient.strip()
+            input_ingredient.strip() #remove extra white space. this is probobly unnecessary
         if ',' in input_ingredient:
+            #take the string to the right of the comma
             input_ingredient = input_ingredient.split(',',1)[0]
-        if ' or ' in input_ingredient:
+        if ' or ' in input_ingredient:#the following will select the first option in an ambiguity case.
             right = input_ingredient.split(' or ', 1)[1]
             left = input_ingredient.split(' or ', 1)[0]
             #print 'right is: ' + right
             if ' ' in right:
-                right = right.split(' ', 1)[1]
-                input_ingredient = input_ingredient.split(' or ',1)[0] + ' ' + right
+                right = right.split(' ', 1)[1]#remove the first word in the string to the right of " or "
+                input_ingredient = left + ' ' + right
             else:
+                #this means that there was only one word following the "or". this means that it was at
+                #the end of the sentance. Most likely dont want something to the right of the "or" if its
+                #at the end of the sentance.
                 input_ingredient = left
             #print 'resulting string of extracted \'or\': ' + input_ingredient
 
+        #check to see if a quantity is specified
         quantity_specified = re.match(r'[1-9/]{1,3}|one|two|three|four|five|six', input_ingredient)
-        if 'recipe' in input_ingredient or 'black pepper' in input_ingredient or ' salt' in input_ingredient or ' spray ' in input_ingredient or ':' in input_ingredient or 'recipe' in input_ingredient:
+        #a few words signify insignificance, or should never be in an ingredient name.
+        if 'recipe' in input_ingredient or 'black pepper' in input_ingredient or ' salt' in input_ingredient or ' spray ' in input_ingredient or ':' in input_ingredient:
             errors.append(input_ingredient)
-            input_ingredient = input_ingredient + ' (or/salt/pepper/spray/recipe,)'
+            input_ingredient = input_ingredient + ' (salt/pepper/spray/recipe/:)'
             filter_results.append(input_ingredient)
-            k+=1
+            k+=1 #increment the ingredient list index and skip to the next loop iteration
             continue
         if quantity_specified:
             if 'parmesan' in input_ingredient:
@@ -86,17 +100,20 @@ def getNVforRecipe(ingredient_list):
                 ingredient = 'unsalted butter'
 
             else:
-                Words = input_ingredient.split()
-                ingredient = ' '
-                for word in Words:
-                    if re.match(r'[0-9]+-', word) or re.match(r'[1-9]/[1-9]-', word):
+                Words = input_ingredient.split() #split raw ingredient string into a list of words
+                ingredient = ' '#initialize output string
+                for word in Words:#loop through each word of input_ingredient
+                    if re.match(r'[0-9]+-', word) or re.match(r'[1-9]/[1-9]-', word): #skip over quantity specifier
                         continue
+                    #tag each word with its part of speech
                     tokenized_word = nltk.word_tokenize(word)
                     POS =  nltk.pos_tag(tokenized_word)
 
+                    #construct the output string by appending all noun and adjective words
                     if POS[0][1] == 'NN' or POS[0][1] == 'NNS' or POS[0][1] == 'JJ':
                         ingredient = ingredient + POS[0][0] + ' '
-                ingredient = ingredient.lower()
+                ingredient = ingredient.lower() #ensure everything is in lowercase
+                #remove the unwanted adjectives/nouns
                 ingredient = ingredient.replace(' miniature ', ' ').replace(' beaten ', ' ').replace(' bags ', ' ').replace(' bag ', '').replace(' teaspoons ', ' ').replace(' teaspoon ', ' ').replace(' cups ', ' ').replace(' cup ', ' ').replace(' container ', ' ').replace(' tablespoons ', ' ').replace(' tablespoon ', ' ').replace(' box ', ' ').replace(' ounces ', ' ').replace(' packages ', ' ').replace(' package ', ' ').replace(' packets', ' ').replace(' pounds ', ' ')
                 ingredient = ingredient.replace(' pound ','').replace(' pints ', ' ').replace(' cans ', ' ').replace(' can ', ' ').replace(' pint ', ' ').replace(' pure ', ' ').replace(' jar ', ' ').replace(' tsp ', ' ').replace(' tbsp ', ' ').replace(' large ', ' ').replace(' small ', ' ').replace(' medium ', ' ').replace(' dairy ', ' ').replace(' aisle ', ' ').replace(' chopped ', ' ').replace(' optional ', ' ').replace(' packed ', ' ').replace(' leftover ', ' ')
                 ingredient = ingredient.replace(' delicious ', ' ').replace(' cooked ', ' ').replace(' cook ', ' ').replace(' note ', ' ').replace(' water ', ' ').replace(' store-bought ', ' ').replace(' good ', ' ').replace(' sprigs ', ' ').replace(' inches ', ' ').replace(' chunks ', ' ').replace(' head ', ' ').replace(' stalks ', ' ').replace(' extra ', ' ').replace(' ice cold ', ' ').replace(' stick ', ' ').replace(' homemade ', ' ').replace(' dry ', ' ')
@@ -108,7 +125,8 @@ def getNVforRecipe(ingredient_list):
                 elif 'red pepper flakes' in ingredient:
                     ingredient = 'crushed red pepper'
 
-                #get rid of - then change format of quantity
+                #ensure that the only time there is a '-' is between whole number and fraction in quantity
+                #this combines the quantity into one word.
                 input_ingredient = input_ingredient.replace('-', ' ')
                 m = re.match(r'[1-9] [1-9]/[1-9]', input_ingredient)
                 if m:
@@ -116,8 +134,8 @@ def getNVforRecipe(ingredient_list):
                     input_ingredient = Num + '-' + rest
                 #grab the '1 cup' or '1 pound' part of ingredient, store as string called quantity
                 array = input_ingredient.split()
-                quantity = array[0] + ' ' + array[1]
-        else:#no quantity specified, add to error list
+                quantity = array[0] + ' ' + array[1] #quantity assumed to be first two words
+        else:#no quantity specified, add to error list, skip to next ingredient
             k+=1
             errors.append(input_ingredient)
             input_ingredient = input_ingredient + ' (no quantity specified)'
@@ -125,12 +143,14 @@ def getNVforRecipe(ingredient_list):
             continue
         filter_results.append(ingredient)#add re-formatted ingredient to list for debugging
 ############        BEGIN SEARCH        ##############
-        link_to_data = search(ingredient)
+        link_to_data = search(ingredient)#call search function
+        #if no search results
         if (link_to_data == ' '):
+            searchFlag = 1
             ingredient = ingredient.replace('dinner','')
             g = len(ingredient.split())
             if g >= 3:
-                split = ingredient.rsplit(' ', 3)
+                split = ingredient.rsplit(' ', 3)#split from the right, remove second to last word
                 ingredient = split[1] + ' ' + split[2]
                 filter_results.append(ingredient)
             elif g <= 2:
@@ -138,7 +158,7 @@ def getNVforRecipe(ingredient_list):
                 filter_results.append(ingredient)
             link_to_data = search(ingredient)
 ############# BEGIN SCRAPE #################
-        #if no search results
+        #if still no search results
         if(link_to_data == ' '):
             #print 'ingredient not found'
             errors.append(ingredient)
@@ -269,6 +289,7 @@ def getNVforRecipe(ingredient_list):
             ingredient_data = {}
             nutrition_data = {}
 
+            #remove mg and < from scraped nutritonal data, and add it to a dictionary object
             nutrition_data['calTotal'] = calories.replace('m','').replace('g','').replace('<', '')
             nutrition_data['calFromFat'] = fatCal.replace('m','').replace('g','').replace('<', '')
             nutrition_data['totalFat'] = totalFat.replace('m','').replace('g','').replace('<', '')
@@ -281,114 +302,127 @@ def getNVforRecipe(ingredient_list):
             nutrition_data['protein'] = protein.replace('m','').replace('g','').replace('<', '')
             nutrition_data['calcium'] = calcium.replace('m','').replace('g','').replace('<', '')
 
-            ingredient_data['name'] = ingredient
+            # if searchFlag == 1:
+            #     ingredient_data['name'] = ingredient_list[k].strip() + '*ingredient search result warning'
+            # elif quantityFlag = 1:
+            #     ingredient_data['name'] = ingredient_list[k].strip() + '*nutritional value result warning (due to )'
+            # else:
+            #     ingredient_data['name'] = ingredient_list[k].strip()
+
             ingredient_data['type'] = 'ingredient'
 
             ingredient_id = str(hashlib.md5(ingredient + str(random())).hexdigest())[:24]
             ingredient_data['_id'] = ingredient_id
             ingredient_data['nutrition'] = nutrition_data
             IngredientIDList.append(ingredient_id)
-            ingredientJSON = json.dumps(ingredient_data)
-            if ingredient_id not in ScrapeFetchedRecipes.all_unique_ingredientID:
-                ScrapeFetchedRecipes.all_unique_ingredientID.append(ingredient_id)
-                print (ingredientJSON)
+
+            # if searchFlag == 1:
+            #     ingredient_data['name'] = ingredient_list[k].strip() + '*ingredient search result warning'
+            # elif quantityFlag = 1:
+            #     ingredient_data['name'] = ingredient_list[k].strip() + '*nutritional value result warning (due to )'
+            # else:
+            #     ingredient_data['name'] = ingredient_list[k].strip()
+            # ingredientJSON = json.dumps(ingredient_data)
+            # if ingredient_id not in ScrapeFetchedRecipes.all_unique_ingredientID:
+            #     ScrapeFetchedRecipes.all_unique_ingredientID.append(ingredient_id)
+            #     print (ingredientJSON)
 ################# BEGIN CALCULATING NUTRITIONAL VALUE OF ENTIRE RECIPE #######################
             g = len(units)-1
-            if g > 0:
-                if ')' == units[g] and 'oz' in units:#only preform calculation if NV data specifies oz for its unit in parenthesis at the end
-                    units = units.rsplit('(',2)[1] #get rid of parenthesis
-                    units = units.replace(')', '')
-                    units = units.split()[0]#get rid of letters
-                    NVunitOZ = float(units)#convert to float
-                    #print NVunitOZ #number of ounces that give fetched NV statistics (in float form)
-                    q = array[0] #quantity specified in ingredient, as a string
+            if g > 0 and ')' == units[g] and 'oz' in units:#only preform calculation if NV data specifies oz for its unit in parenthesis at the end
+                units = units.rsplit('(',2)[1] #get rid of parenthesis
+                units = units.replace(')', '')
+                units = units.split()[0]#get rid of letters
+                NVunitOZ = float(units)#convert to float
+                #print NVunitOZ #number of ounces that give fetched NV statistics (in float form)
+                q = array[0] #quantity specified in ingredient, as a string
+                #print input_ingredient
+
+                #print 'units in DB are:', units
+                #print quantity #string specifying amount of ingredient and unit
+                #extract amount and convert to floating point
+                if '-' not in q and '/' not in q: #if q is a whole number
+                    if q == 'one':
+                        q = 1.0
+                    elif q == 'two':
+                        q = 2.0
+                    elif q == 'three':
+                        q = 3.0
+                    elif q == 'four':
+                        q = 4.0
+                    elif q == 'five':
+                        q = 5.0
+                    elif q == 'six':
+                        q = 6.0
+                    else:
+                        ingredient_qty = float(q)
+                else:
+                    if '-' in q and '/' in q: #if q is a whole number plus a fraction
+                        whole = q.rsplit('-')[0]
+                        a = q.split('-')[1]
+                    elif '/' in q: #if q is just a fraction
+                        a = q
+                    numerator = a.split('/')[0]
+                    denominator = a.split('/')[1]
+                    n = float(numerator)
+                    d = float(denominator)
+                    r = n/d #float version of fraction
+
+                    ingredient_qty = float(r)
+                    if '-' in q:
+                        ingredient_qty = ingredient_qty + float(whole)
+
+                #naming convention sucks here
+                if re.match(r'.*\([1-9]',input_ingredient):#figure out pattern here
+                    unit_extract = input_ingredient.split('(', 1)[1]
+                    unit_extract = unit_extract.split(')',1)[0]
+                    #print unit_extract
+                    q_extract = unit_extract.split()[0]
+                    #print q_extract
+                    ingredient_qty = ingredient_qty * float(q_extract)
+                    quantity = unit_extract.split()[1]
+                    #print quantity
                     #print input_ingredient
+                #unit conversion on ingredient side
+                if 'teaspoon' in  quantity:
+                    ingredient_qtyOZ = ingredient_qty*0.16667
+                elif 'tablespoon' in quantity:
+                    ingredient_qtyOZ = ingredient_qty*0.5
+                elif 'cup' in quantity:
+                    ingredient_qtyOZ = ingredient_qty*8
+                elif 'gallon' in quantity:
+                    ingredient_qtyOZ = ingredient_qty*128
+                elif 'quart' in quantity:
+                    ingredient_qtyOZ = ingredient_qty*32
+                elif 'pint' in quantity or 'pound' in quantity:
+                    ingredient_qtyOZ = ingredient_qty*16
 
-                    #print 'units in DB are:', units
-                    #print quantity #string specifying amount of ingredient and unit
-                    #extract amount and convert to floating point
-                    if '-' not in q and '/' not in q: #if q is a whole number
-                        if q == 'one':
-                            q = 1.0
-                        elif q == 'two':
-                            q = 2.0
-                        elif q == 'three':
-                            q = 3.0
-                        elif q == 'four':
-                            q = 4.0
-                        elif q == 'five':
-                            q = 5.0
-                        elif q == 'six':
-                            q = 6.0
-                        else:
-                            ingredient_qty = float(q)
+                elif 'ounce' in quantity or 'oz' in quantity:
+                    ingredient_qtyOZ = ingredient_qty
+                elif True:
+                    if 'onion' in ingredient:
+                        NVunitOZ = 1.0
+                        ingredient_qtyOZ = SelectUnits(link_to_data, 'whole \[6')
+                        #print 'Called dropdown function on: ' + ingredient + 'with key of: ' + array[1] + ' which returned factor of: ', ingredient_qtyOZ
+                    elif 'celery' in ingredient:
+                        NVunitOZ = 1.0
+                        ingredient_qtyOZ = SelectUnits(link_to_data, 'stalk, 12')
+                        #print 'Called dropdown function on: ' + ingredient + 'with key of: ' + array[1] + ' which returned factor of: ', ingredient_qtyOZ
                     else:
-                        if '-' in q and '/' in q: #if q is a whole number plus a fraction
-                            whole = q.rsplit('-')[0]
-                            a = q.split('-')[1]
-                        elif '/' in q: #if q is just a fraction
-                            a = q
-                        numerator = a.split('/')[0]
-                        denominator = a.split('/')[1]
-                        n = float(numerator)
-                        d = float(denominator)
-                        r = n/d #float version of fraction
+                        NVunitOZ = 1.0
+                        ingredient_qtyOZ = SelectUnits(link_to_data, 'large')
+                        #print 'Called dropdown function on: ' + ingredient + 'with key of: ' + array[1] + ' which returned factor of: ', ingredient_qtyOZ
+                # else:
+                #     #print 'bad unit is: ' + quantity + ' for ingredient: ' + ingredient
+                #     errors.append(input_ingredient)
+                #     input_ingredient = input_ingredient + ' (bad units)'
+                #     filter_results.append(input_ingredient)
+                #     #filter_results.append('Bad unit specifier')
+                #     ingredient_qtyOZ = 0.0
+                #     # NVunitOZ = 1
 
-                        ingredient_qty = float(r)
-                        if '-' in q:
-                            ingredient_qty = ingredient_qty + float(whole)
-
-                    #naming convention sucks here
-                    if re.match(r'.*\([1-9]',input_ingredient):#figure out pattern here
-                        unit_extract = input_ingredient.split('(', 1)[1]
-                        unit_extract = unit_extract.split(')',1)[0]
-                        #print unit_extract
-                        q_extract = unit_extract.split()[0]
-                        #print q_extract
-                        ingredient_qty = ingredient_qty * float(q_extract)
-                        quantity = unit_extract.split()[1]
-                        #print quantity
-                        #print input_ingredient
-                    #unit conversion on ingredient side
-                    if 'teaspoon' in  quantity:
-                        ingredient_qtyOZ = ingredient_qty*0.16667
-                    elif 'tablespoon' in quantity:
-                        ingredient_qtyOZ = ingredient_qty*0.5
-                    elif 'cup' in quantity:
-                        ingredient_qtyOZ = ingredient_qty*8
-                    elif 'gallon' in quantity:
-                        ingredient_qtyOZ = ingredient_qty*128
-                    elif 'quart' in quantity:
-                        ingredient_qtyOZ = ingredient_qty*32
-                    elif 'pint' in quantity or 'pound' in quantity:
-                        ingredient_qtyOZ = ingredient_qty*16
-
-                    elif 'ounce' in quantity or 'oz' in quantity:
-                        ingredient_qtyOZ = ingredient_qty
-                    elif True:
-                        if 'onion' in ingredient:
-                            NVunitOZ = 1.0
-                            ingredient_qtyOZ = SelectUnits(link_to_data, 'whole \[6')
-                            #print 'Called dropdown function on: ' + ingredient + 'with key of: ' + array[1] + ' which returned factor of: ', ingredient_qtyOZ
-                        elif 'celery' in ingredient:
-                            NVunitOZ = 1.0
-                            ingredient_qtyOZ = SelectUnits(link_to_data, 'stalk, 12')
-                            #print 'Called dropdown function on: ' + ingredient + 'with key of: ' + array[1] + ' which returned factor of: ', ingredient_qtyOZ
-                        else:
-                            NVunitOZ = 1.0
-                            ingredient_qtyOZ = SelectUnits(link_to_data, 'large')
-                            #print 'Called dropdown function on: ' + ingredient + 'with key of: ' + array[1] + ' which returned factor of: ', ingredient_qtyOZ
-                    else:
-                        #print 'bad unit is: ' + quantity + ' for ingredient: ' + ingredient
-                        errors.append(input_ingredient)
-                        input_ingredient = input_ingredient + ' (bad units)'
-                        filter_results.append(input_ingredient)
-                        #filter_results.append('Bad unit specifier')
-                        ingredient_qtyOZ = 0.0
-                        # NVunitOZ = 1
-
-                    factor = ingredient_qtyOZ/NVunitOZ #multiply fetched NV data by this constant to get NV of ingredient
-                    #print 'factor is: ' , factor
+                factor = ingredient_qtyOZ/NVunitOZ #multiply fetched NV data by this constant to get NV of ingredient
+                if factor == 1.0:
+                    quantityFlag = 1
             #sum it all up
                 i = 0
                 #j = len(IngredientNVdataG)
@@ -397,6 +431,16 @@ def getNVforRecipe(ingredient_list):
                     IngredientNVdataG[i] = float(IngredientNVdataG[i])
                     totalNVstat[i] = (factor * IngredientNVdataG[i]) + totalNVstat[i]
                     i += 1
+            if searchFlag == 1:
+                ingredient_data['name'] = ingredient_list[k].strip() + '*ingredient search result warning'
+            elif quantityFlag == 1:
+                ingredient_data['name'] = ingredient_list[k].strip() + '*nutritional value result warning (due to )'
+            else:
+                ingredient_data['name'] = ingredient_list[k].strip()
+            ingredientJSON = json.dumps(ingredient_data)
+            if ingredient_id not in ScrapeFetchedRecipes.all_unique_ingredientID:
+                ScrapeFetchedRecipes.all_unique_ingredientID.append(ingredient_id)
+                print (ingredientJSON)
         k += 1
     #display data
     # print 'For ' + ScrapeFetchedRecipes.Amount.strip() + ':'
