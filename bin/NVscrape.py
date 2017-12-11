@@ -432,9 +432,9 @@ def getNVforRecipe(ingredient_list):
                     totalNVstat[i] = (factor * IngredientNVdataG[i]) + totalNVstat[i]
                     i += 1
             if searchFlag == 1:
-                ingredient_data['name'] = ingredient_list[k].strip() + '*ingredient search result warning'
+                ingredient_data['name'] = ingredient_list[k].strip() #+ '*ingredient search result warning'
             elif quantityFlag == 1:
-                ingredient_data['name'] = ingredient_list[k].strip() + '*nutritional value result warning (due to )'
+                ingredient_data['name'] = ingredient_list[k].strip() #+ '*nutritional value result warning'
             else:
                 ingredient_data['name'] = ingredient_list[k].strip()
             ingredientJSON = json.dumps(ingredient_data)
