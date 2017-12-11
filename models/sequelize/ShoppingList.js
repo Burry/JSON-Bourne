@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     const ShoppingList = sequelize.define('ShoppingList', {
-        listID: {
+        listId: {
             type: DataTypes.INTEGER,
             allowNull: false
         }
@@ -8,11 +8,11 @@ module.exports = (sequelize, DataTypes) => {
 
     ShoppingList.associate = models => {
         ShoppingList.hasMany(models.ListItem, {
-            foreignKey: 'listID',
+            foreignKey: 'listId',
             as: 'listItems'
         });
         ShoppingList.belongsTo(models.User, {
-            foreignKey: 'userID',
+            foreignKey: 'userId',
             onDelete: 'CASCADE'
         });
     };

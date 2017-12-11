@@ -22,7 +22,7 @@ describe('Sequelize Models', () => {
     describe('User.create()', () => {
         it('should save new user to database', () => {
             let user = {
-                userID: 'TEST_USER_0',
+                userId: 'TEST_USER_0',
                 firstName: 'Jon',
                 lastName: 'Doe',
                 email: 'jondoe@findmyappetite.com',
@@ -75,7 +75,7 @@ describe('Sequelize Models', () => {
     describe('ShoppingList.create()', () => {
         it('should save new list item to database', () => {
             let shoppingList = {
-                listID: 0,
+                listId: 0,
                 listItems: [0]
             };
             return ShoppingList.create(shoppingList);
