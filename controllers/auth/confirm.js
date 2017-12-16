@@ -4,14 +4,10 @@ const router = require('express').Router();
 const passport = require('passport');
 const User = require('../../models').sql.User;
 
-const render = (req, res, locals) => res.render('auth/confirm', locals || {
-        title: 'Confirm Account',
-        section: 'session',
-        form: req.body,
-        returnto: req.query.returnto,
-        authUser: req.session.auth,
-        existingUser: req.user || null
-    });
+let locals = {
+    title: 'Confirm Account',
+    section: 'session'
+};
 
 // Function to check if a user already exists for this profile id or email (and sign them in)
 const checkExisting = (req, res, next) => {
@@ -92,12 +88,12 @@ const checkAuth = (req, res) => {
 // GET /auth/confirm
 router.get('/', (req, res) => !req.session.auth
     ? res.redirect('/sign-in')
-    : checkExisting(req, res, render(req, res))
+    : checkExisting(req, res, res.render('auth/confirm', locals))
 );
 
 // POST /auth/confirm
 router.post('/', (req, res) => {
-    if (!res.locals.form.firstName || !res.locals.form.lastName || !res.locals.form.email) {
+    if (!req.body.firstName || !res.locals.form.lastName || !res.locals.form.email) {
         // req.flash('error', 'Please enter a name & email.')
         // return next()
         // THROW ERROR

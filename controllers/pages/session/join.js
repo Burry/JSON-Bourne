@@ -2,7 +2,9 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const passportLocalStrategy = require('passport-local');
 const router = require('express').Router();
-const User = require('../../../models').sql.User;
+const models = require('../../../models');
+const Pantry = models.sql.Pantry;
+const User = models.sql.User;
 
 passport.use('local-signup', new passportLocalStrategy(
 	{
@@ -11,9 +13,10 @@ passport.use('local-signup', new passportLocalStrategy(
 		passReqToCallback : true
 	},
 	(req, email, password, done) => {
+		let newUser = null;
 		User.findOne({where: {email: email}})
 			.then(user => user
-				? done(null, false, {message: 'That email is already taken'})
+				? done(null, false, {message: 'This email is already in use'})
 				: User.create({
 						email: email,
 						password: bcrypt.hashSync(password, bcrypt.genSaltSync(8), null),
@@ -21,7 +24,13 @@ passport.use('local-signup', new passportLocalStrategy(
 						lastName: req.body.lastName
 					})
 			)
-			.then(newUser => newUser
+			.then(_newUser => {
+				if (_newUser) {
+					newUser = _newUser;
+					return Pantry.create({UserId: newUser.id});
+				} else return done(null, false);
+			})
+			.then(newPantry => newPantry
 				? done(null, newUser)
 				: done(null, false))
 			.catch(err => {

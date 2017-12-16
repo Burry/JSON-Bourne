@@ -1,7 +1,6 @@
-extends ../../layouts/default
-include ../../mixins/flash-messages
+extends ../../layout
 
-block intro
+block header
 	.jumbotron.jumbotron-light.no-margin-bottom: .container
 		row: .col.col-md-8.mx-auto
 			.header.text-center
@@ -13,11 +12,11 @@ block content
 		form(method='post', autocomplete='off', novalidate)
 			input(type='hidden', name='action', value='confirm.details')
 
-			//- TODO Gravatar / Optional image
+			//- TODO Gravatar / Facebook Avatar
 			
 			.form-group.form-row
-				.col-6: input.form-control(type='text' name='firstName' placeholder='First Name' value=authUser.name.first)
-				.col-6: input.form-control(type='text' name='lastName' placeholder='Last Name' value=authUser.name.last)
+				.col-6: input.form-control(type='text' name='firstName' placeholder='First Name' value=authUser.firstName)
+				.col-6: input.form-control(type='text' name='lastName' placeholder='Last Name' value=authUser.lastName)
 			.form-group
 				input.form-control.form-control-labelled(type='email' name='email' placeholder='Email' value=authUser.email)
 			.row: .col-6.mx-auto

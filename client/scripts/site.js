@@ -7,6 +7,13 @@ $('.navbar-toggler').click(function() {
 var authModal = $('#modal-auth');
 var authModalPanes = authModal.find('.auth-box');
 
+// Hide Facebook callback hash
+if (window.location.hash === '#_=_') {
+	history.replaceState
+        ? history.replaceState(null, null, window.location.href.split('#')[0])
+        : window.location.hash = '';
+}
+
 // Trigger auth modal
 // start on the right pane
 // defaults to "join"
