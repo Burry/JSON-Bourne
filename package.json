@@ -42,6 +42,7 @@
     },
     "dependencies": {
         "algoliasearch": "^3.24.5",
+        "bcrypt": "^1.0.3",
         "body-parser": "~1.17.1",
         "bootstrap": "4.0.0-beta.2",
         "camo": "^0.12.3",
@@ -62,6 +63,7 @@
         "node-sass-middleware": "0.9.8",
         "passport": "^0.4.0",
         "passport-facebook": "^2.1.1",
+        "passport-local": "^1.0.0",
         "pg": "^7.4.0",
         "pg-hstore": "^2.3.2",
         "popper.js": "^1.12.3",
