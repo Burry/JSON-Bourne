@@ -15,24 +15,16 @@ router.use('/pantry', require('./pages/pantry'));
 router.use('/design', require('./pages/design'));
 
 // Session
-router.use('/join', middleware.requireNoUser);
 router.use('/join', require('./pages/session/join'));
-router.use('/sign-in', middleware.requireNoUser);
 router.use('/sign-in', require('./pages/session/signin'));
-router.get('/sign-out', require('./pages/session/signout'));
-router.use('/forgot-password', require('./pages/session/forgot-password'));
-router.use('/reset-password/:key', require('./pages/session/reset-password'));
+router.use('/sign-out', require('./pages/session/signout'));
 
 // Authentication
-// router.use('/auth/confirm', require('./auth/confirm'));
-// router.use('/auth/:service', require('./auth/service'));
+router.use('/auth/confirm', require('./auth/confirm'));
+router.use('/auth/facebook', require('./auth/facebook'));
 
 // User
-// router.use('/settings*', middleware.requireUser);
-// router.use('/settings', routes.views.settings);
-
-// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
-// app.get('/protected', middleware.requireUser, [[protectedRoute]]);
+router.use('/settings*', middleware.requireUser, require('./pages/settings'));
 
 // Handle 404 errors — must be bellow all other routes
 router.use(middleware.catch404);

@@ -1,40 +1,44 @@
+const bcrypt = require('bcrypt');
+const passport = require('passport');
+const passportLocalStrategy = require('passport-local');
 const router = require('express').Router();
 const User = require('../../../models').sql.User;
 
-const render = (req, res) =>
-	res.render('session/sign-in', {
-		title: 'Sign In',
-		section: 'session',
-		form: req.body
-	});
+passport.use('local-signin', new passportLocalStrategy(
+	{
+		usernameField : 'email',
+		passwordField : 'password',
+		passReqToCallback : true
+	},
+	(req, email, password, done) =>
+		User.findOne({where: {email: email}}).then(user => {
+			if (!user)
+				return done(null, false, {message: 'Email does not exist'});
+			if (!bcrypt.compareSync(password, user.password))
+				return done(null, false, {message: 'Incorrect password'});
+			return done(null, user.get());
+		}).catch(err => {
+			console.error(err);
+			return done(null, false, {message: 'Something went wrong with your sign-in'});
+		})
+));
 
 // GET /signin
 router.get('/', (req, res) => req.user
 	? res.redirect(req.cookies.target || '/')
-	: render(req, res)
+	: res.render('session/sign-in', {
+		title: 'Sign In',
+		section: 'session',
+		form: req.body
+	})
 );
 
 // POST /signin
-router.post('/', (req, res) => {
-	if (!req.body.email || !req.body.password) {
-		// req.flash('error', 'Please enter your username and password.');
-		return render(req, res);
-	}
-
-	let onSuccess = () => {
-		if (req.body.target && !/join|sign-in/.test(req.body.target)) {
-			console.log('[sign-in] - Set target as [' + req.body.target + '].');
-			res.redirect(req.body.target);
-		} else res.redirect('/');
-	}
-
-	let onFail = () => {
-		// req.flash('error', 'Your username or password were incorrect, please try again.');
-		return render(req, res);
-	}
-
-	// Sign in, create new Express session, etc.
-	// keystone.session.signin({email: req.body.email, password: req.body.password}, req, res, onSuccess, onFail)
-});
+router.post('/', (req, res) =>
+	passport.authenticate('local-signin', {
+		successRedirect: req.cookies.target || '/',
+		failureRedirect: '/sign-in'
+	})(req, res, () => {})
+);
 
 exports = module.exports = router;

@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const controllers = require('./controllers');
 const passport = require('passport');
 const session = require('express-session');
+const User = require('./models').sql.User;
 
 const app = express();
 
@@ -29,6 +30,15 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+passport.serializeUser((user, done) =>
+    done(null, user.id)
+);
+passport.deserializeUser((id, done) => {
+    User.findById(id).then(user => user
+        ? done(null, user.get())
+        : done(user.errors, null)
+    );
+});
 
 // Parse cookie headers, populate req.cookies with an object keyed by cookie names
 app.use(cookieParser());

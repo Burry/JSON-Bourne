@@ -66,14 +66,7 @@ exports.requireAdmin = (req, res, next) => {
 
 // Prevents people from accessing user-specific pages when they're not signed in
 exports.requireUser = (req, res, next) => {
-	if (!req.user) {
-		req.flash('error', 'Please sign in to access this page.');
-		res.redirect('/keystone/signin');
+	if (!req.isAuthenticated()) {
+		res.redirect('/sign-in');
 	} else next();
-}
-
-// Pages not applicable to signed-in users
-exports.requireNoUser = (req, res, next) => {
-	if (req.user) res.redirect('/');
-	else next();
 }

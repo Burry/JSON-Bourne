@@ -1,71 +1,52 @@
-const async = require('async');
+const bcrypt = require('bcrypt');
+const passport = require('passport');
+const passportLocalStrategy = require('passport-local');
 const router = require('express').Router();
 const User = require('../../../models').sql.User;
 
-const render = (req, res) =>
-	res.render('session/join', {
-		title: 'Join',
-		section: 'session',
-		form: req.body
-	});
+passport.use('local-signup', new passportLocalStrategy(
+	{
+		usernameField : 'email',
+		passwordField : 'password',
+		passReqToCallback : true
+	},
+	(req, email, password, done) => {
+		User.findOne({where: {email: email}})
+			.then(user => user
+				? done(null, false, {message: 'That email is already taken'})
+				: User.create({
+						email: email,
+						password: bcrypt.hashSync(password, bcrypt.genSaltSync(8), null),
+						firstName: req.body.firstName,
+						lastName: req.body.lastName
+					})
+			)
+			.then(newUser => newUser
+				? done(null, newUser)
+				: done(null, false))
+			.catch(err => {
+				console.error(err);
+				return done(null, false, {message: 'Something went wrong with your sign-up'});
+			})
+	}
+));
 
 // GET /join
 router.get('/', (req, res) => req.user
 	? res.redirect(req.cookies.target || '/')
-	: render(req, res)
+	: res.render('session/join', {
+		title: 'Join',
+		section: 'session',
+		form: req.body
+	})
 );
 
 // POST /join
-router.post('/', (req, res) => {
-	if (req.user) return res.redirect(req.cookies.target || '/');
-
-	async.series([
-		function(cb) {
-			if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password) {
-				// req.flash('error', 'Please enter a name, email and password.');
-				return cb(true);
-			}
-			return cb();
-		},
-
-		function(cb) {
-			User.findOne({where: {email: req.body.email}}).then(user => {
-				if (user) {
-					// req.flash('error', 'User already exists with that email address.');
-					return cb(true);
-				}
-				return cb();
-			});
-		},
-
-		function(cb) {
-			let userData = {
-				firstName: req.body.firstName,
-				lastName: req.body.lastName,
-				email: req.body.email,
-				password: req.body.password
-			};
-
-			User.create(userData).then(user => cb());
-		}
-	], function(err) {
-		if (err) return render(req, res);
-
-		let onSuccess = () => {
-			if (req.body.target && !/join|sign-in/.test(req.body.target)) {
-				console.log('[join] - Set target as [' + req.body.target + '].');
-				res.redirect(req.body.target);
-			} else res.redirect('/');
-		};
-
-		let onFail = e => {
-			// req.flash('error', 'There was a problem signing you in, please try again.');
-			return render(req, res);
-		};
-
-		// Sign in, create new Express session, etc.
-		// keystone.session.signin({email: req.body.email, password: req.body.password}, req, res, onSuccess, onFail)
-	});
-});
+router.post('/', (req, res) =>
+	passport.authenticate('local-signup', {
+		successRedirect: req.cookies.target || '/',
+		failureRedirect: '/join'
+	})(req, res, () => {})
+);
 
 exports = module.exports = router;
