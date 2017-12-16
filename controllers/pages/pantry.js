@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const key = 'pantry';
-const Pantry = require('../../../models').sql.Pantry;
+const Pantry = require('../../models').sql.Pantry;
 
 // GET /pantry
 router.get('/', (req, res) =>

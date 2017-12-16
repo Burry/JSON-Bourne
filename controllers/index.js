@@ -11,8 +11,6 @@ router.use('/', require('./pages/index'));
 router.use('/recipe', require('./pages/recipe'));
 router.use('/pantry', middleware.requireUser, require('./pages/pantry'));
 
-router.use('/design', require('./pages/design'));
-
 // Session
 router.use('/join', require('./pages/session/join'));
 router.use('/sign-in', require('./pages/session/signin'));
