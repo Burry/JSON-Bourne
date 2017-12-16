@@ -4,7 +4,7 @@
 	
 	Args
 	* modal  - boolean
-	* initial [default "join"] - accepts "sign-in" | "join" | "password"
+	* initial [default "join"] - accepts "sign-in" | "join"
 	
 mixin form-join(args)
 	.auth-box.modal-pane-join(class=args.modal && args.initial != 'join' ? 'hidden' : null)

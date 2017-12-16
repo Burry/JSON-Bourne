@@ -29,8 +29,6 @@ mixin form-sign-in(args)
 						input(type='password', name='password', placeholder='Password', id='sign-in-password', value='').form-control.form-control--last
 				.row: .col-6.mx-auto.my-3
 					button(type='submit').btn.btn-lg.btn-block.btn-primary.btn-submit Sign in
-			.row.text-muted.mt-1
-				.col-6 No account? 
-					a(href=args.modal ? js : '/join', rel=args.modal ? 'modal-pane' : null, data-modal-pane=args.modal ? 'join' : null) Join
-				.col-6.text-right
-					a(href=args.modal ? js : '/forgot-password', rel=args.modal ? 'modal-pane' : null, data-modal-pane=args.modal ? 'password' : null) Forgot password?
+			p.text-center.text-muted.mt-1
+				| No account? 
+				a(href=args.modal ? js : '/join', rel=args.modal ? 'modal-pane' : null, data-modal-pane=args.modal ? 'join' : null) Join
