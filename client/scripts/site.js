@@ -30,7 +30,7 @@ window.signinModalTrigger = function signinModalTrigger(e) {
 	if (from) authModal.find('[name="from"]').val(from);
 }
 
-$("[href='#modal-auth'], [data-modal='auth'], .auth-trigger").on('click', signinModalTrigger);
+$("[href='#modal-auth'], [data-modal='auth'], .auth-trigger").on('click', signinModalTrigger);	// eslint-disable-line no-undef
 
 // Move between auth panes
 $("[rel='modal-pane']").click(function() {
