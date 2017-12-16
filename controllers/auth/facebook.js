@@ -2,29 +2,23 @@ const _ = require('lodash');
 const async = require('async');
 const passport = require('passport');
 const passportFacebookStrategy = require('passport-facebook').Strategy;
-const User = require('../../../models').sql.User;
+const User = require('../../models').sql.User;
 
-const credentials = {
-	clientID: process.env.FACEBOOK_CLIENT_ID,
-	clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-	callbackURL: process.env.FACEBOOK_CALLBACK_URL,
-	profileFields: ['id', 'email', 'displayName']
-};
-
-exports.authenticateUser = (req, res, next) => {
-	console.log('[services.facebook] - Triggered authentication process...');
-
-	// Initalise Facebook credentials
-	const facebookStrategy = new passportFacebookStrategy(credentials, (accessToken, refreshToken, profile, done) => {
-		done(null, {
-			accessToken: accessToken,
-			refreshToken: refreshToken,
-			profile: profile
-		});
-	});
-
-	// Pass through authentication to passport
-	passport.use(facebookStrategy);
+exports = module.exports = (req, res, next) => {
+	passport.use(new passportFacebookStrategy(
+		{
+			clientID: process.env.FACEBOOK_CLIENT_ID,
+			clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+			callbackURL: process.env.FACEBOOK_CALLBACK_URL,
+			profileFields: ['id', 'email', 'displayName']
+		},
+		(accessToken, refreshToken, profile, done) =>
+			done(null, {
+				accessToken: accessToken,
+				refreshToken: refreshToken,
+				profile: profile
+			})
+	));
 
 	// Save user data once returning from Facebook
 	if (_.has(req.query, 'cb')) {
