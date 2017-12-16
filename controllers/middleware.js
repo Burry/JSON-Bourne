@@ -13,10 +13,7 @@ function renderError(req, res, err) {
 // Initialises the standard view locals
 exports.initLocals = (req, res, next) => {
 	res.locals.navLinks = [
-		{label: 'Discover', key: 'discover', href: '/discover'},
-		{label: 'Favorites', key: 'favorites', href: '/favorites'},
-		{label: 'Pantry', key: 'pantry', href: '/pantry'},
-		{label: 'Design', key: 'design', href: '/design'}
+		{label: 'Pantry', key: 'pantry', href: '/pantry'}
 	];
 	res.locals.query = req.url.split("?")[0];
 	res.locals.user = req.user;
