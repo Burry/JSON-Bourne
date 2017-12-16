@@ -1,20 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
-    const ShoppingList = sequelize.define('ShoppingList', {
-        listId: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        }
-    });
+    const ShoppingList = sequelize.define('ShoppingList');
 
     ShoppingList.associate = models => {
-        ShoppingList.hasMany(models.ListItem, {
-            foreignKey: 'listId',
-            as: 'listItems'
-        });
-        ShoppingList.belongsTo(models.User, {
-            foreignKey: 'userId',
-            onDelete: 'CASCADE'
-        });
+        ShoppingList.hasMany(models.ListItem, {as: 'Items'});
+        ShoppingList.belongsTo(models.User);
     };
 
     return ShoppingList;

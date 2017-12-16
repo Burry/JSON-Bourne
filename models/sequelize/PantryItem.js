@@ -7,10 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     PantryItem.associate = models => {
-        PantryItem.belongsTo(models.Pantry, {
-            foreignKey: 'pantryId',
-            onDelete: 'CASCADE'
-        });
+        PantryItem.belongsTo(models.Pantry);
     };
 
     return PantryItem;

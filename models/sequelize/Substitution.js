@@ -11,10 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Substitution.associate = models => {
-        Substitution.belongsTo(models.User, {
-            foreignKey: 'userId',
-            onDelete: 'CASCADE'
-        });
+        Substitution.belongsTo(models.User);
     };
 
     return Substitution;

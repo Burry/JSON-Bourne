@@ -6,30 +6,10 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
-
     Pantry.associate = models => {
-        Pantry.hasMany(models.PantryItem, {
-            foreignKey: 'pantryId',
-            as: 'pantryItems'
-        });
-        Pantry.belongsTo(models.User, {
-            foreignKey: 'userId',
-            onDelete: 'CASCADE'
-        });
+        Pantry.hasMany(models.PantryItem, {as: 'Items'});
+        Pantry.belongsTo(models.User);
     };
-
-    //models.User.create({ firstName: 'BillyBob'});
-    /*
-    models.User.findAll().then(users => {
-      console.info(users)
-    }); */
-    //console.info("yo")
-
-    //Pantry.create({ owner: 'BillyOwner'});
-/*
-    Pantry.findAll().then(owners => {
-      console.log(owners)
-    }); */
 
     return Pantry;
 };

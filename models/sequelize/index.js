@@ -2,7 +2,6 @@
 
 const importModels = require('../import');
 const path = require('path');
-// const populateTestData = require('./test-data');
 const sequelize = require('sequelize');
 const config = {
     username: process.env.PGUSER || 'root',

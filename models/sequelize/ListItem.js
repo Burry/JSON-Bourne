@@ -11,10 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     ListItem.associate = models => {
-        ListItem.belongsTo(models.ShoppingList, {
-            foreignKey: 'listId',
-            onDelete: 'CASCADE'
-        });
+        ListItem.belongsTo(models.ShoppingList);
     };
 
     return ListItem;
