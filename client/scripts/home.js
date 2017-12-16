@@ -1,5 +1,5 @@
 $(function() {
-    let search = instantsearch({
+    let search = instantsearch({    // eslint-disable-line no-undef
         appId: '4U2NCQ3L4M',
         apiKey: 'b997bca8322aa226a750e1b91c7c3ea1', // search-only API key
         indexName: 'Recipes',
@@ -15,13 +15,13 @@ $(function() {
     });
 
     search.addWidget(
-        instantsearch.widgets.searchBox({
+        instantsearch.widgets.searchBox({   // eslint-disable-line no-undef
             container: '#homeSearch'
         })
     );
 
     search.addWidget(
-        instantsearch.widgets.hits({
+        instantsearch.widgets.hits({    // eslint-disable-line no-undef
             container: '#homeSearchHits',
             hitsPerPage: 10,
             templates: {
