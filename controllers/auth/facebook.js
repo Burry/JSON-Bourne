@@ -22,15 +22,11 @@ exports = module.exports = (req, res, next) => {
 
 	// Save user data once returning from Facebook
 	if (_.has(req.query, 'cb')) {
-		console.info('[services.facebook] - Callback workflow detected, attempting to process data...')
-
 		passport.authenticate('facebook', {session: false}, (err, data, info) => {
 			if (err || !data) {
-				console.error("[services.facebook] - Error retrieving Facebook account data - " + JSON.stringify(err));
+				console.error('Error retrieving Facebook account data: ' + JSON.stringify(err));
 				return res.redirect('/sign-in');
 			}
-
-			console.info('[services.facebook] - Successfully retrieved Facebook account data, processing...')
 
 			let name = data.profile && data.profile.displayName ? data.profile.displayName.split(' ') : [];
 
@@ -53,8 +49,6 @@ exports = module.exports = (req, res, next) => {
 
 	// Perform inital authentication request to Facebook
 	} else {
-		console.info('[services.facebook] - Authentication workflow detected, attempting to request access...');
-
 		passport.authenticate('facebook', {scope: ['email']})(req, res, next);
 	}
 }
