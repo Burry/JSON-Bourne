@@ -20,8 +20,14 @@ a {
     -webkit-text-fill-color: transparent;
 }
 
-// Header
-
+// Font Awesome right margin
+h1,
+.nav-item.dropdown,
+.btn.facebook {
+    i,svg {
+        margin-right: 0.25rem;
+    }
+}
 
 // Home page header jumbotron
 .main-feature {
@@ -70,17 +76,13 @@ a {
 a.btn.facebook {
     color: #fff;
     background: #3b5998;
-
-    i,svg {
-        margin-right: 0.25rem;
-    }
 }
 
 .modal-dialog {
     .btn {
         cursor: pointer;
     }
-    
+
     a:not([href]):not([tabindex]) {
         color: $link-color;
         cursor: pointer;

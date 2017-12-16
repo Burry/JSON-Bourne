@@ -1,4 +1,3 @@
-<!-- Top navbar -->
 nav.navbar.navbar-expand-md.navbar-light
     .container
         a.navbar-brand(href='/') FindMyAppetite
@@ -13,10 +12,11 @@ nav.navbar.navbar-expand-md.navbar-light
                     li.nav-item.dropdown
                         a.nav-link.dropdown-toggle(data-toggle='dropdown', href='#', role='button', aria-haspopup='true', aria-expanded='false')=user.firstName
                         .dropdown-menu
-                            //- a.dropdown-item(href='/settings', class=(section == 'settings' ? 'active' : null))
-                            //- 	i.fa.fa-cog(aria-hidden='true')
-                            //- 	| Settings
+                            a.dropdown-item(href='/settings', class=(section == 'settings' ? 'active' : null))
+                                i.fa.fa-cog(aria-hidden='true')
+                                | Settings
                             a.dropdown-item(href='/sign-out')
+                                i.fa.fa-sign-out(aria-hidden='true')
                                 | Sign Out
                 else
                     li.nav-item: a.nav-link.auth-trigger(href='/sign-in', data-from=query, data-initial='sign-in')
