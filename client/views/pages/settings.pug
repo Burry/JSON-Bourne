@@ -7,7 +7,7 @@ block header
         h2 Preferences
   
 block content
-  form(method = 'POST' name = 'preferences')
+  form(method = 'POST', name = 'preferences')
     .div.row  
       .col-md-3
       .col-md-3
@@ -60,11 +60,11 @@ block content
           .col-md-3.row.no-gutters
             .col-md-4.label.control-label.requiredField(for='badIngredient1') Disliked:
             .col-md-7.input
-              input#badIngredient1.form-control(type='text', placeholder = 'Ingredient name', name='badIngredient1')
+              input#badIngredient1.form-control(type='text', placeholder = 'Ingredient name', name='substitutions[0].ingredient')
           .col-md-3.row.no-gutters
             .col-md-5.label.control-label.requiredField(for='replacement1') Replacement:
             .col-md-7.input
-              input#replacement1.form-control(type='text', placeholder = 'Ingredient name', name='replacement1')
+              input#replacement1.form-control(type='text', placeholder = 'Ingredient name', name='substitutions[0].replacement')
           .col-md-3
       .div  
         .row 
