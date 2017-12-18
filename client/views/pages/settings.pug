@@ -58,45 +58,71 @@ block content
         .row
           .col-md-3
           .col-md-3.row.no-gutters
-            .col-md-4.label.control-label.requiredField(for='badIngredient1') Disliked Ingredient:
-            .col-md-8.input
-              input#badIngredient1.form-control(type='text', placeholder = 'Enter ingredient name', name='badIngredient1')
-          .col-md-3.row.no-gutters.input
-            .col-md-4.label.control-label.requiredField(for='replacement1') Replacement Ingredient:
-            .col-md-8.input
-              input#replacement1.form-control(type='text', placeholder = 'Enter ingredient name', name='replacement1')
+            .col-md-4.label.control-label.requiredField(for='badIngredient1') Disliked:
+            .col-md-7.input
+              input#badIngredient1.form-control(type='text', placeholder = 'Ingredient name', name='badIngredient1')
+          .col-md-3.row.no-gutters
+            .col-md-5.label.control-label.requiredField(for='replacement1') Replacement:
+            .col-md-7.input
+              input#replacement1.form-control(type='text', placeholder = 'Ingredient name', name='replacement1')
           .col-md-3
       .div  
         .row 
           .col-md-4
           .col-md-4
-            input.button(type="button", value="Add Another Substitution", onclick="addSub()")
+            button(type="button", onclick="addSub()")
+              img(src = "/images/plus.png")
             script.
               function addSub(){
-                  var parentRow = document.createElement('row');
-                    
-                  
-                  var badIngredientLabel = document.createElement("LABEL");
-                  var subIngredientLabel = document.createElement('label');
-                  var title1 = document.createTextNode('Disliked Ingredient:');
-                  var title2 = document.createTextNode("Replecement Ingredient:");
-                  badIngredientLabel.setAttribute("for", "badIngredient");
-                  badIngredientLabel.appendChild(title1);
-                  subIngredientLabel.setAttribute("for", "replacement");
-                  subIngredientLabel.appendChild(title2);
-                  
-                  var badIngredientInput = document.createElement('input');
-                      badIngredientInput.type = 'text';
-                      badIngredientInput.placeholder = 'Enter ingredient name';
+                  var parentRow = document.createElement('div');
+                      parentRow.className = 'row';
+                  var blankDiv1 = document.createElement('div');
+                      blankDiv1.className = 'col-md-3';
+                  var blankDiv2 = document.createElement('div');
+                      blankDiv2.className = 'col-md-3';
                       
-                  var subIngredientInput = document.createElement('input');
-                      subIngredientInput.type = 'text';
-                      subIngredientInput.placeholder = 'Enter ingredient name';
-            
-                  parentRow.appendChild(badIngredientLabel); 
-                  parentRow.appendChild(badIngredientInput);
-                  parentRow.appendChild(subIngredientLabel);
-                  parentRow.appendChild(subIngredientInput)                 
+                    
+                  var BIparentCol = document.createElement('div');
+                      BIparentCol.className = 'col-md-3 row no-gutters';
+                  var SIparentCol = document.createElement('div');
+                      SIparentCol.className = 'col-md-3 row no-gutters';
+                  
+                  var BIlabelCol = document.createElement('div');
+                      BIlabelCol.className = 'col-md-4 label control-label';
+                      BIlabelCol.setAttribute('for', 'badIngredient');
+                      BIlabelCol.innerHTML = 'Disliked:';
+                  var BIinputCol = document.createElement('div');
+                      BIinputCol.className = 'col-md-7 input';
+                  var BIinput = document.createElement('input');
+                      BIinput.className = 'form-control';
+                      BIinput.type = 'text';
+                      BIinput.placeholder = 'Ingredient name';
+                      
+                  var SIlabelCol = document.createElement('div');
+                      SIlabelCol.className = 'col-md-5 label control-label';
+                      SIlabelCol.setAttribute('for', 'badIngredient');
+                      SIlabelCol.innerHTML = 'Replacement:';
+                  var SIinputCol = document.createElement('div');
+                      SIinputCol.className = 'col-md-7 input';
+                  var SIinput = document.createElement('input');
+                      SIinput.className = 'form-control';
+                      SIinput.type = 'text';
+                      SIinput.placeholder = 'Ingredient name';
+                  
+                  BIinputCol.appendChild(BIinput);
+                  SIinputCol.appendChild(SIinput);
+
+                  BIparentCol.appendChild(BIlabelCol);
+                  BIparentCol.appendChild(BIinputCol);
+                  
+                  SIparentCol.appendChild(SIlabelCol);
+                  SIparentCol.appendChild(SIinputCol);
+                  
+                  parentRow.appendChild(blankDiv1);
+                  parentRow.appendChild(BIparentCol);
+                  parentRow.appendChild(SIparentCol);
+                  parentRow.appendChild(blankDiv2);
+                  
                   document.getElementById("substitutions").appendChild(parentRow);
               }
           .col-md-4
