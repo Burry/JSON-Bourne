@@ -53,7 +53,7 @@ router.get('/', (req, res) => req.user
 // POST /join
 router.post('/', (req, res) =>
 	passport.authenticate('local-signup', {
-		successRedirect: req.cookies.target || '/',
+		successRedirect: req.cookies.target || '/settings',
 		failureRedirect: '/join'
 	})(req, res, () => {})
 );
