@@ -1,9 +1,102 @@
 extends ../layout
 
 block header
-    .jumbotron.jumbotron-fluid: .container
-        h1
-            i.fa.fa-cog(aria-hidden='true')
-            =title
-
+  .jumbotron.jumbotron-light.no-margin-bottom: .container
+    row: .col.mx-auto
+      .header.text-center
+        h2 Preferences
+  
 block content
+  form(method = 'POST' name = 'preferences')
+    .div.row  
+      .col-md-3
+      .col-md-3
+        label.control-label.requiredField(for='dietaryRestrictions')
+          | Dietary Restrictions
+          span.asteriskField *
+      .col-md-3
+        select#dietaryRestrictions.select.form-control.input-lg(form='selectDiet', name='dietaryRestrictions')
+          option(value='0') -- Select --
+          option(value='1') Vegan
+          option(value='2') Gluten-Free
+          option(value='3') Vegitarian
+          option(value='4') Pescetarian
+          option(value='5') Keto
+          option(value='6') Kosher
+      .col-md-3
+    .div
+      .container(style = 'height: 70px; margin-top: 40px')
+        .header.text-center
+          h6 Custom Food Allergies
+          |
+          |
+      
+      .div
+        .row
+          .col-md-2
+          .col-md-3.row.no-gutters
+            .col-md-4.label.control-label.requiredField(for='foodAllergin1') Allergin 1:
+            .col-md-8.input
+              input#foodAllergin1.form-control(type='text', placeholder = 'Enter ingredient name', name='foodAllergin1')
+          .col-md-3.row.no-gutters.input
+            .col-md-4.label.control-label.requiredField(for='foodAllergin2') Allergin 2:
+            .col-md-8.input
+              input#foodAllergin2.form-control(type='text', placeholder = 'Enter ingredient name', name='foodAllergin2')
+          .col-md-3.row.no-gutters
+            .col-md-4.label.control-label.requiredField(for='foodAllergin3') Allergin 3:
+            .col-md-8.input
+              input#foodAllergin3.form-control(type='text', placeholder = 'Enter ingredient name', name='foodAllergin3')
+          .col-md-1
+    .div
+      .container(style = 'height: 70px; margin-top: 40px')
+        .header.text-center
+          h6 Custom Food Substitutions
+          |
+          |
+      
+      .div(id = "substitutions")
+        .row
+          .col-md-3
+          .col-md-3.row.no-gutters
+            .col-md-4.label.control-label.requiredField(for='badIngredient1') Disliked Ingredient:
+            .col-md-8.input
+              input#badIngredient1.form-control(type='text', placeholder = 'Enter ingredient name', name='badIngredient1')
+          .col-md-3.row.no-gutters.input
+            .col-md-4.label.control-label.requiredField(for='replacement1') Replacement Ingredient:
+            .col-md-8.input
+              input#replacement1.form-control(type='text', placeholder = 'Enter ingredient name', name='replacement1')
+          .col-md-3
+      .div  
+        .row 
+          .col-md-4
+          .col-md-4
+            input.button(type="button", value="Add Another Substitution", onclick="addSub()")
+            script.
+              function addSub(){
+                  var parentRow = document.createElement('row');
+                    
+                  
+                  var badIngredientLabel = document.createElement("LABEL");
+                  var subIngredientLabel = document.createElement('label');
+                  var title1 = document.createTextNode('Disliked Ingredient:');
+                  var title2 = document.createTextNode("Replecement Ingredient:");
+                  badIngredientLabel.setAttribute("for", "badIngredient");
+                  badIngredientLabel.appendChild(title1);
+                  subIngredientLabel.setAttribute("for", "replacement");
+                  subIngredientLabel.appendChild(title2);
+                  
+                  var badIngredientInput = document.createElement('input');
+                      badIngredientInput.type = 'text';
+                      badIngredientInput.placeholder = 'Enter ingredient name';
+                      
+                  var subIngredientInput = document.createElement('input');
+                      subIngredientInput.type = 'text';
+                      subIngredientInput.placeholder = 'Enter ingredient name';
+            
+                  parentRow.appendChild(badIngredientLabel); 
+                  parentRow.appendChild(badIngredientInput);
+                  parentRow.appendChild(subIngredientLabel);
+                  parentRow.appendChild(subIngredientInput)                 
+                  document.getElementById("substitutions").appendChild(parentRow);
+              }
+          .col-md-4
