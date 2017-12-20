@@ -68,8 +68,8 @@ block content
           .col-md-3
       .div  
         .row 
-          .col-md-4
-          .col-md-4
+          .col-md-6
+          .col-md-1
             button(type="button", onclick="addSub()")
               img(src = "/images/plus.png")
             script.
@@ -125,4 +125,9 @@ block content
                   
                   document.getElementById("substitutions").appendChild(parentRow);
               }
-          .col-md-4
+          .col-md-5
+        .row 
+            .col-md-3
+            .col-md-3
+              input(type = 'submit', value = 'Save')
+            .col-md-6
