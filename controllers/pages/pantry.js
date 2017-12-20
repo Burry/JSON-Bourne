@@ -8,7 +8,7 @@ router.get('/', (req, res) =>
         .then(pantry => res.render(key, {
             title: key.charAt(0).toUpperCase() + key.slice(1),
             section: key,
-            pantry: pantry
+            pantry: JSON.stringify(pantry) // DEBUG
         }))
         .catch(err => res.redirect('/'))
 );
